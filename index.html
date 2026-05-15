@@ -151,10 +151,56 @@ tr:hover td{background:#1f2235}
 
 </div>
 <script>
-const SHEET_ID = '1hyGpt3-zK0NVnjuQpZ-wXfu8CZdXS-n2pzcgao85RPU';
-const PUB_ID  = '2PACX-1vSzyHOAkQRwBuyLTWw0xyAkA3aQWjHNAT1wSRMmmB7zjYARDMG470ErejHEFid200TUUbGvbQNYUPsE';
-const SKIP    = ['инструкция','сводная','итог'];
-const BASE    = `https://docs.google.com/spreadsheets/d/e/${PUB_ID}/pub?output=csv`;
+const PUB_ID = '2PACX-1vSzyHOAkQRwBuyLTWw0xyAkA3aQWjHNAT1wSRMmmB7zjYARDMG470ErejHEFid200TUUbGvbQNYUPsE';
+const BASE   = `https://docs.google.com/spreadsheets/d/e/${PUB_ID}/pub?output=csv`;
+
+// Все 44 листа с названиями и GID
+const SHEETS = [
+  {name:"Балашиха",          gid:"1795562364"},
+  {name:"Богородский",       gid:"0"},
+  {name:"Бронницы",          gid:"1103582215"},
+  {name:"Волоколамский",     gid:"220979544"},
+  {name:"Дмитровский",       gid:"1892432856"},
+  {name:"Воскресенск",       gid:"1653606013"},
+  {name:"Домодедово",        gid:"1870428576"},
+  {name:"Дубна",             gid:"1718290784"},
+  {name:"Егорьевск",         gid:"1549030074"},
+  {name:"Жуковский",         gid:"305796329"},
+  {name:"Зарайск",           gid:"283920738"},
+  {name:"Истра",             gid:"1434615352"},
+  {name:"Кашира",            gid:"1580393335"},
+  {name:"Клин",              gid:"1338049965"},
+  {name:"Коломна",           gid:"106788836"},
+  {name:"Королев",           gid:"1576913234"},
+  {name:"Котельники",        gid:"1390969273"},
+  {name:"Красногорск",       gid:"1821499361"},
+  {name:"Лобня",             gid:"2065587021"},
+  {name:"Лосино-Петровский", gid:"2082287183"},
+  {name:"Луховицы",          gid:"239748466"},
+  {name:"Люберцы",           gid:"1843254790"},
+  {name:"Можайский",         gid:"661476574"},
+  {name:"Мытищи",            gid:"846842811"},
+  {name:"Наро-Фоминский",    gid:"249806909"},
+  {name:"Одинцовский",       gid:"1539692434"},
+  {name:"Орехово-Зуево",     gid:"696528998"},
+  {name:"Павлово-Посадский", gid:"1190501242"},
+  {name:"Подольск",          gid:"1062490300"},
+  {name:"Пушкинский",        gid:"1496220984"},
+  {name:"Раменский",         gid:"732430860"},
+  {name:"Рузский",           gid:"376297159"},
+  {name:"Сергиево-Посадский",gid:"782139300"},
+  {name:"Серебряные Пруды",  gid:"344890850"},
+  {name:"Серпухов",          gid:"1919190345"},
+  {name:"Солнечногорск",     gid:"24184888"},
+  {name:"Ступино",           gid:"1528804810"},
+  {name:"Талдомский",        gid:"652495233"},
+  {name:"Химки",             gid:"1817325599"},
+  {name:"Чехов",             gid:"1699541847"},
+  {name:"Шатура",            gid:"1588732400"},
+  {name:"Шаховская",         gid:"1886732760"},
+  {name:"Щелково",           gid:"2101160216"},
+  {name:"Электросталь",      gid:"1617637044"},
+];
 
 // Column map (0-based)
 const C = {prog:0,funded:1,mo:2,np:3,addr:4,apt:5,area:6,citizens:7,fio:8,
@@ -511,12 +557,6 @@ window.addEventListener('load', async ()=>{
     setProg('Предпросмотр — нажмите «Демо»',0);
     setStatus('В claude.ai внешние запросы заблокированы. На GitHub Pages загрузится автоматически.','err');
     return;
-  }
-  const ok = await discoverSheets();
-  if(!ok || sheets.length===0){
-    setProg('Листы не обнаружены — пробую прямую загрузку',50);
-    // fallback: load sheet 0
-    sheets=[{name:'Основной лист',gid:'0'}];
   }
   await loadAllSheets();
   startAuto();
