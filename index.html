@@ -11,506 +11,515 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',sans-serif;background:#0f1117;color:#e0e0e0;min-height:100vh}
-#countdown-bar-wrap{height:3px;background:#1f2235}
-#countdown-bar{height:3px;background:#4f8ef7;width:100%;transition:width 1s linear}
+#bar-wrap{height:3px;background:#1f2235}
+#bar{height:3px;background:#4f8ef7;width:100%;transition:width 1s linear}
 header{background:#1a1d2e;padding:14px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #2a2d3e;flex-wrap:wrap}
 header h1{font-size:17px;font-weight:600;color:#fff}
 #update-time{font-size:11px;color:#666;margin-left:auto}
-#auto-badge{background:#1b4332;color:#4caf50;font-size:11px;padding:3px 10px;border-radius:10px}
+#live-badge{background:#1b4332;color:#4caf50;font-size:11px;padding:3px 10px;border-radius:10px}
 .main{padding:16px 20px;display:flex;flex-direction:column;gap:14px}
 
-/* Sheet selector */
-.sheet-section{background:#1a1d2e;border-radius:12px;padding:14px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.sheet-section label{font-size:12px;color:#888;white-space:nowrap}
-.sheet-section select{background:#0f1117;border:1px solid #2a2d3e;color:#e0e0e0;border-radius:8px;padding:8px 12px;font-size:13px;outline:none;flex:1;min-width:180px}
-.sheet-section select:focus{border-color:#4f8ef7}
-.btn{background:#4f8ef7;color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:13px;cursor:pointer;white-space:nowrap;transition:background .2s}
+.top-bar{background:#1a1d2e;border-radius:12px;padding:14px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.top-bar label{font-size:12px;color:#888;white-space:nowrap}
+#progress-wrap{flex:1;min-width:200px}
+#progress-text{font-size:12px;color:#888;margin-bottom:4px}
+#progress-bg{background:#0f1117;border-radius:4px;height:8px}
+#progress-fill{height:8px;border-radius:4px;background:#4f8ef7;width:0%;transition:width .3s}
+.btn{background:#4f8ef7;color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:13px;cursor:pointer;transition:background .2s;white-space:nowrap}
 .btn:hover{background:#3a7ae0}
 .btn-sm{background:#2a2d3e;color:#aaa;padding:7px 14px;font-size:12px}
 .btn-sm:hover{background:#333}
-.status-msg{font-size:12px;color:#888;width:100%}
-.status-msg.ok{color:#4caf50}.status-msg.err{color:#f44336}
+.status-ok{color:#4caf50;font-size:12px;width:100%}
+.status-err{color:#f44336;font-size:12px;width:100%}
+.status-info{color:#888;font-size:12px;width:100%}
 
-/* Filters */
-.filters{background:#1a1d2e;border-radius:12px;padding:12px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.filters{background:#1a1d2e;border-radius:12px;padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .filters label{font-size:12px;color:#888}
 .filters select{background:#0f1117;border:1px solid #2a2d3e;color:#e0e0e0;border-radius:6px;padding:6px 10px;font-size:12px;outline:none}
 
-/* KPI */
-.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
 .kpi{background:#1a1d2e;border-radius:12px;padding:14px 16px;border-left:3px solid #4f8ef7}
-.kpi.green{border-color:#4caf50}.kpi.orange{border-color:#ff9800}
-.kpi.purple{border-color:#9c27b0}.kpi.red{border-color:#f44336}
+.kpi.g{border-color:#4caf50}.kpi.o{border-color:#ff9800}.kpi.p{border-color:#9c27b0}
 .kpi-val{font-size:26px;font-weight:700;color:#fff;line-height:1}
 .kpi-label{font-size:11px;color:#888;margin-top:5px}
 
-/* Funnel */
-.funnel-box{background:#1a1d2e;border-radius:12px;padding:16px}
-.funnel-box h3,.chart-box h3,.map-box h3,.table-box h3,.finance-card h3{font-size:13px;color:#aaa;margin-bottom:12px;font-weight:500}
+.funnel-box,.chart-box,.map-box,.table-box,.fin-card{background:#1a1d2e;border-radius:12px;padding:16px}
+.sec-title{font-size:13px;color:#aaa;margin-bottom:12px;font-weight:500}
 .funnel-step{display:flex;align-items:center;gap:10px;margin-bottom:7px}
-.funnel-bar-wrap{flex:1;background:#0f1117;border-radius:4px;height:26px;overflow:hidden}
-.funnel-bar{height:100%;border-radius:4px;transition:width .8s;display:flex;align-items:center;padding-left:10px;font-size:12px;font-weight:600;color:#fff;min-width:28px}
-.funnel-label{font-size:12px;color:#aaa;width:190px;flex-shrink:0}
-.funnel-count{font-size:12px;color:#fff;width:36px;text-align:right;flex-shrink:0}
+.f-label{font-size:12px;color:#aaa;width:200px;flex-shrink:0}
+.f-wrap{flex:1;background:#0f1117;border-radius:4px;height:26px;overflow:hidden}
+.f-bar{height:100%;border-radius:4px;transition:width .8s;display:flex;align-items:center;padding-left:10px;font-size:12px;font-weight:600;color:#fff;min-width:28px}
+.f-cnt{font-size:12px;color:#fff;width:40px;text-align:right;flex-shrink:0}
 
-/* Charts */
 .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.chart-box{background:#1a1d2e;border-radius:12px;padding:16px}
-.chart-wrap{position:relative;height:200px}
+.chart-wrap{position:relative;height:220px}
+.fin-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.fin-val{font-size:20px;font-weight:700;color:#4f8ef7;margin-top:6px}
+.fin-sub{font-size:11px;color:#666;margin-top:4px}
 
-/* Finance */
-.finance-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
-.finance-card{background:#1a1d2e;border-radius:12px;padding:16px}
-.finance-val{font-size:20px;font-weight:700;color:#4f8ef7}
-.finance-sub{font-size:11px;color:#666;margin-top:4px}
+#map{height:400px;border-radius:8px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#aaa}
+.leg-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
 
-/* Map */
-.map-box{background:#1a1d2e;border-radius:12px;padding:16px}
-#map{height:380px;border-radius:8px;overflow:hidden}
-.map-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
-.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#aaa}
-.legend-dot{width:12px;height:12px;border-radius:50%}
-
-/* Tables */
-.table-box{background:#1a1d2e;border-radius:12px;padding:16px}
-.table-wrap{overflow-x:auto;max-height:320px;overflow-y:auto}
+.table-wrap{overflow:auto;max-height:340px}
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{background:#0f1117;color:#888;padding:8px 12px;text-align:left;position:sticky;top:0;white-space:nowrap}
+th{background:#0f1117;color:#888;padding:8px 12px;text-align:left;position:sticky;top:0;white-space:nowrap;z-index:1}
 td{padding:7px 12px;border-bottom:1px solid #1f2235;white-space:nowrap}
 tr:hover td{background:#1f2235}
-.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500}
-.badge-pos{background:#1b4332;color:#4caf50}.badge-neg{background:#3b1a1a;color:#f44336}
-.badge-proc{background:#2d2005;color:#ff9800}.badge-rej{background:#2d1a2d;color:#ce93d8}
-.no-data{text-align:center;padding:40px;color:#555;font-size:13px;grid-column:1/-1}
+.b{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500}
+.b-pos{background:#1b4332;color:#4caf50}.b-neg{background:#3b1a1a;color:#f44336}
+.b-proc{background:#2d2005;color:#ff9800}.b-rej{background:#2d1a2d;color:#ce93d8}
+.no-data{text-align:center;padding:40px;color:#555;font-size:13px}
+
+/* округа-теги */
+.rounds-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.round-tag{background:#1f2235;border:1px solid #2a2d3e;color:#aaa;font-size:11px;padding:3px 10px;border-radius:10px;cursor:pointer;transition:all .15s}
+.round-tag:hover{border-color:#4f8ef7;color:#4f8ef7}
+.round-tag.active{background:#4f8ef7;color:#fff;border-color:#4f8ef7}
 </style>
 </head>
 <body>
-
-<div id="countdown-bar-wrap"><div id="countdown-bar"></div></div>
-
+<div id="bar-wrap"><div id="bar"></div></div>
 <header>
   <div style="font-size:22px">🏚️</div>
   <h1>Дашборд расселения аварийного жилья</h1>
-  <span id="auto-badge">● LIVE</span>
+  <span id="live-badge">● LIVE</span>
   <span id="update-time">Загрузка...</span>
 </header>
-
 <div class="main">
 
-  <!-- Sheet selector -->
-  <div class="sheet-section">
-    <label>Лист таблицы:</label>
-    <select id="sheet-select" onchange="onSheetChange()">
-      <option value="0">Загрузка листов...</option>
-    </select>
-    <button class="btn btn-sm" onclick="loadSheet()">↺ Обновить</button>
-    <button class="btn" onclick="loadDemo()" style="background:#7c4dff">🎲 Демо-данные</button>
-    <div class="status-msg" id="status-msg">⚠️ В режиме предпросмотра (claude.ai) внешние запросы заблокированы — нажмите «Демо-данные». На GitHub Pages таблица загрузится автоматически.</div>
+  <div class="top-bar">
+    <div id="progress-wrap">
+      <div id="progress-text">Инициализация...</div>
+      <div id="progress-bg"><div id="progress-fill"></div></div>
+    </div>
+    <button class="btn btn-sm" onclick="reloadAll()">↺ Обновить всё</button>
+    <button class="btn btn-sm" onclick="loadDemo()" style="background:#7c4dff;color:#fff">🎲 Демо</button>
+    <div id="status-msg" class="status-info"></div>
   </div>
 
-  <!-- Filters -->
   <div class="filters" id="filters" style="display:none">
+    <label>Округ:</label>
+    <select id="f-round" onchange="applyFilters()"><option value="">Все округа</option></select>
     <label>Подпрограмма:</label>
     <select id="f-prog" onchange="applyFilters()"><option value="">Все</option></select>
-    <label>Г.О/М.О:</label>
-    <select id="f-mo" onchange="applyFilters()"><option value="">Все</option></select>
     <label>Решение:</label>
-    <select id="f-status" onchange="applyFilters()"><option value="">Все</option></select>
+    <select id="f-dec" onchange="applyFilters()"><option value="">Все</option></select>
     <label>Тип:</label>
     <select id="f-type" onchange="applyFilters()"><option value="">Все</option></select>
     <button class="btn btn-sm" onclick="resetFilters()">↺ Сброс</button>
   </div>
 
-  <!-- KPI -->
   <div class="kpi-row" id="kpi-row">
-    <div class="no-data">Подключение к таблице...</div>
+    <div class="no-data" style="grid-column:1/-1">Загрузка данных...</div>
   </div>
 
-  <!-- Funnel -->
   <div class="funnel-box" id="funnel-box" style="display:none">
-    <h3>🔄 Воронка расселения</h3>
+    <div class="sec-title">🔄 Воронка расселения</div>
     <div id="funnel-content"></div>
   </div>
 
-  <!-- Charts -->
   <div class="charts-row" id="charts-row" style="display:none">
-    <div class="chart-box"><h3>📋 Статус решений</h3><div class="chart-wrap"><canvas id="chart-status"></canvas></div></div>
-    <div class="chart-box"><h3>🏗️ По застройщикам (топ-10)</h3><div class="chart-wrap"><canvas id="chart-builders"></canvas></div></div>
+    <div class="chart-box"><div class="sec-title">📋 Статус решений</div><div class="chart-wrap"><canvas id="c-dec"></canvas></div></div>
+    <div class="chart-box"><div class="sec-title">🏙️ По округам (топ-15)</div><div class="chart-wrap"><canvas id="c-rounds"></canvas></div></div>
   </div>
 
-  <!-- Finance -->
-  <div class="finance-row" id="finance-row" style="display:none"></div>
+  <div class="fin-row" id="fin-row" style="display:none"></div>
 
-  <!-- Map -->
   <div class="map-box" id="map-box" style="display:none">
-    <h3>🗺️ Карта аварийных домов</h3>
+    <div class="sec-title">🗺️ Карта аварийных домов</div>
     <div id="map"></div>
-    <div class="map-legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#4caf50"></div>Положительное</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#f44336"></div>Отрицательное</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#ff9800"></div>На рассмотрении</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#ce93d8"></div>Отказ</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#4f8ef7"></div>Не указано</div>
+    <div class="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:#4caf50"></div>Положительное</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#f44336"></div>Отрицательное</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#ff9800"></div>На рассмотрении</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#ce93d8"></div>Отказ</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#4f8ef7"></div>Не указано</div>
     </div>
   </div>
 
-  <!-- Table МО -->
-  <div class="table-box" id="table-mo-box" style="display:none">
-    <h3>📍 Прогресс по Г.О/М.О</h3>
-    <div class="table-wrap"><table id="table-mo"></table></div>
+  <div class="table-box" id="tbl-round-box" style="display:none">
+    <div class="sec-title">📍 Сводка по округам</div>
+    <div class="table-wrap"><table id="tbl-round"></table></div>
   </div>
 
-  <!-- Main table -->
-  <div class="table-box" id="table-main-box" style="display:none">
-    <h3>📄 Детальная таблица</h3>
-    <div class="table-wrap"><table id="table-main"></table></div>
+  <div class="table-box" id="tbl-main-box" style="display:none">
+    <div class="sec-title">📄 Детальная таблица</div>
+    <div class="table-wrap"><table id="tbl-main"></table></div>
   </div>
 
 </div>
-
 <script>
-// ============================================================
-// CONFIG — вставьте сюда ID вашей таблицы
-// ============================================================
-const SHEET_ID = '2PACX-1vSzyHOAkQRwBuyLTWw0xyAkA3aQWjHNAT1wSRMmmB7zjYARDMG470ErejHEFid200TUUbGvbQNYUPsE';
-// Листы которые НЕ нужно показывать (точное совпадение или часть названия)
-const SKIP_SHEETS = ['инструкция', 'сводная', 'итог'];
-// ============================================================
+const SHEET_ID = '1hyGpt3-zK0NVnjuQpZ-wXfu8CZdXS-n2pzcgao85RPU';
+const PUB_ID  = '2PACX-1vSzyHOAkQRwBuyLTWw0xyAkA3aQWjHNAT1wSRMmmB7zjYARDMG470ErejHEFid200TUUbGvbQNYUPsE';
+const SKIP    = ['инструкция','сводная','итог'];
+const BASE    = `https://docs.google.com/spreadsheets/d/e/${PUB_ID}/pub?output=csv`;
 
-const BASE_URL = `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv`;
-let allData=[], filteredData=[], map, markersLayer, chartStatus, chartBuilders;
-let autoInterval, countdownInterval, secondsLeft=30;
-let currentGid = '0';
-let availableSheets = [];
-
-const C = {
-  prog:0,funded:1,mo:2,np:3,addr:4,apt:5,area:6,citizens:7,fio:8,phone:9,
-  owner:10,certType:11,dateApp:12,decision:13,signed:14,negReason:15,
+// Column map (0-based)
+const C = {prog:0,funded:1,mo:2,np:3,addr:4,apt:5,area:6,citizens:7,fio:8,
+  phone:9,owner:10,certType:11,dateApp:12,decision:13,signed:14,negReason:15,
   buyConsent:16,evalDate:17,agreeDate:18,price:19,dkp:20,district:21,
-  newAddr:22,newArea:23,builder:24,contractType:25,contractPrice:26,minPay:27
-};
+  newAddr:22,newArea:23,builder:24,contractType:25,contractPrice:26,minPay:27};
 
-// Fetch list of sheets via HTML page
-async function fetchSheetList() {
+let allData=[], filteredData=[];
+let sheets=[], loadedSheets=0;
+let map, markersLayer, chartDec, chartRounds;
+let autoTimer, cdTimer, secondsLeft=60;
+
+// ─── Sheet discovery ───────────────────────────────────────────────
+async function discoverSheets(){
+  setProg('Получение списка листов...', 0);
   try {
-    const res = await fetch(`https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=html`);
+    const res = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/pub?output=html&cachebust=${Date.now()}`);
     const html = await res.text();
-    const doc = new DOMParser().parseFromString(html,'text/html');
-    const tabs = doc.querySelectorAll('#sheet-menu li, .goog-tab, [id^="sheet-button"]');
-    let sheets = [];
-    tabs.forEach(t => {
-      const name = t.textContent.trim();
-      const gid = t.getAttribute('id')||t.dataset.sheetId||'';
-      if (name) sheets.push({name, gid: gid.replace(/\D/g,'')});
+    const doc  = new DOMParser().parseFromString(html,'text/html');
+    let found  = [];
+
+    // Try multiple selectors GitHub Pages will hit the real DOM
+    doc.querySelectorAll('[id^="sheet-button-"]').forEach(el=>{
+      const gid  = el.id.replace('sheet-button-','');
+      const name = el.textContent.trim();
+      if(name && gid) found.push({name,gid});
     });
-    // fallback: parse anchors
-    if (!sheets.length) {
-      doc.querySelectorAll('a[href*="gid="]').forEach(a => {
+    if(!found.length){
+      doc.querySelectorAll('a[href*="gid="]').forEach(a=>{
         const m = a.href.match(/gid=(\d+)/);
-        if (m) sheets.push({name: a.textContent.trim(), gid: m[1]});
+        if(m) found.push({name:a.textContent.trim(), gid:m[1]});
       });
     }
     // deduplicate
-    const seen = new Set();
-    sheets = sheets.filter(s => { if(!s.name||seen.has(s.gid)) return false; seen.add(s.gid); return true; });
-    return sheets;
-  } catch(e) { return []; }
+    const seen=new Set();
+    found = found.filter(s=>{ if(!s.name||seen.has(s.gid)) return false; seen.add(s.gid); return true; });
+    sheets = found.filter(s=>!SKIP.some(sk=>s.name.toLowerCase().includes(sk)));
+    return sheets.length > 0;
+  } catch(e){ return false; }
 }
 
-function shouldSkip(name) {
-  const n = name.toLowerCase();
-  return SKIP_SHEETS.some(s => n.includes(s.toLowerCase()));
-}
+// ─── Load all sheets ───────────────────────────────────────────────
+async function loadAllSheets(){
+  allData=[]; loadedSheets=0;
+  const total = sheets.length;
+  if(!total){ setStatus('Не удалось определить листы. Используйте «Демо»','err'); return; }
 
-async function initSheets() {
-  setStatus('Получение списка листов...','');
-  let sheets = await fetchSheetList();
-
-  if (!sheets.length) {
-    // fallback: just use sheet 0
-    sheets = [{name:'Основной лист', gid:'0'}];
+  for(const sh of sheets){
+    const url = `${BASE}&gid=${sh.gid}&cachebust=${Date.now()}`;
+    await new Promise(resolve=>{
+      Papa.parse(url,{
+        download:true, header:false, skipEmptyLines:true,
+        complete: r=>{
+          if(r.data && r.data.length>1){
+            // skip header row, tag each row with sheet name
+            r.data.slice(1).forEach(row=>{ row._sheet=sh.name; allData.push(row); });
+          }
+          loadedSheets++;
+          const pct = Math.round(loadedSheets/total*100);
+          setProg(`Загружено листов: ${loadedSheets}/${total} (${allData.length} строк)`, pct);
+          resolve();
+        },
+        error:()=>{ loadedSheets++; resolve(); }
+      });
+    });
+    await sleep(120); // small delay to avoid rate-limiting
   }
 
-  // Filter out unwanted sheets
-  availableSheets = sheets.filter(s => !shouldSkip(s.name));
+  if(!allData.length){ setStatus('Данные не загружены. Проверьте публикацию таблицы.','err'); return; }
 
-  const sel = document.getElementById('sheet-select');
-  sel.innerHTML = availableSheets.map(s =>
-    `<option value="${s.gid||'0'}">${s.name}</option>`
-  ).join('');
-
-  if (availableSheets.length) {
-    currentGid = availableSheets[0].gid || '0';
-    sel.value = currentGid;
-  }
-
-  loadSheet();
-  startAutoRefresh();
-}
-
-function onSheetChange() {
-  currentGid = document.getElementById('sheet-select').value;
-  loadSheet();
-  restartCountdown();
-}
-
-function loadSheet(silent=false) {
-  const url = BASE_URL + (currentGid && currentGid!=='0' ? `&gid=${currentGid}` : '') + '&cachebust=' + Date.now();
-  if (!silent) setStatus('Загрузка...','');
-  Papa.parse(url, {
-    download: true, header: false, skipEmptyLines: true,
-    complete: r => {
-      // Skip if this looks like a non-data sheet (less than 2 rows or no recognizable header)
-      if (!r.data || r.data.length < 2) {
-        setStatus('Лист пуст или не содержит данных','err');
-        return;
-      }
-      processData(r.data);
-      const now = new Date().toLocaleTimeString('ru');
-      document.getElementById('update-time').textContent = `${now} | след. через ${secondsLeft}с`;
-      if (!silent) setStatus(`Загружено ${r.data.length-1} строк ✓`,'ok');
-    },
-    error: () => setStatus('Ошибка загрузки. Убедитесь что таблица опубликована: Файл → Опубликовать в интернете','err')
-  });
-}
-
-function startAutoRefresh() {
-  clearInterval(autoInterval);
-  autoInterval = setInterval(() => { loadSheet(true); restartCountdown(); }, 30000);
-  restartCountdown();
-}
-
-function restartCountdown() {
-  clearInterval(countdownInterval);
-  secondsLeft = 30;
-  updateBar();
-  countdownInterval = setInterval(() => {
-    secondsLeft = Math.max(0, secondsLeft-1);
-    updateBar();
-    const t = document.getElementById('update-time');
-    const parts = t.textContent.split('|');
-    if (parts.length>=2) t.textContent = parts[0].trim() + ` | след. через ${secondsLeft}с`;
-  }, 1000);
-}
-
-function updateBar() {
-  const b = document.getElementById('countdown-bar');
-  if (b) b.style.width = (secondsLeft/30*100)+'%';
-}
-
-function processData(raw) {
-  if (!raw||raw.length<2) return;
-  allData = raw;
-  filteredData = raw.slice(1);
-  populateFilters(filteredData);
+  populateFilters();
+  filteredData = [...allData];
   render();
   document.getElementById('filters').style.display='flex';
+  setStatus(`✓ Загружено ${allData.length} строк из ${loadedSheets} округов`, 'ok');
+  setTime();
 }
 
-function populateFilters(rows) {
-  const fill=(id,col)=>{
+async function reloadAll(){
+  clearInterval(autoTimer); clearInterval(cdTimer);
+  secondsLeft=60;
+  const ok = await discoverSheets();
+  await loadAllSheets();
+  startAuto();
+}
+
+function startAuto(){
+  clearInterval(autoTimer); clearInterval(cdTimer);
+  secondsLeft=60; updateBar();
+  autoTimer = setInterval(()=>{ reloadAll(); }, 60000);
+  cdTimer = setInterval(()=>{
+    secondsLeft=Math.max(0,secondsLeft-1);
+    updateBar();
+    setTime();
+  },1000);
+}
+
+// ─── Filters ───────────────────────────────────────────────────────
+function populateFilters(){
+  const fill=(id,getter)=>{
     const s=document.getElementById(id);
-    const vals=[...new Set(rows.map(r=>r[col]||'').filter(v=>v&&v.trim()))].sort();
+    const vals=[...new Set(allData.map(getter).filter(v=>v&&v.trim()))].sort();
     s.innerHTML='<option value="">Все</option>'+vals.map(v=>`<option>${v}</option>`).join('');
   };
-  fill('f-prog',C.prog); fill('f-mo',C.mo); fill('f-status',C.decision); fill('f-type',C.certType);
+  fill('f-round', r=>r._sheet);
+  fill('f-prog',  r=>r[C.prog]);
+  fill('f-dec',   r=>r[C.decision]);
+  fill('f-type',  r=>r[C.certType]);
 }
 
-function applyFilters() {
-  const fp=document.getElementById('f-prog').value, fm=document.getElementById('f-mo').value,
-        fs=document.getElementById('f-status').value, ft=document.getElementById('f-type').value;
-  filteredData=allData.slice(1).filter(r=>(!fp||r[C.prog]==fp)&&(!fm||r[C.mo]==fm)&&(!fs||r[C.decision]==fs)&&(!ft||r[C.certType]==ft));
+function applyFilters(){
+  const fr=v('f-round'),fp=v('f-prog'),fd=v('f-dec'),ft=v('f-type');
+  filteredData=allData.filter(r=>
+    (!fr||r._sheet===fr)&&(!fp||r[C.prog]===fp)&&(!fd||r[C.decision]===fd)&&(!ft||r[C.certType]===ft)
+  );
   render();
 }
-
-function resetFilters() {
-  ['f-prog','f-mo','f-status','f-type'].forEach(id=>document.getElementById(id).value='');
-  filteredData=allData.slice(1); render();
+function resetFilters(){
+  ['f-round','f-prog','f-dec','f-type'].forEach(id=>document.getElementById(id).value='');
+  filteredData=[...allData]; render();
 }
 
-function num(v){return parseFloat(String(v||'0').replace(/[^\d.]/g,''))||0;}
-function fmtRub(v){return new Intl.NumberFormat('ru-RU',{style:'currency',currency:'RUB',maximumFractionDigits:0}).format(v);}
-function colorByDec(dec){
-  const v=String(dec||'').toLowerCase();
-  if(v.includes('положит')) return '#4caf50';
-  if(v.includes('отриц')) return '#f44336';
-  if(v.includes('рассм')) return '#ff9800';
-  if(v.includes('отказ')) return '#ce93d8';
-  return '#4f8ef7';
-}
-
-function render() {
+// ─── Render ────────────────────────────────────────────────────────
+function render(){
   const d=filteredData;
-  if(!d.length){document.getElementById('kpi-row').innerHTML='<div class="no-data">Нет данных для отображения</div>';return;}
+  if(!d.length){document.getElementById('kpi-row').innerHTML='<div class="no-data">Нет данных</div>';return;}
+
+  const n=v=>parseFloat(String(v||'0').replace(/[^\d.]/g,''))||0;
+  const totalArea=d.reduce((s,r)=>s+n(r[C.area]),0);
+  const totalCit =d.reduce((s,r)=>s+n(r[C.citizens]),0);
+  const signed   =d.filter(r=>up(r[C.signed])==='ДА').length;
+  const dkp      =d.filter(r=>up(r[C.dkp])==='ДА').length;
+  const pos      =d.filter(r=>lo(r[C.decision]).includes('положительн')).length;
+  const paid     =d.filter(r=>lo(r[C.minPay])==='да').length;
+  const apps     =d.filter(r=>r[C.dateApp]&&String(r[C.dateApp]).trim()).length;
 
   // KPI
-  const totalArea=d.reduce((s,r)=>s+num(r[C.area]),0);
-  const totalCit=d.reduce((s,r)=>s+num(r[C.citizens]),0);
-  const signedCount=d.filter(r=>String(r[C.signed]||'').toUpperCase()==='ДА').length;
-  const dkpCount=d.filter(r=>String(r[C.dkp]||'').toUpperCase()==='ДА').length;
-  const posCount=d.filter(r=>String(r[C.decision]||'').toLowerCase().includes('положительн')).length;
-  const paidCount=d.filter(r=>String(r[C.minPay]||'').toLowerCase()==='да').length;
-
   document.getElementById('kpi-row').innerHTML=`
     <div class="kpi"><div class="kpi-val">${d.length}</div><div class="kpi-label">Всего квартир</div></div>
-    <div class="kpi green"><div class="kpi-val">${Math.round(totalCit)}</div><div class="kpi-label">Граждан к расселению</div></div>
-    <div class="kpi orange"><div class="kpi-val">${totalArea.toFixed(0)} м²</div><div class="kpi-label">Расселяемая площадь</div></div>
-    <div class="kpi purple"><div class="kpi-val">${signedCount}</div><div class="kpi-label">Подписано соглашений</div></div>
-    <div class="kpi"><div class="kpi-val">${dkpCount}</div><div class="kpi-label">Заключено ДКП/ДДУ</div></div>
-    <div class="kpi green"><div class="kpi-val">${paidCount}</div><div class="kpi-label">Оплата Министерства</div></div>
+    <div class="kpi g"><div class="kpi-val">${Math.round(totalCit)}</div><div class="kpi-label">Граждан к расселению</div></div>
+    <div class="kpi o"><div class="kpi-val">${totalArea.toFixed(0)} м²</div><div class="kpi-label">Расселяемая площадь</div></div>
+    <div class="kpi p"><div class="kpi-val">${signed}</div><div class="kpi-label">Подписано соглашений</div></div>
+    <div class="kpi"><div class="kpi-val">${dkp}</div><div class="kpi-label">Заключено ДКП/ДДУ</div></div>
+    <div class="kpi g"><div class="kpi-val">${paid}</div><div class="kpi-label">Оплата Министерства</div></div>
   `;
 
   // Funnel
-  document.getElementById('funnel-box').style.display='block';
+  show('funnel-box');
+  const mx=d.length||1;
   const steps=[
-    {label:'Всего квартир',val:d.length,color:'#4f8ef7'},
-    {label:'Подано заявлений',val:d.filter(r=>r[C.dateApp]&&String(r[C.dateApp]).trim()).length,color:'#7c4dff'},
-    {label:'Положительное решение',val:posCount,color:'#4caf50'},
-    {label:'Подписано соглашение',val:signedCount,color:'#ff9800'},
-    {label:'Заключён ДКП/ДДУ',val:dkpCount,color:'#e91e63'},
-    {label:'Оплата Министерства',val:paidCount,color:'#00bcd4'},
+    {l:'Всего квартир',v:d.length,c:'#4f8ef7'},
+    {l:'Подано заявлений',v:apps,c:'#7c4dff'},
+    {l:'Положительное решение',v:pos,c:'#4caf50'},
+    {l:'Подписано соглашение',v:signed,c:'#ff9800'},
+    {l:'Заключён ДКП/ДДУ',v:dkp,c:'#e91e63'},
+    {l:'Оплата Министерства',v:paid,c:'#00bcd4'},
   ];
-  const mx=steps[0].val||1;
   document.getElementById('funnel-content').innerHTML=steps.map(s=>`
     <div class="funnel-step">
-      <div class="funnel-label">${s.label}</div>
-      <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:${(s.val/mx*100).toFixed(1)}%;background:${s.color}">${s.val>0?s.val:''}</div></div>
-      <div class="funnel-count">${s.val}</div>
+      <div class="f-label">${s.l}</div>
+      <div class="f-wrap"><div class="f-bar" style="width:${(s.v/mx*100).toFixed(1)}%;background:${s.c}">${s.v||''}</div></div>
+      <div class="f-cnt">${s.v}</div>
     </div>`).join('');
 
   // Charts
-  document.getElementById('charts-row').style.display='grid';
+  show('charts-row');
   const decMap={};
-  d.forEach(r=>{const v=r[C.decision]||'Не указано';decMap[v]=(decMap[v]||0)+1;});
-  const dL=Object.keys(decMap),dV=Object.values(decMap);
-  const dColors=dL.map(l=>colorByDec(l));
-  if(chartStatus)chartStatus.destroy();
-  chartStatus=new Chart(document.getElementById('chart-status'),{
-    type:'doughnut',data:{labels:dL,datasets:[{data:dV,backgroundColor:dColors,borderWidth:0}]},
+  d.forEach(r=>{const k=r[C.decision]||'Не указано';decMap[k]=(decMap[k]||0)+1;});
+  if(chartDec) chartDec.destroy();
+  chartDec=new Chart(document.getElementById('c-dec'),{
+    type:'doughnut',
+    data:{labels:Object.keys(decMap),datasets:[{data:Object.values(decMap),
+      backgroundColor:Object.keys(decMap).map(colorDec),borderWidth:0}]},
     options:{plugins:{legend:{labels:{color:'#aaa',font:{size:11}}}},cutout:'65%'}
   });
-  const bM={};
-  d.forEach(r=>{const v=r[C.builder]||'Не указан';if(v.trim())bM[v]=(bM[v]||0)+1;});
-  const bS=Object.entries(bM).sort((a,b)=>b[1]-a[1]).slice(0,10);
-  if(chartBuilders)chartBuilders.destroy();
-  chartBuilders=new Chart(document.getElementById('chart-builders'),{
-    type:'bar',data:{labels:bS.map(e=>e[0]),datasets:[{data:bS.map(e=>e[1]),backgroundColor:'#4f8ef7',borderRadius:4}]},
-    options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#888'},grid:{color:'#1f2235'}},y:{ticks:{color:'#aaa',font:{size:11}},grid:{display:false}}}}
+
+  const roundMap={};
+  d.forEach(r=>{const k=r._sheet||'—';roundMap[k]=(roundMap[k]||0)+1;});
+  const rSorted=Object.entries(roundMap).sort((a,b)=>b[1]-a[1]).slice(0,15);
+  if(chartRounds) chartRounds.destroy();
+  chartRounds=new Chart(document.getElementById('c-rounds'),{
+    type:'bar',
+    data:{labels:rSorted.map(e=>e[0]),datasets:[{data:rSorted.map(e=>e[1]),backgroundColor:'#4f8ef7',borderRadius:4}]},
+    options:{indexAxis:'y',plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'#888'},grid:{color:'#1f2235'}},y:{ticks:{color:'#aaa',font:{size:10}},grid:{display:false}}}}
   });
 
   // Finance
-  document.getElementById('finance-row').style.display='grid';
-  const tE=d.reduce((s,r)=>s+num(r[C.price]),0);
-  const tC=d.reduce((s,r)=>s+num(r[C.contractPrice]),0);
-  const aE=d.filter(r=>num(r[C.price])>0).length?tE/d.filter(r=>num(r[C.price])>0).length:0;
-  document.getElementById('finance-row').innerHTML=`
-    <div class="finance-card"><h3>Суммарная стоимость по оценке</h3><div class="finance-val">${fmtRub(tE)}</div><div class="finance-sub">Средняя: ${fmtRub(aE)}</div></div>
-    <div class="finance-card"><h3>Сумма договоров ДКП/ДДУ</h3><div class="finance-val" style="color:#4caf50">${fmtRub(tC)}</div><div class="finance-sub">Заключено: ${dkpCount}</div></div>
-    <div class="finance-card"><h3>Разница (оценка vs договор)</h3><div class="finance-val" style="color:${tC-tE>=0?'#4caf50':'#f44336'}">${fmtRub(tC-tE)}</div><div class="finance-sub">${tC>=tE?'Договор выше оценки':'Договор ниже оценки'}</div></div>
+  show('fin-row');
+  const tE=d.reduce((s,r)=>s+n(r[C.price]),0);
+  const tC=d.reduce((s,r)=>s+n(r[C.contractPrice]),0);
+  const aE=d.filter(r=>n(r[C.price])>0).length;
+  document.getElementById('fin-row').innerHTML=`
+    <div class="fin-card"><div class="sec-title">Суммарная стоимость по оценке</div><div class="fin-val">${rub(tE)}</div><div class="fin-sub">Средняя: ${rub(aE?tE/aE:0)}</div></div>
+    <div class="fin-card"><div class="sec-title">Сумма договоров ДКП/ДДУ</div><div class="fin-val" style="color:#4caf50">${rub(tC)}</div><div class="fin-sub">Заключено: ${dkp}</div></div>
+    <div class="fin-card"><div class="sec-title">Разница (оценка vs договор)</div><div class="fin-val" style="color:${tC>=tE?'#4caf50':'#f44336'}">${rub(tC-tE)}</div><div class="fin-sub">${tC>=tE?'Договор выше оценки':'Договор ниже оценки'}</div></div>
   `;
 
   // Map
-  document.getElementById('map-box').style.display='block';
+  show('map-box');
   if(!map){
-    map=L.map('map').setView([55.75,37.62],8);
+    map=L.map('map').setView([55.75,37.62],6);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
     markersLayer=L.layerGroup().addTo(map);
-  } else { markersLayer.clearLayers(); }
-
-  // Geocode addresses
+  } else markersLayer.clearLayers();
   geocodeAll(d);
 
-  // МО table
-  document.getElementById('table-mo-box').style.display='block';
-  const moM={};
+  // Round summary table
+  show('tbl-round-box');
+  const rm={};
   d.forEach(r=>{
-    const mo=r[C.mo]||'Не указано';
-    if(!moM[mo])moM[mo]={total:0,pos:0,signed:0,dkp:0,area:0,cit:0};
-    moM[mo].total++;
-    if(String(r[C.decision]||'').toLowerCase().includes('положительн'))moM[mo].pos++;
-    if(String(r[C.signed]||'').toUpperCase()==='ДА')moM[mo].signed++;
-    if(String(r[C.dkp]||'').toUpperCase()==='ДА')moM[mo].dkp++;
-    moM[mo].area+=num(r[C.area]);moM[mo].cit+=num(r[C.citizens]);
+    const k=r._sheet||'—';
+    if(!rm[k])rm[k]={t:0,pos:0,sig:0,dkp:0,area:0,cit:0};
+    rm[k].t++; rm[k].area+=n(r[C.area]); rm[k].cit+=n(r[C.citizens]);
+    if(lo(r[C.decision]).includes('положительн'))rm[k].pos++;
+    if(up(r[C.signed])==='ДА')rm[k].sig++;
+    if(up(r[C.dkp])==='ДА')rm[k].dkp++;
   });
-  document.getElementById('table-mo').innerHTML=`
-    <thead><tr><th>Г.О/М.О</th><th>Квартир</th><th>Граждан</th><th>Площадь м²</th><th>Полож.</th><th>Подписано</th><th>ДКП/ДДУ</th><th>Прогресс</th></tr></thead>
-    <tbody>${Object.entries(moM).map(([mo,v])=>{
-      const pct=Math.round(v.dkp/v.total*100);
-      return `<tr><td>${mo}</td><td>${v.total}</td><td>${v.cit}</td><td>${v.area.toFixed(0)}</td><td>${v.pos}</td><td>${v.signed}</td><td>${v.dkp}</td>
-      <td><div style="display:flex;align-items:center;gap:6px"><div style="background:#0f1117;border-radius:4px;height:14px;width:80px"><div style="background:#4f8ef7;height:100%;width:${pct}%;border-radius:4px"></div></div><span style="font-size:10px;color:#888">${pct}%</span></div></td></tr>`;
+  document.getElementById('tbl-round').innerHTML=`
+    <thead><tr><th>Округ</th><th>Квартир</th><th>Граждан</th><th>Площадь м²</th><th>Полож.</th><th>Подписано</th><th>ДКП/ДДУ</th><th>Прогресс</th></tr></thead>
+    <tbody>${Object.entries(rm).sort((a,b)=>b[1].t-a[1].t).map(([k,v])=>{
+      const pct=Math.round(v.dkp/v.t*100);
+      return`<tr><td>${k}</td><td>${v.t}</td><td>${v.cit}</td><td>${v.area.toFixed(0)}</td><td>${v.pos}</td><td>${v.sig}</td><td>${v.dkp}</td>
+      <td><div style="display:flex;align-items:center;gap:6px"><div style="background:#0f1117;border-radius:3px;height:12px;width:80px"><div style="background:#4f8ef7;height:100%;width:${pct}%;border-radius:3px"></div></div><span style="font-size:10px;color:#888">${pct}%</span></div></td></tr>`;
     }).join('')}</tbody>`;
 
-  // Main table
-  document.getElementById('table-main-box').style.display='block';
-  const badgeDec=v=>{
-    const l=String(v||'').toLowerCase();
-    if(l.includes('полож'))return`<span class="badge badge-pos">${v}</span>`;
-    if(l.includes('отриц'))return`<span class="badge badge-neg">${v}</span>`;
-    if(l.includes('рассм'))return`<span class="badge badge-proc">${v}</span>`;
-    if(l.includes('отказ'))return`<span class="badge badge-rej">${v}</span>`;
-    return v||'—';
-  };
-  document.getElementById('table-main').innerHTML=`
-    <thead><tr><th>№</th><th>Г.О/М.О</th><th>Адрес</th><th>Кв.</th><th>Площадь</th><th>Граждан</th><th>Тип</th><th>Решение</th><th>Подписано</th><th>ДКП</th><th>Застройщик</th><th>Стоимость</th></tr></thead>
+  // Main detail table
+  show('tbl-main-box');
+  document.getElementById('tbl-main').innerHTML=`
+    <thead><tr><th>№</th><th>Округ</th><th>Г.О/М.О</th><th>Адрес</th><th>Кв.</th><th>Площадь</th><th>Граждан</th><th>Тип</th><th>Решение</th><th>Подписано</th><th>ДКП</th><th>Стоимость</th></tr></thead>
     <tbody>${d.map((r,i)=>`<tr>
-      <td>${i+1}</td><td>${r[C.mo]||'—'}</td><td>${r[C.addr]||'—'}</td><td>${r[C.apt]||'—'}</td>
-      <td>${num(r[C.area]).toFixed(1)}</td><td>${r[C.citizens]||'—'}</td><td>${r[C.certType]||'—'}</td>
-      <td>${badgeDec(r[C.decision])}</td><td>${r[C.signed]||'—'}</td><td>${r[C.dkp]||'—'}</td>
-      <td>${r[C.builder]||'—'}</td><td>${num(r[C.price])>0?fmtRub(num(r[C.price])):'—'}</td>
+      <td>${i+1}</td><td>${r._sheet||'—'}</td><td>${r[C.mo]||'—'}</td><td>${r[C.addr]||'—'}</td>
+      <td>${r[C.apt]||'—'}</td><td>${n(r[C.area]).toFixed(1)}</td><td>${r[C.citizens]||'—'}</td>
+      <td>${r[C.certType]||'—'}</td><td>${badgeDec(r[C.decision])}</td>
+      <td>${r[C.signed]||'—'}</td><td>${r[C.dkp]||'—'}</td>
+      <td>${n(r[C.price])>0?rub(n(r[C.price])):'—'}</td>
     </tr>`).join('')}</tbody>`;
 }
 
-// Geocoding
+// ─── Geocoding ─────────────────────────────────────────────────────
 function addMarker(r,lat,lon){
-  const col=colorByDec(r[C.decision]);
-  const mk=L.circleMarker([lat,lon],{radius:8,fillColor:col,color:'#fff',weight:1.5,fillOpacity:0.9}).addTo(markersLayer);
-  mk.bindPopup(`<b>${r[C.addr]||'Адрес не указан'}</b><br>Кв. ${r[C.apt]||'—'}<br>Площадь: ${r[C.area]} м²<br>Граждан: ${r[C.citizens]}<br>Решение: <b>${r[C.decision]||'—'}</b><br>Застройщик: ${r[C.builder]||'—'}`);
+  const col=colorDec(r[C.decision]);
+  const mk=L.circleMarker([lat,lon],{radius:7,fillColor:col,color:'#fff',weight:1.5,fillOpacity:0.9}).addTo(markersLayer);
+  mk.bindPopup(`<b>${r[C.addr]||'—'}</b><br>Округ: ${r._sheet||'—'}<br>Кв. ${r[C.apt]||'—'} | ${r[C.area]} м² | ${r[C.citizens]} чел.<br>Решение: <b>${r[C.decision]||'—'}</b>`);
 }
 
 async function geocodeAll(rows){
-  let el=document.getElementById('geo-status');
-  if(el)el.remove();
-  const info=document.createElement('div');
-  info.id='geo-status';info.style.cssText='color:#ff9800;font-size:12px;margin-top:8px';
-  info.textContent=`🔍 Геокодирование (0/${rows.length})...`;
-  document.getElementById('map-box').appendChild(info);
+  let el=document.getElementById('geo-st');
+  if(!el){el=document.createElement('div');el.id='geo-st';el.style.cssText='color:#ff9800;font-size:12px;margin-top:8px';document.getElementById('map-box').appendChild(el);}
+  el.textContent=`🔍 Геокодирование (0/${rows.length})...`;
   let done=0,found=0;const bounds=[];
   for(const r of rows){
-    const addr=r[C.addr]||'',np=r[C.np]||'',mo=r[C.mo]||'';
-    if(!addr.trim()){done++;continue;}
-    const q=[np,mo,addr].filter(Boolean).join(', ');
+    const addr=String(r[C.addr]||'').trim();
+    if(!addr){done++;continue;}
+    const q=[r[C.np],r[C.mo],addr].filter(Boolean).join(', ');
     try{
       const res=await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`,
         {headers:{'Accept-Language':'ru','User-Agent':'ResettlementDashboard/1.0'}});
-      const json=await res.json();
-      if(json&&json[0]){
-        const lat=parseFloat(json[0].lat),lon=parseFloat(json[0].lon);
-        addMarker(r,lat,lon);bounds.push([lat,lon]);found++;
-      }
+      const j=await res.json();
+      if(j&&j[0]){const lat=+j[0].lat,lon=+j[0].lon;addMarker(r,lat,lon);bounds.push([lat,lon]);found++;}
     }catch(e){}
     done++;
-    info.textContent=`🔍 Геокодирование (${done}/${rows.length}, найдено: ${found})...`;
-    await new Promise(r=>setTimeout(r,1050));
+    if(done%5===0) el.textContent=`🔍 Геокодирование (${done}/${rows.length}, найдено: ${found})...`;
+    await sleep(1050);
   }
-  if(bounds.length){map.fitBounds(bounds,{padding:[30,30]});info.style.color='#4caf50';info.textContent=`✅ Геокодировано: ${found} из ${rows.length} адресов`;}
-  else{info.style.color='#888';info.textContent='ℹ️ Адреса не найдены на карте. Уточните формат: Город, улица, дом.';}
+  if(bounds.length){map.fitBounds(bounds,{padding:[30,30]});el.style.color='#4caf50';el.textContent=`✅ Геокодировано: ${found} из ${rows.length}`;}
+  else{el.style.color='#888';el.textContent='ℹ️ Адреса не найдены. Уточните формат в таблице.';}
 }
 
+// ─── Demo data ─────────────────────────────────────────────────────
+function loadDemo(){
+  const rounds=['Г.О. Казань','Г.О. Набережные Челны','М.О. Альметьевск','Г.О. Нижнекамск','М.О. Чистополь',
+    'Г.О. Зеленодольск','М.О. Бугульма','Г.О. Лениногорск','М.О. Елабуга','Г.О. Менделеевск'];
+  const streets=['ул. Ленина','пр. Победы','ул. Советская','ул. Мира','пр. Революции'];
+  const decs=['Положительное','Отрицательное','На рассмотрении','Отказ'];
+  const builders=['СК Монолит','ПИК','Самолёт','ЛСР','А101'];
+  allData=[];
+  for(let i=0;i<120;i++){
+    const dec=decs[i%4];
+    const r=new Array(28).fill('');
+    r[C.prog]='Подпрограмма '+(i%3+1);
+    r[C.mo]='Г.О. Тест';
+    r[C.np]=rounds[i%rounds.length];
+    r[C.addr]=streets[i%streets.length]+', д.'+(i+1);
+    r[C.apt]=String(i%50+1);
+    r[C.area]=String((20+i%40).toFixed(1));
+    r[C.citizens]=String(i%4+1);
+    r[C.decision]=dec;
+    r[C.signed]=dec==='Положительное'?'ДА':'НЕТ';
+    r[C.dkp]=dec==='Положительное'&&i%2===0?'ДА':'НЕТ';
+    r[C.price]=String(2000000+i*100000);
+    r[C.contractPrice]=String(2500000+i*90000);
+    r[C.minPay]=i%3===0?'да':'нет';
+    r[C.certType]=i%2===0?'Сертификат':'Выкуп';
+    r[C.builder]=builders[i%builders.length];
+    r[C.dateApp]=`${(i%28)+1}.${String((i%12)+1).padStart(2,'0')}.2024`;
+    r._sheet=rounds[i%rounds.length];
+    allData.push(r);
+  }
+  filteredData=[...allData];
+  populateFilters();
+  render();
+  document.getElementById('filters').style.display='flex';
+  setStatus('✓ Загружено 120 демо-строк (10 округов)','ok');
+  setProg('Демо-режим',100);
+}
+
+// ─── Helpers ───────────────────────────────────────────────────────
+function colorDec(d){
+  const v=lo(d||'');
+  if(v.includes('положит'))return'#4caf50';
+  if(v.includes('отриц'))return'#f44336';
+  if(v.includes('рассм'))return'#ff9800';
+  if(v.includes('отказ'))return'#ce93d8';
+  return'#4f8ef7';
+}
+function badgeDec(v){
+  const l=lo(v||'');
+  if(l.includes('полож'))return`<span class="b b-pos">${v}</span>`;
+  if(l.includes('отриц'))return`<span class="b b-neg">${v}</span>`;
+  if(l.includes('рассм'))return`<span class="b b-proc">${v}</span>`;
+  if(l.includes('отказ'))return`<span class="b b-rej">${v}</span>`;
+  return v||'—';
+}
+const rub=v=>new Intl.NumberFormat('ru-RU',{style:'currency',currency:'RUB',maximumFractionDigits:0}).format(v);
+const lo=s=>String(s||'').toLowerCase();
+const up=s=>String(s||'').toUpperCase();
+const v=id=>document.getElementById(id).value;
+const show=id=>document.getElementById(id).style.display='block';
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+function setProg(txt,pct){
+  document.getElementById('progress-text').textContent=txt;
+  document.getElementById('progress-fill').style.width=pct+'%';
+}
 function setStatus(msg,type){
   const el=document.getElementById('status-msg');
-  el.textContent=msg;el.className='status-msg'+(type?' '+type:'');
+  el.textContent=msg;
+  el.className=type==='ok'?'status-ok':type==='err'?'status-err':'status-info';
+}
+function setTime(){
+  document.getElementById('update-time').textContent=
+    `${new Date().toLocaleTimeString('ru')} | след. через ${secondsLeft}с`;
+}
+function updateBar(){
+  const b=document.getElementById('bar');
+  if(b) b.style.width=(secondsLeft/60*100)+'%';
 }
 
-// Init
-window.addEventListener('load', () => {
-  // Detect if running inside an iframe (claude.ai preview) — skip auto-fetch
+// ─── Init ──────────────────────────────────────────────────────────
+window.addEventListener('load', async ()=>{
   const inIframe = window.self !== window.top;
-  if (inIframe) {
-    setStatus('⚠️ Предпросмотр: нажмите «Демо-данные» чтобы увидеть дашборд. На GitHub Pages данные загрузятся из таблицы автоматически.', 'err');
-    document.getElementById('sheet-select').innerHTML = '<option value="0">Основной лист</option>';
-  } else {
-    initSheets();
+  if(inIframe){
+    setProg('Предпросмотр — нажмите «Демо»',0);
+    setStatus('В claude.ai внешние запросы заблокированы. На GitHub Pages загрузится автоматически.','err');
+    return;
   }
+  const ok = await discoverSheets();
+  if(!ok || sheets.length===0){
+    setProg('Листы не обнаружены — пробую прямую загрузку',50);
+    // fallback: load sheet 0
+    sheets=[{name:'Основной лист',gid:'0'}];
+  }
+  await loadAllSheets();
+  startAuto();
 });
 </script>
 </body>
