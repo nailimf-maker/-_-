@@ -4,126 +4,199 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Расселение аварийного жилья — Московская область</title>
+<title>Минстрой МО — Программа выдачи сертификатов</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@400;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',sans-serif;background:#eef0f8;color:#2d2d4e;min-height:100vh}
-.header{background:#fff;padding:10px 24px;display:flex;align-items:center;gap:16px;box-shadow:0 1px 6px rgba(0,0,0,.08);position:sticky;top:0;z-index:1000}
-.header-logo{font-size:15px;font-weight:700;color:#4a5568}
-.header-logo span{color:#667eea}
-.header-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-.live-dot{width:8px;height:8px;border-radius:50%;background:#48bb78;display:inline-block;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.update-time{font-size:11px;color:#aaa}
-.btn{background:#667eea;color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer;font-weight:600}
-.btn:hover{background:#5a67d8}
-.btn-light{background:#f0f2ff;color:#667eea;border:1px solid #e0e3f0}
-.btn-light:hover{background:#e0e4ff}
-.filter-bar{background:#fff;padding:10px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid #e8eaf6;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.filter-bar label{font-size:12px;color:#888;font-weight:600}
-.filter-bar select{background:#f7f8ff;border:1px solid #e0e3f0;color:#2d2d4e;border-radius:8px;padding:6px 12px;font-size:12px;outline:none;cursor:pointer}
-.filter-bar select:focus{border-color:#667eea}
-.loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 56px);gap:16px}
-.loader{width:48px;height:48px;border:4px solid #e0e3f0;border-top:4px solid #667eea;border-radius:50%;animation:spin 1s linear infinite}
+:root{
+  --navy:#1a2e4a;
+  --navy2:#243c5e;
+  --red:#c0392b;
+  --red2:#e74c3c;
+  --gold:#f39c12;
+  --green:#27ae60;
+  --blue:#2980b9;
+  --bg:#f4f5f7;
+  --border:#dde2ea;
+  --text:#1a2e4a;
+  --muted:#6b7a8d;
+}
+body{font-family:'PT Sans',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* HEADER */
+.header{background:var(--navy);padding:0 28px;display:flex;align-items:stretch;min-height:64px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.header-left{display:flex;align-items:center;gap:14px;padding:10px 0;border-right:1px solid rgba(255,255,255,.12);padding-right:20px}
+.header-emblem{width:40px;height:40px;border-radius:4px;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.header-titles{display:flex;flex-direction:column;gap:2px}
+.header-org{font-size:13px;font-weight:700;color:#fff;letter-spacing:.3px}
+.header-dept{font-size:11px;color:rgba(255,255,255,.6);letter-spacing:.2px}
+.header-program{padding:0 20px;display:flex;align-items:center;border-right:1px solid rgba(255,255,255,.12)}
+.header-program span{font-size:12px;color:rgba(255,255,255,.85);background:rgba(255,255,255,.08);padding:5px 12px;border-radius:4px;border:1px solid rgba(255,255,255,.15)}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.live-wrap{display:flex;align-items:center;gap:6px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#2ecc71;animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(46,204,113,.4)}50%{opacity:.7;box-shadow:0 0 0 4px rgba(46,204,113,0)}}
+.update-time{font-size:11px;color:rgba(255,255,255,.5)}
+.btn-upd{background:var(--red);color:#fff;border:none;border-radius:4px;padding:8px 16px;font-size:12px;cursor:pointer;font-weight:700;letter-spacing:.3px;transition:background .2s;font-family:'PT Sans',sans-serif}
+.btn-upd:hover{background:var(--red2)}
+
+/* FILTER BAR */
+.filter-bar{background:#fff;padding:8px 28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:2px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.filter-bar label{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.filter-bar select{background:#f8f9fb;border:1px solid var(--border);color:var(--text);border-radius:4px;padding:6px 10px;font-size:12px;outline:none;cursor:pointer;font-family:'PT Sans',sans-serif}
+.filter-bar select:focus{border-color:var(--navy)}
+.btn-reset{background:#f0f2f5;color:var(--muted);border:1px solid var(--border);border-radius:4px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'PT Sans',sans-serif}
+.btn-reset:hover{background:#e0e4ec}
+.filter-count{font-size:11px;color:var(--muted);margin-left:auto}
+
+/* LOADING */
+.loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 100px);gap:18px}
+.loader{width:44px;height:44px;border:4px solid var(--border);border-top:4px solid var(--navy);border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-size:14px;color:#888;font-weight:500}
-.prog-bar-wrap{width:300px;background:#e0e3f0;border-radius:4px;height:6px}
-.prog-bar-fill{height:6px;border-radius:4px;background:#667eea;transition:width .3s;width:0%}
-.dashboard{display:grid;grid-template-columns:260px 1fr 280px;gap:12px;padding:14px 20px;align-items:start}
-.left-panel,.right-panel{display:flex;flex-direction:column;gap:10px}
-.card{background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.kpi-card{background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.kpi-label{font-size:10px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.kpi-val{font-size:30px;font-weight:700;color:#2d2d4e;line-height:1}
-.kpi-sub{font-size:11px;color:#aaa;margin-top:4px}
-.kpi-bar{height:4px;border-radius:2px;margin-top:10px;background:#e8eaf6}
-.kpi-bar-fill{height:4px;border-radius:2px;background:#667eea}
+.loading-text{font-size:14px;color:var(--muted)}
+.prog-wrap{width:280px;background:var(--border);border-radius:3px;height:5px}
+.prog-fill{height:5px;border-radius:3px;background:var(--navy);transition:width .3s;width:0%}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:260px 1fr 300px;gap:14px;padding:14px 20px}
+
+/* CARDS */
+.card{background:#fff;border-radius:6px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);border:1px solid var(--border)}
+.card-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
+
+/* KPI */
+.kpi-big{background:#fff;border-radius:6px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.08);border:1px solid var(--border);border-left:4px solid var(--navy)}
+.kpi-big.red{border-left-color:var(--red)}
+.kpi-big.green{border-left-color:var(--green)}
+.kpi-big-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.kpi-big-val{font-size:32px;font-weight:700;color:var(--navy);line-height:1;font-family:'PT Serif',serif}
+.kpi-big-sub{font-size:11px;color:var(--muted);margin-top:4px}
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.kpi-mini{border-radius:10px;padding:10px 12px;border-left:3px solid #667eea}
-.kpi-mini.g{background:#f0fff4;border-color:#48bb78}
-.kpi-mini.o{background:#fffaf0;border-color:#ed8936}
-.kpi-mini.r{background:#fff5f5;border-color:#fc8181}
-.kpi-mini.p{background:#faf5ff;border-color:#9f7aea}
-.kpi-mini-val{font-size:20px;font-weight:700;color:#2d2d4e}
-.kpi-mini-label{font-size:10px;color:#aaa;margin-top:2px}
-.sec-title{font-size:12px;font-weight:700;color:#2d2d4e;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px}
-.rounds-scroll{max-height:300px;overflow-y:auto;padding-right:2px}
+.kpi-sm{background:#f8f9fb;border-radius:6px;padding:10px 12px;border-left:3px solid var(--navy)}
+.kpi-sm.g{border-color:var(--green)}.kpi-sm.o{border-color:var(--gold)}.kpi-sm.r{border-color:var(--red)}.kpi-sm.b{border-color:var(--blue)}
+.kpi-sm-val{font-size:22px;font-weight:700;color:var(--navy);font-family:'PT Serif',serif}
+.kpi-sm-label{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* ROUNDS */
+.rounds-scroll{max-height:280px;overflow-y:auto}
 .rounds-scroll::-webkit-scrollbar{width:3px}
-.rounds-scroll::-webkit-scrollbar-thumb{background:#e0e3f0;border-radius:2px}
-.round-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;transition:background .15s;margin-bottom:2px}
-.round-item:hover{background:#f0f2ff}
-.round-item.active{background:#ede9fe}
-.round-rank{font-size:11px;color:#aaa;width:20px;flex-shrink:0;text-align:center}
-.round-name{font-size:12px;color:#2d2d4e;flex:1;font-weight:500}
-.round-bar-bg{width:50px;background:#e8eaf6;border-radius:3px;height:5px;flex-shrink:0}
-.round-bar-fill{height:5px;border-radius:3px;background:#667eea}
-.round-count{font-size:11px;color:#667eea;font-weight:700;width:26px;text-align:right;flex-shrink:0}
-.center-card{background:#fff;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}
-.map-toolbar{padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #f0f2f5}
-.map-title{font-size:13px;font-weight:700;color:#2d2d4e;flex:1}
-.map-tab{padding:5px 12px;border-radius:7px;border:none;background:#f0f2ff;color:#667eea;font-size:11px;font-weight:600;cursor:pointer}
-.map-tab.active{background:#667eea;color:#fff}
-#map{height:460px}
-.map-legend{display:flex;gap:12px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid #f0f2f5}
-.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:#666}
-.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.geo-st{font-size:11px;color:#aaa;padding:4px 16px 8px;text-align:center}
-.chart-wrap{position:relative;height:170px}
-.chart-wrap-sm{position:relative;height:140px}
-.fin-item{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:8px;margin-bottom:6px}
-.fin-item.blue{background:#f0f4ff}
-.fin-item.green{background:#f0fff4}
-.fin-item.gray{background:#f7f8ff}
-.fin-item-label{font-size:11px;color:#888}
-.fin-item-val{font-size:13px;font-weight:700;color:#667eea}
-.fin-item.green .fin-item-val{color:#276749}
-.fin-item.gray .fin-item-val{color:#444}
-.f-step{display:flex;align-items:center;gap:6px;margin-bottom:6px}
-.f-step-label{font-size:10px;color:#888;width:85px;flex-shrink:0}
-.f-step-bg{flex:1;background:#f0f2f5;border-radius:3px;height:16px;overflow:hidden}
-.f-step-fill{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:5px}
-.f-step-fill span{font-size:9px;font-weight:700;color:#fff}
-.f-step-cnt{font-size:10px;font-weight:700;color:#444;width:24px;text-align:right;flex-shrink:0}
-.detail-section{background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin:0 20px 16px;grid-column:1/4}
-.detail-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.detail-title{font-size:13px;font-weight:700;color:#2d2d4e}
-.detail-count{font-size:12px;color:#aaa}
-.table-wrap{overflow:auto;max-height:340px}
+.rounds-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.round-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:4px;cursor:pointer;transition:background .15s;margin-bottom:1px}
+.round-item:hover{background:#f0f3f8}
+.round-item.active{background:#e8edf5;border-left:3px solid var(--navy);padding-left:5px}
+.round-rank{font-size:11px;color:var(--muted);width:20px;text-align:center;flex-shrink:0}
+.round-name{font-size:12px;color:var(--text);flex:1}
+.round-bar-bg{width:44px;background:var(--border);border-radius:2px;height:5px;flex-shrink:0}
+.round-bar-fill{height:5px;border-radius:2px;background:var(--navy)}
+.round-cnt{font-size:11px;font-weight:700;color:var(--navy);width:26px;text-align:right;flex-shrink:0}
+
+/* MAP */
+.map-card{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.08);border:1px solid var(--border);overflow:hidden}
+.map-toolbar{background:#fff;padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.map-label{font-size:12px;font-weight:700;color:var(--navy);flex:1}
+.map-tab{padding:5px 12px;border-radius:4px;border:1px solid var(--border);background:#f8f9fb;color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;font-family:'PT Sans',sans-serif}
+.map-tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+#map{height:380px}
+.map-legend{display:flex;gap:12px;flex-wrap:wrap;padding:8px 14px;border-top:1px solid var(--border);background:#fafbfc}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.geo-st{font-size:11px;color:var(--muted);text-align:center;padding:5px 14px;background:#fafbfc;border-top:1px solid var(--border)}
+
+/* TABS SECTION */
+.tabs-section{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.08);border:1px solid var(--border);overflow:hidden}
+.tabs-nav{display:flex;border-bottom:2px solid var(--border);background:#f8f9fb}
+.tab-btn{padding:12px 18px;font-size:12px;font-weight:700;color:var(--muted);border:none;background:none;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;text-transform:uppercase;letter-spacing:.4px;font-family:'PT Sans',sans-serif}
+.tab-btn:hover{color:var(--navy);background:#f0f3f8}
+.tab-btn.active{color:var(--navy);border-bottom-color:var(--red);background:#fff}
+.tab-pane{display:none;padding:16px}
+.tab-pane.active{display:block}
+
+/* CHARTS */
+.chart-wrap{position:relative;height:160px}
+.chart-wrap-md{position:relative;height:200px}
+
+/* FINANCE */
+.fin-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
+.fin-item{background:#f8f9fb;border-radius:6px;padding:12px 14px;border-left:3px solid var(--navy)}
+.fin-item.g{border-color:var(--green)}.fin-item.r{border-color:var(--red)}
+.fin-item-label{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.fin-item-val{font-size:18px;font-weight:700;color:var(--navy);margin-top:4px;font-family:'PT Serif',serif}
+
+/* FUNNEL */
+.f-step{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.f-lbl{font-size:11px;color:var(--muted);width:140px;flex-shrink:0}
+.f-bg{flex:1;background:#f0f2f5;border-radius:3px;height:22px;overflow:hidden}
+.f-fill{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:8px}
+.f-fill span{font-size:11px;font-weight:700;color:#fff}
+.f-cnt{font-size:12px;font-weight:700;color:var(--navy);width:32px;text-align:right;flex-shrink:0}
+
+/* TABLE */
+.table-wrap{overflow:auto;max-height:360px}
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{background:#f7f8ff;color:#667eea;padding:9px 12px;text-align:left;position:sticky;top:0;white-space:nowrap;z-index:1;border-bottom:2px solid #e8eaf6;font-weight:600}
-td{padding:8px 12px;border-bottom:1px solid #f5f5f5;white-space:nowrap;color:#444}
-tr:hover td{background:#f7f8ff}
-.b{display:inline-block;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600}
-.b-pos{background:#e6fffa;color:#276749}
-.b-neg{background:#fff5f5;color:#c53030}
-.b-proc{background:#fffbeb;color:#c05621}
-.b-rej{background:#faf5ff;color:#6b46c1}
-.no-data{text-align:center;padding:40px;color:#aaa;font-size:13px}
+th{background:#f0f3f8;color:var(--navy);padding:9px 12px;text-align:left;position:sticky;top:0;white-space:nowrap;z-index:1;border-bottom:2px solid var(--border);font-weight:700;text-transform:uppercase;letter-spacing:.3px;font-size:10px}
+td{padding:8px 12px;border-bottom:1px solid #f0f2f5;white-space:nowrap}
+tr:hover td{background:#f8f9fb}
+.b{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700}
+.b-pos{background:#e8f5e9;color:#1b5e20}
+.b-neg{background:#ffebee;color:#b71c1c}
+.b-proc{background:#fff8e1;color:#e65100}
+.b-rej{background:#f3e5f5;color:#4a148c}
+
+/* OWNER/CERT TABS */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.stat-item{background:#f8f9fb;border-radius:6px;padding:12px;text-align:center;border:1px solid var(--border)}
+.stat-item-val{font-size:26px;font-weight:700;color:var(--navy);font-family:'PT Serif',serif}
+.stat-item-label{font-size:11px;color:var(--muted);margin-top:3px}
+.stat-item.navy{background:var(--navy);border-color:var(--navy)}
+.stat-item.navy .stat-item-val,.stat-item.navy .stat-item-label{color:#fff}
+.stat-item.red{background:var(--red);border-color:var(--red)}
+.stat-item.red .stat-item-val,.stat-item.red .stat-item-label{color:#fff}
+.stat-item.green{background:var(--green);border-color:var(--green)}
+.stat-item.green .stat-item-val,.stat-item.green .stat-item-label{color:#fff}
+.stat-item.gold{background:var(--gold);border-color:var(--gold)}
+.stat-item.gold .stat-item-val,.stat-item.gold .stat-item-label{color:#fff}
+
+.two-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="header">
-  <div style="font-size:20px">🏚️</div>
-  <div class="header-logo">МО <span>|</span> Расселение аварийного жилья · 2026</div>
+  <div class="header-left">
+    <div class="header-emblem">🏛️</div>
+    <div class="header-titles">
+      <div class="header-org">Минстрой МО · Управление ликвидации аварийного жилья</div>
+      <div class="header-dept">Министерство строительного комплекса Московской области</div>
+    </div>
+  </div>
+  <div class="header-program">
+    <span>📋 Программа выдачи сертификатов · 2026</span>
+  </div>
   <div class="header-right">
-    <span class="live-dot"></span>
-    <span class="update-time" id="update-time">Загрузка...</span>
-    <button class="btn" onclick="reloadAll()">↺ Обновить</button>
+    <div class="live-wrap">
+      <div class="live-dot"></div>
+      <span class="update-time" id="update-time">Загрузка...</span>
+    </div>
+    <button class="btn-upd" onclick="reloadAll()">↺ Обновить</button>
   </div>
 </div>
 
+<!-- LOADING -->
 <div class="loading-screen" id="loading-screen">
   <div class="loader"></div>
   <div class="loading-text" id="loading-text">Подключение к данным...</div>
-  <div class="prog-bar-wrap"><div class="prog-bar-fill" id="prog-fill"></div></div>
+  <div class="prog-wrap"><div class="prog-fill" id="prog-fill"></div></div>
 </div>
 
+<!-- MAIN -->
 <div id="main-content" style="display:none">
+
+  <!-- FILTERS -->
   <div class="filter-bar">
     <label>Округ:</label>
     <select id="f-round" onchange="applyFilters()"><option value="">Все округа</option></select>
@@ -131,50 +204,49 @@ tr:hover td{background:#f7f8ff}
     <select id="f-dec" onchange="applyFilters()"><option value="">Все</option></select>
     <label>Тип:</label>
     <select id="f-type" onchange="applyFilters()"><option value="">Все</option></select>
-    <button class="btn btn-light" onclick="resetFilters()">↺ Сброс</button>
-    <span style="font-size:11px;color:#aaa;margin-left:auto" id="filter-count"></span>
+    <button class="btn-reset" onclick="resetFilters()">↺ Сброс</button>
+    <span class="filter-count" id="filter-count"></span>
   </div>
 
-  <div class="dashboard">
+  <!-- 3-COLUMN LAYOUT -->
+  <div class="layout">
+
     <!-- LEFT -->
-    <div class="left-panel">
-      <div class="kpi-card">
-        <div class="kpi-label">Всего квартир</div>
-        <div class="kpi-val" id="kpi-total">—</div>
-        <div class="kpi-sub" id="kpi-area-sub">—</div>
-        <div class="kpi-bar"><div class="kpi-bar-fill" id="kpi-bar1" style="width:100%"></div></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="kpi-big">
+        <div class="kpi-big-label">Всего квартир</div>
+        <div class="kpi-big-val" id="kpi-total">—</div>
+        <div class="kpi-big-sub" id="kpi-area-sub">—</div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Граждан к расселению</div>
-        <div class="kpi-val" id="kpi-cit">—</div>
-        <div class="kpi-sub" id="kpi-cit-sub">—</div>
-        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%;background:#48bb78"></div></div>
+      <div class="kpi-big green">
+        <div class="kpi-big-label">Граждан к расселению</div>
+        <div class="kpi-big-val" id="kpi-cit">—</div>
+        <div class="kpi-big-sub" id="kpi-cit-sub">—</div>
       </div>
       <div class="kpi-grid">
-        <div class="kpi-mini g"><div class="kpi-mini-val" id="kpi-pos">—</div><div class="kpi-mini-label">Положит.</div></div>
-        <div class="kpi-mini o"><div class="kpi-mini-val" id="kpi-signed">—</div><div class="kpi-mini-label">Подписано</div></div>
-        <div class="kpi-mini r"><div class="kpi-mini-val" id="kpi-dkp">—</div><div class="kpi-mini-label">ДКП/ДДУ</div></div>
-        <div class="kpi-mini p"><div class="kpi-mini-val" id="kpi-paid">—</div><div class="kpi-mini-label">Оплата Мин.</div></div>
+        <div class="kpi-sm g"><div class="kpi-sm-val" id="kpi-pos">—</div><div class="kpi-sm-label">Положит. решений</div></div>
+        <div class="kpi-sm o"><div class="kpi-sm-val" id="kpi-signed">—</div><div class="kpi-sm-label">Подписано согл.</div></div>
+        <div class="kpi-sm r"><div class="kpi-sm-val" id="kpi-dkp">—</div><div class="kpi-sm-label">ДКП/ДДУ</div></div>
+        <div class="kpi-sm b"><div class="kpi-sm-val" id="kpi-paid">—</div><div class="kpi-sm-label">Оплата Мин-ва</div></div>
       </div>
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div class="sec-title" style="margin-bottom:0">Округа</div>
-          <select onchange="sortRounds(this.value)" style="font-size:10px;border:1px solid #e0e3f0;border-radius:6px;padding:2px 6px;color:#667eea;background:#f7f8ff;outline:none;cursor:pointer">
+          <div class="card-title" style="margin-bottom:0">Округа</div>
+          <select onchange="sortRounds(this.value)" style="font-size:10px;border:1px solid var(--border);border-radius:4px;padding:3px 6px;color:var(--navy);background:#f8f9fb;outline:none;cursor:pointer;font-family:'PT Sans',sans-serif">
             <option value="count">По кол-ву</option>
             <option value="area">По площади</option>
             <option value="dkp">По ДКП</option>
-            <option value="name">По названию</option>
           </select>
         </div>
         <div class="rounds-scroll" id="rounds-list"></div>
       </div>
     </div>
 
-    <!-- CENTER -->
+    <!-- CENTER: MAP -->
     <div>
-      <div class="center-card">
+      <div class="map-card">
         <div class="map-toolbar">
-          <div class="map-title">🗺️ Карта аварийных домов · Московская область</div>
+          <div class="map-label">Карта аварийных домов · Московская область</div>
           <button class="map-tab active" onclick="setMapFilter('all',this)">Все</button>
           <button class="map-tab" onclick="setMapFilter('pos',this)">Положит.</button>
           <button class="map-tab" onclick="setMapFilter('proc',this)">На рассм.</button>
@@ -182,45 +254,106 @@ tr:hover td{background:#f7f8ff}
         </div>
         <div id="map"></div>
         <div class="map-legend">
-          <div class="leg"><div class="leg-dot" style="background:#48bb78"></div>Положительное</div>
-          <div class="leg"><div class="leg-dot" style="background:#fc8181"></div>Отрицательное</div>
-          <div class="leg"><div class="leg-dot" style="background:#ed8936"></div>На рассмотрении</div>
-          <div class="leg"><div class="leg-dot" style="background:#9f7aea"></div>Отказ</div>
-          <div class="leg"><div class="leg-dot" style="background:#667eea"></div>Не указано</div>
+          <div class="leg"><div class="leg-dot" style="background:#27ae60"></div>Положительное</div>
+          <div class="leg"><div class="leg-dot" style="background:#e74c3c"></div>Отрицательное</div>
+          <div class="leg"><div class="leg-dot" style="background:#f39c12"></div>На рассмотрении</div>
+          <div class="leg"><div class="leg-dot" style="background:#8e44ad"></div>Отказ</div>
+          <div class="leg"><div class="leg-dot" style="background:#2980b9"></div>Не указано</div>
         </div>
         <div class="geo-st" id="geo-st"></div>
       </div>
     </div>
 
     <!-- RIGHT -->
-    <div class="right-panel">
+    <div style="display:flex;flex-direction:column;gap:10px">
       <div class="card">
-        <div class="sec-title">Статус решений</div>
-        <div class="chart-wrap-sm"><canvas id="c-dec"></canvas></div>
+        <div class="card-title">Статус решений</div>
+        <div class="chart-wrap"><canvas id="c-dec"></canvas></div>
       </div>
       <div class="card">
-        <div class="sec-title">Топ-10 округов</div>
-        <div class="chart-wrap"><canvas id="c-top"></canvas></div>
+        <div class="card-title">Топ-10 округов по квартирам</div>
+        <div class="chart-wrap-md"><canvas id="c-top"></canvas></div>
       </div>
-      <div class="card">
-        <div class="sec-title">Финансы</div>
-        <div id="fin-block"></div>
+    </div>
+
+  </div>
+
+  <!-- TABS SECTION (full width) -->
+  <div style="padding:0 20px 20px">
+    <div class="tabs-section">
+      <div class="tabs-nav">
+        <button class="tab-btn active" onclick="switchTab('summary',this)">📊 Сводная аналитика</button>
+        <button class="tab-btn" onclick="switchTab('owners',this)">👥 Собственники и наниматели</button>
+        <button class="tab-btn" onclick="switchTab('certs',this)">📜 Сертификаты и выкупы</button>
+        <button class="tab-btn" onclick="switchTab('funnel',this)">🔄 Воронка и финансы</button>
+        <button class="tab-btn" onclick="switchTab('detail',this)">📄 Детальная таблица</button>
       </div>
-      <div class="card">
-        <div class="sec-title">Воронка</div>
-        <div id="funnel-block"></div>
+
+      <!-- СВОДНАЯ -->
+      <div class="tab-pane active" id="tab-summary">
+        <div class="fin-row" id="fin-row"></div>
+        <div class="two-cols">
+          <div>
+            <div class="card-title">Воронка расселения</div>
+            <div id="funnel-mini"></div>
+          </div>
+          <div>
+            <div class="card-title">Округа — сводная таблица</div>
+            <div class="table-wrap" style="max-height:240px">
+              <table id="tbl-rounds"></table>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <!-- СОБСТВЕННИКИ -->
+      <div class="tab-pane" id="tab-owners">
+        <div class="stat-grid" id="owners-stats"></div>
+        <div class="two-cols">
+          <div>
+            <div class="card-title" style="margin-bottom:10px">Распределение по типу</div>
+            <div style="position:relative;height:220px"><canvas id="c-owners"></canvas></div>
+          </div>
+          <div>
+            <div class="card-title" style="margin-bottom:10px">Решения по собственникам vs нанимателям</div>
+            <div style="position:relative;height:220px"><canvas id="c-owners-dec"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- СЕРТИФИКАТЫ -->
+      <div class="tab-pane" id="tab-certs">
+        <div class="stat-grid" id="certs-stats"></div>
+        <div class="two-cols">
+          <div>
+            <div class="card-title" style="margin-bottom:10px">Сертификаты vs Выкуп</div>
+            <div style="position:relative;height:220px"><canvas id="c-certs"></canvas></div>
+          </div>
+          <div>
+            <div class="card-title" style="margin-bottom:10px">Согласие на выкуп без сертификата</div>
+            <div style="position:relative;height:220px"><canvas id="c-buyconsent"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ВОРОНКА И ФИНАНСЫ -->
+      <div class="tab-pane" id="tab-funnel">
+        <div class="fin-row" id="fin-row2"></div>
+        <div id="funnel-full"></div>
+      </div>
+
+      <!-- ДЕТАЛИ -->
+      <div class="tab-pane" id="tab-detail">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="font-size:13px;font-weight:700;color:var(--navy)" id="detail-title">Детальная таблица</div>
+          <div style="font-size:11px;color:var(--muted)" id="detail-count"></div>
+        </div>
+        <div class="table-wrap"><table id="tbl-main"></table></div>
+      </div>
+
     </div>
   </div>
 
-  <!-- DETAIL TABLE -->
-  <div class="detail-section">
-    <div class="detail-header">
-      <div class="detail-title" id="detail-title">📄 Детальная таблица</div>
-      <div class="detail-count" id="detail-count"></div>
-    </div>
-    <div class="table-wrap"><table id="tbl-main"></table></div>
-  </div>
 </div>
 
 <script>
@@ -249,11 +382,12 @@ var SHEETS=[
   {name:'Шатура',gid:'1588732400'},{name:'Шаховская',gid:'1886732760'},
   {name:'Щелково',gid:'2101160216'},{name:'Электросталь',gid:'1617637044'}
 ];
-var C={prog:1,mo:3,np:4,addr:5,apt:6,area:7,citizens:8,certType:12,dateApp:13,decision:14,signed:15,price:20,dkp:21,contractPrice:27,minPay:28};
+var C={prog:1,mo:3,np:4,addr:5,apt:6,area:7,citizens:8,owner:11,certType:12,dateApp:13,decision:14,signed:15,buyConsent:17,price:20,dkp:21,contractPrice:27,minPay:28};
 var allData=[],filteredData=[],loaded=0;
 var mapObj,markersLayer,allMarkers=[],mapFilter='all';
-var chartDec,chartTop,roundsSort='count',selRound=null;
-var autoTimer,cdTimer,secs=60;
+var charts={};
+var roundsSort='count',selRound=null;
+var autoTimer,cdTimer,secs=7200;
 
 function n(x){
   var s=String(x||'').trim().replace(/\s/g,'');
@@ -266,11 +400,11 @@ function up(s){return String(s||'').toUpperCase();}
 function rub(x){return new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(x)+' ₽';}
 function colorDec(d){
   var v=lo(d||'');
-  if(v.indexOf('положит')>=0)return'#48bb78';
-  if(v.indexOf('отриц')>=0)return'#fc8181';
-  if(v.indexOf('рассм')>=0)return'#ed8936';
-  if(v.indexOf('отказ')>=0)return'#9f7aea';
-  return'#667eea';
+  if(v.indexOf('положит')>=0)return'#27ae60';
+  if(v.indexOf('отриц')>=0)return'#e74c3c';
+  if(v.indexOf('рассм')>=0)return'#f39c12';
+  if(v.indexOf('отказ')>=0)return'#8e44ad';
+  return'#2980b9';
 }
 function badgeDec(v){
   var l=lo(v||'');
@@ -281,8 +415,15 @@ function badgeDec(v){
   return v||'—';
 }
 
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.tab-pane').forEach(function(p){p.classList.remove('active');});
+  btn.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
 function reloadAll(){
-  clearInterval(autoTimer);clearInterval(cdTimer);secs=60;
+  clearInterval(autoTimer);clearInterval(cdTimer);secs=7200;
   document.getElementById('main-content').style.display='none';
   document.getElementById('loading-screen').style.display='flex';
   allData=[];loaded=0;
@@ -297,7 +438,7 @@ function reloadAll(){
               if(row[0]&&String(row[0]).match(/^\d+$/)){row._sheet=sh.name;allData.push(row);}
             });
             loaded++;
-            document.getElementById('loading-text').textContent='Загружено: '+loaded+'/'+total+' округов · '+allData.length+' строк';
+            document.getElementById('loading-text').textContent='Загружено: '+loaded+'/'+total+' · '+allData.length+' строк';
             document.getElementById('prog-fill').style.width=Math.round(loaded/total*100)+'%';
             setTimeout(res,150);
           },
@@ -307,7 +448,7 @@ function reloadAll(){
     });
   });
   chain.then(function(){
-    if(!allData.length){document.getElementById('loading-text').textContent='Нет данных. Проверьте публикацию.';return;}
+    if(!allData.length){document.getElementById('loading-text').textContent='Нет данных.';return;}
     filteredData=allData.slice();
     fillFilters();renderAll();initMap();
     document.getElementById('loading-screen').style.display='none';
@@ -318,12 +459,13 @@ function reloadAll(){
 }
 
 function startAuto(){
-  clearInterval(autoTimer);clearInterval(cdTimer);secs=60;
-  autoTimer=setInterval(function(){reloadAll();},60000);
+  clearInterval(autoTimer);clearInterval(cdTimer);secs=7200;
+  autoTimer=setInterval(function(){reloadAll();},7200000);
   cdTimer=setInterval(function(){
     secs=Math.max(0,secs-1);
-    var t=document.getElementById('update-time').textContent.split('·');
-    if(t.length>=2)document.getElementById('update-time').textContent=t[0].trim()+' · '+t[1].trim()+' · через '+secs+'с';
+    var h=Math.floor(secs/3600),m=Math.floor((secs%3600)/60),s=secs%60;
+    var ts=h>0?(h+'ч '+m+'м'):(m>0?(m+'м '+s+'с'):(s+'с'));
+    document.getElementById('update-time').textContent=new Date().toLocaleTimeString('ru')+' · след. через '+ts;
   },1000);
 }
 
@@ -344,7 +486,7 @@ function applyFilters(){
   var ft=document.getElementById('f-type').value;
   selRound=fr||null;
   filteredData=allData.filter(function(r){return(!fr||r._sheet===fr)&&(!fd||r[C.decision]===fd)&&(!ft||r[C.certType]===ft);});
-  document.getElementById('filter-count').textContent='Показано: '+filteredData.length+' строк';
+  document.getElementById('filter-count').textContent=selRound?'Показано: '+filteredData.length+' строк':'';
   renderAll();filterMarkers();
 }
 function resetFilters(){
@@ -376,13 +518,12 @@ function renderAll(){
   document.getElementById('kpi-dkp').textContent=dkp;
   document.getElementById('kpi-paid').textContent=paid;
 
-  // Rounds
+  // Rounds list
   var rm={};
   d.forEach(function(r){var k=r._sheet||'—';if(!rm[k])rm[k]={t:0,dkp:0,area:0};rm[k].t++;rm[k].area+=n(r[C.area]);if(up(r[C.dkp])==='ДА')rm[k].dkp++;});
   var sorted=Object.entries(rm).sort(function(a,b){
     if(roundsSort==='area')return b[1].area-a[1].area;
     if(roundsSort==='dkp')return b[1].dkp-a[1].dkp;
-    if(roundsSort==='name')return a[0].localeCompare(b[0],'ru');
     return b[1].t-a[1].t;
   });
   var mx=sorted.length?sorted[0][1].t:1;
@@ -392,57 +533,134 @@ function renderAll(){
     '<div class="round-rank">'+(medal||(i+1))+'</div>'+
     '<div class="round-name">'+k+'</div>'+
     '<div class="round-bar-bg"><div class="round-bar-fill" style="width:'+(v.t/mx*100).toFixed(0)+'%"></div></div>'+
-    '<div class="round-count">'+v.t+'</div></div>';
+    '<div class="round-cnt">'+v.t+'</div></div>';
   }).join('');
 
-  // Chart: решения
+  // Chart решения
   var dm={};d.forEach(function(r){var k=r[C.decision]||'Не указано';dm[k]=(dm[k]||0)+1;});
-  if(chartDec)chartDec.destroy();
-  chartDec=new Chart(document.getElementById('c-dec'),{type:'doughnut',
+  if(charts.dec)charts.dec.destroy();
+  charts.dec=new Chart(document.getElementById('c-dec'),{type:'doughnut',
     data:{labels:Object.keys(dm),datasets:[{data:Object.values(dm),backgroundColor:Object.keys(dm).map(colorDec),borderWidth:2,borderColor:'#fff'}]},
-    options:{plugins:{legend:{position:'bottom',labels:{color:'#666',font:{size:10},padding:6,boxWidth:10}}},cutout:'58%'}});
+    options:{plugins:{legend:{position:'bottom',labels:{color:'#6b7a8d',font:{size:10},padding:6,boxWidth:10}}},cutout:'60%'}});
 
-  // Chart: топ округов
+  // Chart топ
   var top=sorted.slice(0,10);
-  if(chartTop)chartTop.destroy();
-  chartTop=new Chart(document.getElementById('c-top'),{type:'bar',
+  if(charts.top)charts.top.destroy();
+  charts.top=new Chart(document.getElementById('c-top'),{type:'bar',
     data:{labels:top.map(function(e){return e[0];}),
       datasets:[{data:top.map(function(e){return e[1].t;}),
-        backgroundColor:top.map(function(_,i){return i===0?'#f6d860':i===1?'#c0c0c0':i===2?'#cd7f32':'#667eea';}),
-        borderRadius:4,borderSkipped:false}]},
+        backgroundColor:top.map(function(_,i){return i===0?'#f1c40f':i===1?'#bdc3c7':i===2?'#e67e22':'#1a2e4a';}),
+        borderRadius:3}]},
     options:{indexAxis:'y',plugins:{legend:{display:false}},
       scales:{x:{ticks:{color:'#aaa',font:{size:9}},grid:{color:'#f0f0f0'}},y:{ticks:{color:'#555',font:{size:9}},grid:{display:false}}}}});
 
   // Finance
   var aEc=d.filter(function(r){return n(r[C.price])>0;}).length;
-  document.getElementById('fin-block').innerHTML=
-    '<div class="fin-item blue"><span class="fin-item-label">По оценке (сумма)</span><span class="fin-item-val">'+rub(tE)+'</span></div>'+
-    '<div class="fin-item green"><span class="fin-item-label">Договоры ДКП/ДДУ</span><span class="fin-item-val">'+rub(tC)+'</span></div>'+
-    '<div class="fin-item gray"><span class="fin-item-label">Средняя оценка</span><span class="fin-item-val">'+rub(aEc?tE/aEc:0)+'</span></div>';
+  var finHtml='<div class="fin-row">'+
+    '<div class="fin-item"><div class="fin-item-label">По оценке (сумма)</div><div class="fin-item-val">'+rub(tE)+'</div></div>'+
+    '<div class="fin-item g"><div class="fin-item-label">Договоры ДКП/ДДУ</div><div class="fin-item-val">'+rub(tC)+'</div></div>'+
+    '<div class="fin-item r"><div class="fin-item-label">Средняя оценка</div><div class="fin-item-val">'+rub(aEc?tE/aEc:0)+'</div></div>'+
+    '</div>';
+  document.getElementById('fin-row').innerHTML=finHtml;
+  document.getElementById('fin-row2').innerHTML=finHtml;
 
   // Funnel
   var mx2=d.length||1;
-  var fs=[{l:'Квартир',v:d.length,c:'#667eea'},{l:'Заявлений',v:apps,c:'#9f7aea'},
-    {l:'Положит.',v:pos,c:'#48bb78'},{l:'Подписано',v:sig,c:'#ed8936'},
-    {l:'ДКП/ДДУ',v:dkp,c:'#fc8181'},{l:'Оплачено',v:paid,c:'#38b2ac'}];
-  document.getElementById('funnel-block').innerHTML=fs.map(function(s){
-    return'<div class="f-step"><div class="f-step-label">'+s.l+'</div>'+
-    '<div class="f-step-bg"><div class="f-step-fill" style="width:'+(s.v/mx2*100).toFixed(1)+'%;background:'+s.c+'"><span>'+(s.v>0?s.v:'')+'</span></div></div>'+
-    '<div class="f-step-cnt">'+s.v+'</div></div>';
+  var fs=[{l:'Всего квартир',v:d.length,c:'#1a2e4a'},{l:'Подано заявлений',v:apps,c:'#2980b9'},
+    {l:'Положит. решений',v:pos,c:'#27ae60'},{l:'Подписано соглашений',v:sig,c:'#f39c12'},
+    {l:'Заключено ДКП/ДДУ',v:dkp,c:'#c0392b'},{l:'Оплата Министерства',v:paid,c:'#16a085'}];
+  var fHtml=fs.map(function(s){
+    return'<div class="f-step"><div class="f-lbl">'+s.l+'</div>'+
+    '<div class="f-bg"><div class="f-fill" style="width:'+(s.v/mx2*100).toFixed(1)+'%;background:'+s.c+'"><span>'+(s.v>0?s.v:'')+'</span></div></div>'+
+    '<div class="f-cnt">'+s.v+'</div></div>';
   }).join('');
+  document.getElementById('funnel-mini').innerHTML=fHtml;
+  document.getElementById('funnel-full').innerHTML=fHtml;
 
-  // Table
-  document.getElementById('detail-title').textContent=selRound?'📍 '+selRound+' — детали':'📄 Детальная таблица';
+  // Rounds summary table
+  document.getElementById('tbl-rounds').innerHTML=
+    '<thead><tr><th>№</th><th>Округ</th><th>Квартир</th><th>Граждан</th><th>Площадь м²</th><th>Положит.</th><th>Подписано</th><th>ДКП/ДДУ</th><th>Прогресс</th></tr></thead>'+
+    '<tbody>'+sorted.map(function(e,i){
+      var k=e[0];
+      var rows=d.filter(function(r){return r._sheet===k;});
+      var rCit=rows.reduce(function(s,r){return s+n(r[C.citizens]);},0);
+      var rArea=rows.reduce(function(s,r){return s+n(r[C.area]);},0);
+      var rPos=rows.filter(function(r){return lo(r[C.decision]).indexOf('положительн')>=0;}).length;
+      var rSig=rows.filter(function(r){return up(r[C.signed])==='ДА';}).length;
+      var rDkp=rows.filter(function(r){return up(r[C.dkp])==='ДА';}).length;
+      var pct=Math.round(rDkp/rows.length*100);
+      var medal=i===0?'🥇 ':i===1?'🥈 ':i===2?'🥉 ':'';
+      return'<tr><td>'+(i+1)+'</td><td>'+medal+k+'</td><td>'+rows.length+'</td><td>'+Math.round(rCit)+'</td><td>'+rArea.toFixed(1)+'</td>'+
+      '<td>'+rPos+'</td><td>'+rSig+'</td><td>'+rDkp+'</td>'+
+      '<td><div style="display:flex;align-items:center;gap:6px"><div style="background:#e0e4ec;border-radius:2px;height:10px;width:70px"><div style="background:var(--navy);height:100%;width:'+pct+'%;border-radius:2px"></div></div><span style="font-size:10px;color:var(--muted)">'+pct+'%</span></div></td></tr>';
+    }).join('')+'</tbody>';
+
+  // OWNERS tab
+  var own={};
+  d.forEach(function(r){var k=String(r[C.owner]||'Не указано').trim();own[k]=(own[k]||0)+1;});
+  var ownKeys=Object.keys(own);
+  var sob=d.filter(function(r){return lo(r[C.owner]).indexOf('собственник')>=0;}).length;
+  var nanim=d.filter(function(r){return lo(r[C.owner]).indexOf('наниматель')>=0;}).length;
+  document.getElementById('owners-stats').innerHTML=
+    '<div class="stat-item navy"><div class="stat-item-val">'+d.length+'</div><div class="stat-item-label">Всего</div></div>'+
+    '<div class="stat-item"><div class="stat-item-val">'+sob+'</div><div class="stat-item-label">Собственники</div></div>'+
+    '<div class="stat-item"><div class="stat-item-val">'+nanim+'</div><div class="stat-item-label">Наниматели</div></div>'+
+    '<div class="stat-item green"><div class="stat-item-val">'+(d.length>0?Math.round(sob/d.length*100):0)+'%</div><div class="stat-item-label">Доля собственников</div></div>';
+  if(charts.owners)charts.owners.destroy();
+  charts.owners=new Chart(document.getElementById('c-owners'),{type:'doughnut',
+    data:{labels:ownKeys,datasets:[{data:ownKeys.map(function(k){return own[k];}),backgroundColor:['#1a2e4a','#c0392b','#2980b9','#27ae60','#f39c12','#8e44ad'],borderWidth:2,borderColor:'#fff'}]},
+    options:{plugins:{legend:{position:'bottom',labels:{color:'#6b7a8d',font:{size:11},padding:8}}},cutout:'55%'}});
+  // Решения по собственникам
+  var sobPos=d.filter(function(r){return lo(r[C.owner]).indexOf('собственник')>=0&&lo(r[C.decision]).indexOf('положительн')>=0;}).length;
+  var nanPos=d.filter(function(r){return lo(r[C.owner]).indexOf('наниматель')>=0&&lo(r[C.decision]).indexOf('положительн')>=0;}).length;
+  var sobNeg=d.filter(function(r){return lo(r[C.owner]).indexOf('собственник')>=0&&lo(r[C.decision]).indexOf('отриц')>=0;}).length;
+  var nanNeg=d.filter(function(r){return lo(r[C.owner]).indexOf('наниматель')>=0&&lo(r[C.decision]).indexOf('отриц')>=0;}).length;
+  var sobProc=d.filter(function(r){return lo(r[C.owner]).indexOf('собственник')>=0&&lo(r[C.decision]).indexOf('рассм')>=0;}).length;
+  var nanProc=d.filter(function(r){return lo(r[C.owner]).indexOf('наниматель')>=0&&lo(r[C.decision]).indexOf('рассм')>=0;}).length;
+  if(charts.ownersDec)charts.ownersDec.destroy();
+  charts.ownersDec=new Chart(document.getElementById('c-owners-dec'),{type:'bar',
+    data:{labels:['Собственники','Наниматели'],
+      datasets:[
+        {label:'Положительное',data:[sobPos,nanPos],backgroundColor:'#27ae60',borderRadius:3},
+        {label:'На рассмотрении',data:[sobProc,nanProc],backgroundColor:'#f39c12',borderRadius:3},
+        {label:'Отрицательное',data:[sobNeg,nanNeg],backgroundColor:'#e74c3c',borderRadius:3}
+      ]},
+    options:{plugins:{legend:{labels:{color:'#555',font:{size:11}}}},scales:{x:{ticks:{color:'#555'},grid:{display:false}},y:{ticks:{color:'#aaa'},grid:{color:'#f0f0f0'}}}}});
+
+  // CERTS tab
+  var cert=d.filter(function(r){return lo(r[C.certType]).indexOf('сертификат')>=0;}).length;
+  var vykup=d.filter(function(r){return lo(r[C.certType]).indexOf('выкуп')>=0;}).length;
+  var notFiled=d.filter(function(r){return lo(r[C.certType]).indexOf('не подавал')>=0||lo(r[C.certType]).indexOf('не подавалось')>=0;}).length;
+  var buyConsYes=d.filter(function(r){return lo(r[C.buyConsent])==='да';}).length;
+  var buyConsNo=d.filter(function(r){return lo(r[C.buyConsent])==='нет';}).length;
+  document.getElementById('certs-stats').innerHTML=
+    '<div class="stat-item navy"><div class="stat-item-val">'+cert+'</div><div class="stat-item-label">Сертификаты</div></div>'+
+    '<div class="stat-item red"><div class="stat-item-val">'+vykup+'</div><div class="stat-item-label">Выкуп</div></div>'+
+    '<div class="stat-item gold"><div class="stat-item-val">'+notFiled+'</div><div class="stat-item-label">Заявление не подавалось</div></div>'+
+    '<div class="stat-item green"><div class="stat-item-val">'+buyConsYes+'</div><div class="stat-item-label">Согласие на выкуп</div></div>';
+  var ctMap={};d.forEach(function(r){var k=String(r[C.certType]||'Не указано').trim();ctMap[k]=(ctMap[k]||0)+1;});
+  if(charts.certs)charts.certs.destroy();
+  charts.certs=new Chart(document.getElementById('c-certs'),{type:'doughnut',
+    data:{labels:Object.keys(ctMap),datasets:[{data:Object.values(ctMap),backgroundColor:['#1a2e4a','#c0392b','#2980b9','#27ae60','#f39c12'],borderWidth:2,borderColor:'#fff'}]},
+    options:{plugins:{legend:{position:'bottom',labels:{color:'#6b7a8d',font:{size:11},padding:8}}},cutout:'55%'}});
+  if(charts.buyConsent)charts.buyConsent.destroy();
+  charts.buyConsent=new Chart(document.getElementById('c-buyconsent'),{type:'bar',
+    data:{labels:['Да','Нет','Не указано'],
+      datasets:[{data:[buyConsYes,buyConsNo,d.length-buyConsYes-buyConsNo],backgroundColor:['#27ae60','#e74c3c','#bdc3c7'],borderRadius:3}]},
+    options:{plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#555'},grid:{display:false}},y:{ticks:{color:'#aaa'},grid:{color:'#f0f0f0'}}}}});
+
+  // Detail table
+  document.getElementById('detail-title').textContent=selRound?'📍 '+selRound+' — детали':'Все округа';
   document.getElementById('detail-count').textContent='Строк: '+d.length;
   document.getElementById('tbl-main').innerHTML=
-    '<thead><tr><th>№</th><th>Округ</th><th>Г.О/М.О</th><th>Адрес</th><th>Кв.</th><th>Площадь</th><th>Граждан</th><th>Тип</th><th>Решение</th><th>Подписано</th><th>ДКП</th><th>Стоимость</th></tr></thead>'+
+    '<thead><tr><th>№</th><th>Округ</th><th>Г.О/М.О</th><th>Адрес</th><th>Кв.</th><th>Площадь</th><th>Граждан</th><th>Собственник/Наниматель</th><th>Тип</th><th>Решение</th><th>Подписано</th><th>ДКП</th><th>Стоимость</th></tr></thead>'+
     '<tbody>'+d.map(function(r,i){
       return'<tr><td>'+(i+1)+'</td><td>'+(r._sheet||'—')+'</td><td>'+(r[C.mo]||'—')+'</td>'+
       '<td>'+(r[C.addr]||'—')+'</td><td>'+(r[C.apt]||'—')+'</td>'+
       '<td>'+n(r[C.area]).toFixed(2)+'</td><td>'+(r[C.citizens]||'—')+'</td>'+
-      '<td>'+(r[C.certType]||'—')+'</td><td>'+badgeDec(r[C.decision])+'</td>'+
-      '<td>'+(r[C.signed]||'—')+'</td><td>'+(r[C.dkp]||'—')+'</td>'+
-      '<td>'+(n(r[C.price])>0?rub(n(r[C.price])):'—')+'</td></tr>';
+      '<td>'+(r[C.owner]||'—')+'</td><td>'+(r[C.certType]||'—')+'</td>'+
+      '<td>'+badgeDec(r[C.decision])+'</td><td>'+(r[C.signed]||'—')+'</td>'+
+      '<td>'+(r[C.dkp]||'—')+'</td><td>'+(n(r[C.price])>0?rub(n(r[C.price])):'—')+'</td></tr>';
     }).join('')+'</tbody>';
 }
 
@@ -454,18 +672,20 @@ function selectRound(name){
 }
 function sortRounds(v){roundsSort=v;renderAll();}
 
-// MAP
 function initMap(){
-  if(mapObj){markersLayer.clearLayers();allMarkers=[];geocodeAll(allData);return;}
-  mapObj=L.map('map').setView([55.75,37.62],8);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(mapObj);
+  if(mapObj)return;
+  mapObj=L.map('map',{zoomControl:true}).setView([55.75,37.62],8);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© OpenStreetMap',
+    opacity:0.7
+  }).addTo(mapObj);
   markersLayer=L.layerGroup().addTo(mapObj);
   geocodeAll(allData);
 }
 
 function geocodeAll(rows){
   var el=document.getElementById('geo-st');
-  el.style.color='#aaa';el.textContent='🔍 Геокодирование адресов...';
+  el.textContent='Геокодирование адресов...';
   var done=0,found=0,bounds=[],chain=Promise.resolve();
   rows.forEach(function(r){
     chain=chain.then(function(){
@@ -473,27 +693,31 @@ function geocodeAll(rows){
       if(!addr){done++;return Promise.resolve();}
       var q=[r[C.np],r[C.mo],addr,'Московская область'].filter(Boolean).join(', ');
       return fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(q),
-        {headers:{'Accept-Language':'ru','User-Agent':'ResettlementDashboard/1.0'}})
+        {headers:{'Accept-Language':'ru','User-Agent':'MinstroyMO/1.0'}})
         .then(function(res){return res.json();})
         .then(function(j){
           if(j&&j[0]){
             var lat=parseFloat(j[0].lat),lon=parseFloat(j[0].lon);
-            var mk=L.circleMarker([lat,lon],{radius:7,fillColor:colorDec(r[C.decision]),color:'#fff',weight:1.5,fillOpacity:0.9});
-            mk.bindPopup('<div style="font-size:12px;min-width:180px"><b>'+( r[C.addr]||'—')+'</b><br><span style="color:#888">'+( r._sheet||'—')+'</span><br><br>'+
+            var mk=L.circleMarker([lat,lon],{radius:6,fillColor:colorDec(r[C.decision]),color:'#fff',weight:1.5,fillOpacity:0.85});
+            mk.bindPopup('<div style="font-size:12px;min-width:200px;font-family:PT Sans,sans-serif">'+
+              '<b style="font-size:13px;color:#1a2e4a">'+(r[C.addr]||'—')+'</b><br>'+
+              '<span style="color:#6b7a8d">'+(r._sheet||'—')+'</span><br><br>'+
               'Кв. '+(r[C.apt]||'—')+' · '+n(r[C.area]).toFixed(2)+' м² · '+(r[C.citizens]||'—')+' чел.<br>'+
+              (r[C.owner]?'<span style="color:#6b7a8d">'+r[C.owner]+'</span><br>':'')+
+              'Тип: '+(r[C.certType]||'—')+'<br>'+
               'Решение: '+badgeDec(r[C.decision])+'</div>');
             mk._dec=lo(r[C.decision]||'');mk._sheet=r._sheet;
             mk.addTo(markersLayer);allMarkers.push(mk);bounds.push([lat,lon]);found++;
           }
           done++;
-          if(done%10===0)el.textContent='🔍 Геокодирование ('+done+'/'+rows.length+', найдено: '+found+')...';
+          if(done%10===0)el.textContent='Геокодирование ('+done+'/'+rows.length+', найдено: '+found+')...';
           return new Promise(function(res){setTimeout(res,1050);});
         }).catch(function(){done++;return Promise.resolve();});
     });
   });
   chain.then(function(){
-    if(bounds.length){mapObj.fitBounds(bounds,{padding:[20,20]});el.style.color='#2e7d32';el.textContent='✅ Отображено '+found+' адресов';}
-    else el.textContent='ℹ️ Адреса не найдены';
+    if(bounds.length){mapObj.fitBounds(bounds,{padding:[20,20]});el.textContent='Отображено '+found+' адресов на карте';}
+    else el.textContent='Адреса не геокодированы';
   });
 }
 
