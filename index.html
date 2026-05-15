@@ -258,7 +258,7 @@ function resetFilters(){
   filteredData=allData.slice();render();
 }
 
-function n(x){return parseFloat(String(x||'0').replace(/[^\d.]/g,''))||0;}
+function n(x){return parseFloat(String(x||'0').replace(/\s/g,'').replace(',','.'))||0;}
 function lo(s){return String(s||'').toLowerCase();}
 function up(s){return String(s||'').toUpperCase();}
 function show(id){document.getElementById(id).style.display='block';}
