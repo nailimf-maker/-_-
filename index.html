@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -10,219 +11,205 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',sans-serif;background:#eef0f8;color:#2d2d4e;min-height:100vh;overflow-x:hidden}
-
-/* HEADER */
+body{font-family:'Segoe UI',sans-serif;background:#eef0f8;color:#2d2d4e;min-height:100vh}
 .header{background:#fff;padding:10px 24px;display:flex;align-items:center;gap:16px;box-shadow:0 1px 6px rgba(0,0,0,.08);position:sticky;top:0;z-index:1000}
 .header-logo{font-size:15px;font-weight:700;color:#4a5568}
 .header-logo span{color:#667eea}
-.header-title{font-size:13px;color:#888;margin-left:4px}
 .header-right{margin-left:auto;display:flex;align-items:center;gap:10px}
 .live-dot{width:8px;height:8px;border-radius:50%;background:#48bb78;display:inline-block;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .update-time{font-size:11px;color:#aaa}
-.btn-refresh{background:#667eea;color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer}
-.btn-refresh:hover{background:#5a67d8}
-
-/* FILTER BAR */
+.btn{background:#667eea;color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer;font-weight:600}
+.btn:hover{background:#5a67d8}
+.btn-light{background:#f0f2ff;color:#667eea;border:1px solid #e0e3f0}
+.btn-light:hover{background:#e0e4ff}
 .filter-bar{background:#fff;padding:10px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid #e8eaf6;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.filter-bar label{font-size:12px;color:#888;font-weight:500}
+.filter-bar label{font-size:12px;color:#888;font-weight:600}
 .filter-bar select{background:#f7f8ff;border:1px solid #e0e3f0;color:#2d2d4e;border-radius:8px;padding:6px 12px;font-size:12px;outline:none;cursor:pointer}
 .filter-bar select:focus{border-color:#667eea}
-.filter-tag{background:#667eea;color:#fff;font-size:11px;padding:4px 10px;border-radius:10px;font-weight:600}
-.progress-mini{font-size:11px;color:#aaa;margin-left:auto}
-
-/* LOADING */
-.loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 120px);gap:16px}
+.loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 56px);gap:16px}
 .loader{width:48px;height:48px;border:4px solid #e0e3f0;border-top:4px solid #667eea;border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-size:14px;color:#888}
+.loading-text{font-size:14px;color:#888;font-weight:500}
 .prog-bar-wrap{width:300px;background:#e0e3f0;border-radius:4px;height:6px}
-.prog-bar-fill{height:6px;border-radius:4px;background:#667eea;transition:width .3s}
-
-/* MAIN GRID */
-.dashboard{display:grid;grid-template-columns:260px 1fr 280px;grid-template-rows:auto 1fr auto;gap:12px;padding:14px 20px;min-height:calc(100vh - 110px)}
-
-/* LEFT PANEL */
-.left-panel{display:flex;flex-direction:column;gap:10px;grid-row:1/4}
+.prog-bar-fill{height:6px;border-radius:4px;background:#667eea;transition:width .3s;width:0%}
+.dashboard{display:grid;grid-template-columns:260px 1fr 280px;gap:12px;padding:14px 20px;align-items:start}
+.left-panel,.right-panel{display:flex;flex-direction:column;gap:10px}
 .card{background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-
-/* KPI cards */
 .kpi-card{background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.kpi-card-label{font-size:11px;color:#aaa;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.kpi-card-val{font-size:28px;font-weight:700;color:#2d2d4e;line-height:1}
-.kpi-card-sub{font-size:11px;color:#888;margin-top:4px}
-.kpi-bar{height:4px;border-radius:2px;margin-top:10px;background:#e8eaf6;overflow:hidden}
+.kpi-label{font-size:10px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.kpi-val{font-size:30px;font-weight:700;color:#2d2d4e;line-height:1}
+.kpi-sub{font-size:11px;color:#aaa;margin-top:4px}
+.kpi-bar{height:4px;border-radius:2px;margin-top:10px;background:#e8eaf6}
 .kpi-bar-fill{height:4px;border-radius:2px;background:#667eea}
-
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.kpi-mini{background:#f7f8ff;border-radius:10px;padding:10px 12px;border-left:3px solid #667eea}
-.kpi-mini.g{border-color:#48bb78}.kpi-mini.o{border-color:#ed8936}.kpi-mini.r{border-color:#fc8181}.kpi-mini.p{border-color:#9f7aea}
-.kpi-mini-val{font-size:18px;font-weight:700;color:#2d2d4e}
+.kpi-mini{border-radius:10px;padding:10px 12px;border-left:3px solid #667eea}
+.kpi-mini.g{background:#f0fff4;border-color:#48bb78}
+.kpi-mini.o{background:#fffaf0;border-color:#ed8936}
+.kpi-mini.r{background:#fff5f5;border-color:#fc8181}
+.kpi-mini.p{background:#faf5ff;border-color:#9f7aea}
+.kpi-mini-val{font-size:20px;font-weight:700;color:#2d2d4e}
 .kpi-mini-label{font-size:10px;color:#aaa;margin-top:2px}
-
-/* Rounds list */
-.rounds-title{font-size:12px;font-weight:700;color:#2d2d4e;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
-.rounds-scroll{max-height:320px;overflow-y:auto;padding-right:4px}
-.rounds-scroll::-webkit-scrollbar{width:4px}
+.sec-title{font-size:12px;font-weight:700;color:#2d2d4e;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px}
+.rounds-scroll{max-height:300px;overflow-y:auto;padding-right:2px}
+.rounds-scroll::-webkit-scrollbar{width:3px}
 .rounds-scroll::-webkit-scrollbar-thumb{background:#e0e3f0;border-radius:2px}
 .round-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;transition:background .15s;margin-bottom:2px}
 .round-item:hover{background:#f0f2ff}
 .round-item.active{background:#ede9fe}
-.round-rank{font-size:11px;color:#aaa;width:18px;text-align:right;flex-shrink:0}
+.round-rank{font-size:11px;color:#aaa;width:20px;flex-shrink:0;text-align:center}
 .round-name{font-size:12px;color:#2d2d4e;flex:1;font-weight:500}
-.round-bar-bg{width:60px;background:#e8eaf6;border-radius:3px;height:6px;flex-shrink:0}
-.round-bar-fill{height:6px;border-radius:3px;background:#667eea}
-.round-count{font-size:11px;color:#667eea;font-weight:600;width:28px;text-align:right;flex-shrink:0}
-
-/* CENTER: map */
-.center-panel{grid-row:1/4;display:flex;flex-direction:column;gap:10px}
-.map-header{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-.map-tabs{display:flex;gap:4px}
-.map-tab{padding:6px 14px;border-radius:8px;border:none;background:#f0f2ff;color:#667eea;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.round-bar-bg{width:50px;background:#e8eaf6;border-radius:3px;height:5px;flex-shrink:0}
+.round-bar-fill{height:5px;border-radius:3px;background:#667eea}
+.round-count{font-size:11px;color:#667eea;font-weight:700;width:26px;text-align:right;flex-shrink:0}
+.center-card{background:#fff;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}
+.map-toolbar{padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #f0f2f5}
+.map-title{font-size:13px;font-weight:700;color:#2d2d4e;flex:1}
+.map-tab{padding:5px 12px;border-radius:7px;border:none;background:#f0f2ff;color:#667eea;font-size:11px;font-weight:600;cursor:pointer}
 .map-tab.active{background:#667eea;color:#fff}
-#map{border-radius:12px;flex:1;min-height:420px;border:1px solid #e0e3f0;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.map-legend{display:flex;gap:12px;flex-wrap:wrap;padding:8px 0 2px}
+#map{height:460px}
+.map-legend{display:flex;gap:12px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid #f0f2f5}
 .leg{display:flex;align-items:center;gap:5px;font-size:11px;color:#666}
 .leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.geo-status{font-size:11px;color:#aaa;text-align:center;padding:4px 0}
-
-/* RIGHT PANEL */
-.right-panel{display:flex;flex-direction:column;gap:10px;grid-row:1/4}
-.chart-wrap{position:relative;height:180px}
-.chart-wrap-sm{position:relative;height:150px}
-
-/* Detail table */
-.detail-section{grid-column:1/4;background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.detail-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.geo-st{font-size:11px;color:#aaa;padding:4px 16px 8px;text-align:center}
+.chart-wrap{position:relative;height:170px}
+.chart-wrap-sm{position:relative;height:140px}
+.fin-item{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:8px;margin-bottom:6px}
+.fin-item.blue{background:#f0f4ff}
+.fin-item.green{background:#f0fff4}
+.fin-item.gray{background:#f7f8ff}
+.fin-item-label{font-size:11px;color:#888}
+.fin-item-val{font-size:13px;font-weight:700;color:#667eea}
+.fin-item.green .fin-item-val{color:#276749}
+.fin-item.gray .fin-item-val{color:#444}
+.f-step{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.f-step-label{font-size:10px;color:#888;width:85px;flex-shrink:0}
+.f-step-bg{flex:1;background:#f0f2f5;border-radius:3px;height:16px;overflow:hidden}
+.f-step-fill{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:5px}
+.f-step-fill span{font-size:9px;font-weight:700;color:#fff}
+.f-step-cnt{font-size:10px;font-weight:700;color:#444;width:24px;text-align:right;flex-shrink:0}
+.detail-section{background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin:0 20px 16px;grid-column:1/4}
+.detail-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .detail-title{font-size:13px;font-weight:700;color:#2d2d4e}
 .detail-count{font-size:12px;color:#aaa}
-.table-wrap{overflow:auto;max-height:320px}
+.table-wrap{overflow:auto;max-height:340px}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th{background:#f7f8ff;color:#667eea;padding:9px 12px;text-align:left;position:sticky;top:0;white-space:nowrap;z-index:1;border-bottom:2px solid #e8eaf6;font-weight:600}
 td{padding:8px 12px;border-bottom:1px solid #f5f5f5;white-space:nowrap;color:#444}
 tr:hover td{background:#f7f8ff}
 .b{display:inline-block;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600}
-.b-pos{background:#e6fffa;color:#276749}.b-neg{background:#fff5f5;color:#c53030}
-.b-proc{background:#fffbeb;color:#c05621}.b-rej{background:#faf5ff;color:#6b46c1}
-
-@media(max-width:900px){
-  .dashboard{grid-template-columns:1fr;grid-template-rows:auto}
-  .left-panel,.right-panel,.center-panel{grid-row:auto}
-  .detail-section{grid-column:1}
-}
+.b-pos{background:#e6fffa;color:#276749}
+.b-neg{background:#fff5f5;color:#c53030}
+.b-proc{background:#fffbeb;color:#c05621}
+.b-rej{background:#faf5ff;color:#6b46c1}
+.no-data{text-align:center;padding:40px;color:#aaa;font-size:13px}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
-  <div class="header-logo">МО <span>|</span> Расселение</div>
-  <div class="header-title">Аварийное жильё · Московская область · 2026</div>
+  <div style="font-size:20px">🏚️</div>
+  <div class="header-logo">МО <span>|</span> Расселение аварийного жилья · 2026</div>
   <div class="header-right">
     <span class="live-dot"></span>
     <span class="update-time" id="update-time">Загрузка...</span>
-    <button class="btn-refresh" onclick="reloadAll()">↺ Обновить</button>
+    <button class="btn" onclick="reloadAll()">↺ Обновить</button>
   </div>
 </div>
 
-<!-- FILTER BAR -->
-<div class="filter-bar" id="filter-bar" style="display:none">
-  <label>Округ:</label>
-  <select id="f-round" onchange="applyFilters()"><option value="">Все округа</option></select>
-  <label>Решение:</label>
-  <select id="f-dec" onchange="applyFilters()"><option value="">Все</option></select>
-  <label>Тип:</label>
-  <select id="f-type" onchange="applyFilters()"><option value="">Все</option></select>
-  <button class="btn-refresh" style="background:#e8eaf6;color:#667eea" onclick="resetFilters()">↺ Сброс</button>
-  <span class="progress-mini" id="prog-text"></span>
-</div>
-
-<!-- LOADING -->
 <div class="loading-screen" id="loading-screen">
   <div class="loader"></div>
   <div class="loading-text" id="loading-text">Подключение к данным...</div>
-  <div class="prog-bar-wrap"><div class="prog-bar-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="prog-bar-wrap"><div class="prog-bar-fill" id="prog-fill"></div></div>
 </div>
 
-<!-- DASHBOARD -->
-<div class="dashboard" id="dashboard" style="display:none">
-
-  <!-- LEFT -->
-  <div class="left-panel">
-    <div class="kpi-card">
-      <div class="kpi-card-label">Всего квартир</div>
-      <div class="kpi-card-val" id="kpi-total">—</div>
-      <div class="kpi-card-sub" id="kpi-area-sub">площадь: —</div>
-      <div class="kpi-bar"><div class="kpi-bar-fill" id="kpi-bar1" style="width:0%"></div></div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-card-label">Граждан к расселению</div>
-      <div class="kpi-card-val" id="kpi-cit">—</div>
-      <div class="kpi-card-sub" id="kpi-cit-sub">—</div>
-      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%;background:#48bb78"></div></div>
-    </div>
-    <div class="kpi-grid">
-      <div class="kpi-mini g"><div class="kpi-mini-val" id="kpi-pos">—</div><div class="kpi-mini-label">Положит. решений</div></div>
-      <div class="kpi-mini o"><div class="kpi-mini-val" id="kpi-signed">—</div><div class="kpi-mini-label">Подписано согл.</div></div>
-      <div class="kpi-mini r"><div class="kpi-mini-val" id="kpi-dkp">—</div><div class="kpi-mini-label">ДКП/ДДУ</div></div>
-      <div class="kpi-mini p"><div class="kpi-mini-val" id="kpi-paid">—</div><div class="kpi-mini-label">Оплата Мин-ва</div></div>
-    </div>
-    <div class="card">
-      <div class="rounds-title">
-        <span>🏙️ Округа <span id="rounds-sort-label" style="color:#aaa;font-weight:400;font-size:11px">по кол-ву</span></span>
-        <select onchange="sortRounds(this.value)" style="font-size:11px;border:1px solid #e0e3f0;border-radius:6px;padding:2px 6px;color:#667eea;background:#f7f8ff;outline:none">
-          <option value="count">По кол-ву</option>
-          <option value="area">По площади</option>
-          <option value="dkp">По ДКП</option>
-          <option value="name">По названию</option>
-        </select>
-      </div>
-      <div class="rounds-scroll" id="rounds-list"></div>
-    </div>
+<div id="main-content" style="display:none">
+  <div class="filter-bar">
+    <label>Округ:</label>
+    <select id="f-round" onchange="applyFilters()"><option value="">Все округа</option></select>
+    <label>Решение:</label>
+    <select id="f-dec" onchange="applyFilters()"><option value="">Все</option></select>
+    <label>Тип:</label>
+    <select id="f-type" onchange="applyFilters()"><option value="">Все</option></select>
+    <button class="btn btn-light" onclick="resetFilters()">↺ Сброс</button>
+    <span style="font-size:11px;color:#aaa;margin-left:auto" id="filter-count"></span>
   </div>
 
-  <!-- CENTER -->
-  <div class="center-panel">
-    <div class="card" style="flex:1;display:flex;flex-direction:column;padding:14px">
-      <div class="map-header">
-        <div style="font-size:13px;font-weight:700;color:#2d2d4e">🗺️ Карта аварийных домов</div>
-        <div class="map-tabs">
+  <div class="dashboard">
+    <!-- LEFT -->
+    <div class="left-panel">
+      <div class="kpi-card">
+        <div class="kpi-label">Всего квартир</div>
+        <div class="kpi-val" id="kpi-total">—</div>
+        <div class="kpi-sub" id="kpi-area-sub">—</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" id="kpi-bar1" style="width:100%"></div></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Граждан к расселению</div>
+        <div class="kpi-val" id="kpi-cit">—</div>
+        <div class="kpi-sub" id="kpi-cit-sub">—</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%;background:#48bb78"></div></div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-mini g"><div class="kpi-mini-val" id="kpi-pos">—</div><div class="kpi-mini-label">Положит.</div></div>
+        <div class="kpi-mini o"><div class="kpi-mini-val" id="kpi-signed">—</div><div class="kpi-mini-label">Подписано</div></div>
+        <div class="kpi-mini r"><div class="kpi-mini-val" id="kpi-dkp">—</div><div class="kpi-mini-label">ДКП/ДДУ</div></div>
+        <div class="kpi-mini p"><div class="kpi-mini-val" id="kpi-paid">—</div><div class="kpi-mini-label">Оплата Мин.</div></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div class="sec-title" style="margin-bottom:0">Округа</div>
+          <select onchange="sortRounds(this.value)" style="font-size:10px;border:1px solid #e0e3f0;border-radius:6px;padding:2px 6px;color:#667eea;background:#f7f8ff;outline:none;cursor:pointer">
+            <option value="count">По кол-ву</option>
+            <option value="area">По площади</option>
+            <option value="dkp">По ДКП</option>
+            <option value="name">По названию</option>
+          </select>
+        </div>
+        <div class="rounds-scroll" id="rounds-list"></div>
+      </div>
+    </div>
+
+    <!-- CENTER -->
+    <div>
+      <div class="center-card">
+        <div class="map-toolbar">
+          <div class="map-title">🗺️ Карта аварийных домов · Московская область</div>
           <button class="map-tab active" onclick="setMapFilter('all',this)">Все</button>
           <button class="map-tab" onclick="setMapFilter('pos',this)">Положит.</button>
           <button class="map-tab" onclick="setMapFilter('proc',this)">На рассм.</button>
           <button class="map-tab" onclick="setMapFilter('neg',this)">Отриц.</button>
         </div>
+        <div id="map"></div>
+        <div class="map-legend">
+          <div class="leg"><div class="leg-dot" style="background:#48bb78"></div>Положительное</div>
+          <div class="leg"><div class="leg-dot" style="background:#fc8181"></div>Отрицательное</div>
+          <div class="leg"><div class="leg-dot" style="background:#ed8936"></div>На рассмотрении</div>
+          <div class="leg"><div class="leg-dot" style="background:#9f7aea"></div>Отказ</div>
+          <div class="leg"><div class="leg-dot" style="background:#667eea"></div>Не указано</div>
+        </div>
+        <div class="geo-st" id="geo-st"></div>
       </div>
-      <div id="map"></div>
-      <div class="map-legend">
-        <div class="leg"><div class="leg-dot" style="background:#48bb78"></div>Положительное</div>
-        <div class="leg"><div class="leg-dot" style="background:#fc8181"></div>Отрицательное</div>
-        <div class="leg"><div class="leg-dot" style="background:#ed8936"></div>На рассмотрении</div>
-        <div class="leg"><div class="leg-dot" style="background:#9f7aea"></div>Отказ</div>
-        <div class="leg"><div class="leg-dot" style="background:#667eea"></div>Не указано</div>
-      </div>
-      <div class="geo-status" id="geo-st"></div>
     </div>
-  </div>
 
-  <!-- RIGHT -->
-  <div class="right-panel">
-    <div class="card">
-      <div class="rounds-title" style="margin-bottom:10px">📋 Статус решений</div>
-      <div class="chart-wrap-sm"><canvas id="c-dec"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="rounds-title" style="margin-bottom:10px">🏆 Топ округов по квартирам</div>
-      <div class="chart-wrap"><canvas id="c-top"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="rounds-title" style="margin-bottom:8px">💰 Финансы</div>
-      <div id="fin-block"></div>
-    </div>
-    <div class="card">
-      <div class="rounds-title" style="margin-bottom:8px">🔄 Воронка</div>
-      <div id="funnel-block"></div>
+    <!-- RIGHT -->
+    <div class="right-panel">
+      <div class="card">
+        <div class="sec-title">Статус решений</div>
+        <div class="chart-wrap-sm"><canvas id="c-dec"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="sec-title">Топ-10 округов</div>
+        <div class="chart-wrap"><canvas id="c-top"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="sec-title">Финансы</div>
+        <div id="fin-block"></div>
+      </div>
+      <div class="card">
+        <div class="sec-title">Воронка</div>
+        <div id="funnel-block"></div>
+      </div>
     </div>
   </div>
 
@@ -232,11 +219,8 @@ tr:hover td{background:#f7f8ff}
       <div class="detail-title" id="detail-title">📄 Детальная таблица</div>
       <div class="detail-count" id="detail-count"></div>
     </div>
-    <div class="table-wrap">
-      <table id="tbl-main"></table>
-    </div>
+    <div class="table-wrap"><table id="tbl-main"></table></div>
   </div>
-
 </div>
 
 <script>
@@ -265,20 +249,16 @@ var SHEETS=[
   {name:'Шатура',gid:'1588732400'},{name:'Шаховская',gid:'1886732760'},
   {name:'Щелково',gid:'2101160216'},{name:'Электросталь',gid:'1617637044'}
 ];
-var C={prog:1,mo:3,np:4,addr:5,apt:6,area:7,citizens:8,
-  certType:12,dateApp:13,decision:14,signed:15,
-  price:20,dkp:21,contractPrice:27,minPay:28};
-
-var allData=[],filteredData=[],loadedCount=0;
-var mapObj,markersLayer,allMarkers=[],mapFilterMode='all';
-var chartDec,chartTop;
-var autoTimer,cdTimer,secondsLeft=60;
-var roundsSort='count',selectedRound=null;
+var C={prog:1,mo:3,np:4,addr:5,apt:6,area:7,citizens:8,certType:12,dateApp:13,decision:14,signed:15,price:20,dkp:21,contractPrice:27,minPay:28};
+var allData=[],filteredData=[],loaded=0;
+var mapObj,markersLayer,allMarkers=[],mapFilter='all';
+var chartDec,chartTop,roundsSort='count',selRound=null;
+var autoTimer,cdTimer,secs=60;
 
 function n(x){
   var s=String(x||'').trim().replace(/\s/g,'');
-  if(s.indexOf(',')>-1&&s.indexOf('.')>-1){s=s.replace(/,/g,'');}
-  else if(s.indexOf(',')>-1){s=s.replace(',','.');}
+  if(s.indexOf(',')>-1&&s.indexOf('.')>-1)s=s.replace(/,/g,'');
+  else if(s.indexOf(',')>-1)s=s.replace(',','.');
   var v=parseFloat(s);return isNaN(v)?0:v;
 }
 function lo(s){return String(s||'').toLowerCase();}
@@ -292,81 +272,66 @@ function colorDec(d){
   if(v.indexOf('отказ')>=0)return'#9f7aea';
   return'#667eea';
 }
-function badgeDec(val){
-  var l=lo(val||'');
-  if(l.indexOf('полож')>=0)return'<span class="b b-pos">'+val+'</span>';
-  if(l.indexOf('отриц')>=0)return'<span class="b b-neg">'+val+'</span>';
-  if(l.indexOf('рассм')>=0)return'<span class="b b-proc">'+val+'</span>';
-  if(l.indexOf('отказ')>=0)return'<span class="b b-rej">'+val+'</span>';
-  return val||'—';
+function badgeDec(v){
+  var l=lo(v||'');
+  if(l.indexOf('полож')>=0)return'<span class="b b-pos">'+v+'</span>';
+  if(l.indexOf('отриц')>=0)return'<span class="b b-neg">'+v+'</span>';
+  if(l.indexOf('рассм')>=0)return'<span class="b b-proc">'+v+'</span>';
+  if(l.indexOf('отказ')>=0)return'<span class="b b-rej">'+v+'</span>';
+  return v||'—';
 }
 
 function reloadAll(){
-  clearInterval(autoTimer);clearInterval(cdTimer);secondsLeft=60;
-  document.getElementById('dashboard').style.display='none';
+  clearInterval(autoTimer);clearInterval(cdTimer);secs=60;
+  document.getElementById('main-content').style.display='none';
   document.getElementById('loading-screen').style.display='flex';
-  loadAllSheets().then(function(){startAuto();});
-}
-
-function loadAllSheets(){
-  allData=[];loadedCount=0;
-  var total=SHEETS.length;
-  var chain=Promise.resolve();
+  allData=[];loaded=0;
+  var total=SHEETS.length,chain=Promise.resolve();
   SHEETS.forEach(function(sh){
     chain=chain.then(function(){
-      return new Promise(function(resolve){
-        var url=PUB+'&gid='+sh.gid+'&cachebust='+Date.now();
-        Papa.parse(url,{download:true,header:false,skipEmptyLines:true,
+      return new Promise(function(res){
+        Papa.parse(PUB+'&gid='+sh.gid+'&cachebust='+Date.now(),{
+          download:true,header:false,skipEmptyLines:true,
           complete:function(r){
-            if(r.data&&r.data.length>1){
-              r.data.slice(1).forEach(function(row){
-                if(row[0]&&String(row[0]).match(/^\d+$/)){
-                  row._sheet=sh.name;allData.push(row);
-                }
-              });
-            }
-            loadedCount++;
-            var pct=Math.round(loadedCount/total*100);
-            document.getElementById('loading-text').textContent='Загружено: '+loadedCount+'/'+total+' округов ('+allData.length+' строк)';
-            document.getElementById('prog-fill').style.width=pct+'%';
-            setTimeout(resolve,150);
+            if(r.data&&r.data.length>1)r.data.slice(1).forEach(function(row){
+              if(row[0]&&String(row[0]).match(/^\d+$/)){row._sheet=sh.name;allData.push(row);}
+            });
+            loaded++;
+            document.getElementById('loading-text').textContent='Загружено: '+loaded+'/'+total+' округов · '+allData.length+' строк';
+            document.getElementById('prog-fill').style.width=Math.round(loaded/total*100)+'%';
+            setTimeout(res,150);
           },
-          error:function(){loadedCount++;setTimeout(resolve,150);}
+          error:function(){loaded++;setTimeout(res,150);}
         });
       });
     });
   });
-  return chain.then(function(){
-    if(!allData.length){document.getElementById('loading-text').textContent='Нет данных. Проверьте публикацию таблицы.';return;}
+  chain.then(function(){
+    if(!allData.length){document.getElementById('loading-text').textContent='Нет данных. Проверьте публикацию.';return;}
     filteredData=allData.slice();
-    populateFilters();
-    renderAll();
+    fillFilters();renderAll();initMap();
     document.getElementById('loading-screen').style.display='none';
-    document.getElementById('dashboard').style.display='grid';
-    document.getElementById('filter-bar').style.display='flex';
+    document.getElementById('main-content').style.display='block';
     document.getElementById('update-time').textContent=new Date().toLocaleTimeString('ru')+' · '+allData.length+' строк';
-    initMap();
+    startAuto();
   });
 }
 
 function startAuto(){
-  clearInterval(autoTimer);clearInterval(cdTimer);
-  secondsLeft=60;
+  clearInterval(autoTimer);clearInterval(cdTimer);secs=60;
   autoTimer=setInterval(function(){reloadAll();},60000);
   cdTimer=setInterval(function(){
-    secondsLeft=Math.max(0,secondsLeft-1);
-    var t=document.getElementById('update-time');
-    var parts=t.textContent.split('·');
-    if(parts.length>=2)t.textContent=parts[0].trim()+' · '+parts[1].trim()+' · через '+secondsLeft+'с';
+    secs=Math.max(0,secs-1);
+    var t=document.getElementById('update-time').textContent.split('·');
+    if(t.length>=2)document.getElementById('update-time').textContent=t[0].trim()+' · '+t[1].trim()+' · через '+secs+'с';
   },1000);
 }
 
-function populateFilters(){
-  function fill(id,getter){
-    var s=document.getElementById(id);
-    var vals={};allData.forEach(function(r){var v=getter(r);if(v&&v.trim())vals[v]=1;});
-    var arr=Object.keys(vals).sort();
-    s.innerHTML='<option value="">Все</option>'+arr.map(function(v){return'<option>'+v+'</option>';}).join('');
+function fillFilters(){
+  function fill(id,fn){
+    var s=document.getElementById(id),v={};
+    allData.forEach(function(r){var x=fn(r);if(x&&x.trim())v[x]=1;});
+    s.innerHTML='<option value="">Все</option>'+Object.keys(v).sort().map(function(x){return'<option>'+x+'</option>';}).join('');
   }
   fill('f-round',function(r){return r._sheet;});
   fill('f-dec',function(r){return r[C.decision];});
@@ -377,24 +342,24 @@ function applyFilters(){
   var fr=document.getElementById('f-round').value;
   var fd=document.getElementById('f-dec').value;
   var ft=document.getElementById('f-type').value;
-  selectedRound=fr||null;
-  filteredData=allData.filter(function(r){
-    return(!fr||r._sheet===fr)&&(!fd||r[C.decision]===fd)&&(!ft||r[C.certType]===ft);
-  });
-  renderAll();
-  filterMapMarkers();
+  selRound=fr||null;
+  filteredData=allData.filter(function(r){return(!fr||r._sheet===fr)&&(!fd||r[C.decision]===fd)&&(!ft||r[C.certType]===ft);});
+  document.getElementById('filter-count').textContent='Показано: '+filteredData.length+' строк';
+  renderAll();filterMarkers();
 }
 function resetFilters(){
   ['f-round','f-dec','f-type'].forEach(function(id){document.getElementById(id).value='';});
-  selectedRound=null;filteredData=allData.slice();renderAll();filterMapMarkers();
+  selRound=null;filteredData=allData.slice();
+  document.getElementById('filter-count').textContent='';
+  renderAll();filterMarkers();
 }
 
 function renderAll(){
   var d=filteredData;
-  var totalArea=0,totalCit=0,signed=0,dkp=0,pos=0,paid=0,apps=0,tE=0,tC=0;
+  var area=0,cit=0,sig=0,dkp=0,pos=0,paid=0,apps=0,tE=0,tC=0;
   d.forEach(function(r){
-    totalArea+=n(r[C.area]);totalCit+=n(r[C.citizens]);
-    if(up(r[C.signed])==='ДА')signed++;
+    area+=n(r[C.area]);cit+=n(r[C.citizens]);
+    if(up(r[C.signed])==='ДА')sig++;
     if(up(r[C.dkp])==='ДА')dkp++;
     if(lo(r[C.decision]).indexOf('положительн')>=0)pos++;
     if(lo(r[C.minPay])==='да')paid++;
@@ -402,106 +367,77 @@ function renderAll(){
     tE+=n(r[C.price]);tC+=n(r[C.contractPrice]);
   });
 
-  // KPI
   document.getElementById('kpi-total').textContent=d.length.toLocaleString('ru');
-  document.getElementById('kpi-area-sub').textContent='площадь: '+totalArea.toFixed(2)+' м²';
-  document.getElementById('kpi-cit').textContent=Math.round(totalCit).toLocaleString('ru');
-  document.getElementById('kpi-cit-sub').textContent='в среднем '+(d.length?( totalCit/d.length).toFixed(1):0)+' чел/кв.';
+  document.getElementById('kpi-area-sub').textContent='площадь: '+area.toFixed(2)+' м²';
+  document.getElementById('kpi-cit').textContent=Math.round(cit).toLocaleString('ru');
+  document.getElementById('kpi-cit-sub').textContent='ср. '+(d.length?(cit/d.length).toFixed(1):0)+' чел/кв.';
   document.getElementById('kpi-pos').textContent=pos;
-  document.getElementById('kpi-signed').textContent=signed;
+  document.getElementById('kpi-signed').textContent=sig;
   document.getElementById('kpi-dkp').textContent=dkp;
   document.getElementById('kpi-paid').textContent=paid;
 
-  // Rounds list
+  // Rounds
   var rm={};
-  d.forEach(function(r){
-    var k=r._sheet||'—';
-    if(!rm[k])rm[k]={t:0,dkp:0,area:0};
-    rm[k].t++;rm[k].area+=n(r[C.area]);
-    if(up(r[C.dkp])==='ДА')rm[k].dkp++;
-  });
+  d.forEach(function(r){var k=r._sheet||'—';if(!rm[k])rm[k]={t:0,dkp:0,area:0};rm[k].t++;rm[k].area+=n(r[C.area]);if(up(r[C.dkp])==='ДА')rm[k].dkp++;});
   var sorted=Object.entries(rm).sort(function(a,b){
     if(roundsSort==='area')return b[1].area-a[1].area;
     if(roundsSort==='dkp')return b[1].dkp-a[1].dkp;
     if(roundsSort==='name')return a[0].localeCompare(b[0],'ru');
     return b[1].t-a[1].t;
   });
-  var maxT=sorted.length?sorted[0][1].t:1;
+  var mx=sorted.length?sorted[0][1].t:1;
   document.getElementById('rounds-list').innerHTML=sorted.map(function(e,i){
-    var k=e[0],v=e[1];
-    var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
-    var isActive=selectedRound===k;
-    return'<div class="round-item'+(isActive?' active':'')+'" onclick="selectRound(\''+k+'\')">'+
-    '<div class="round-rank">'+(medal||i+1)+'</div>'+
+    var k=e[0],v=e[1],medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+    return'<div class="round-item'+(selRound===k?' active':'')+'" onclick="selectRound(\''+k.replace(/'/g,"\\'")+'\')" >'+
+    '<div class="round-rank">'+(medal||(i+1))+'</div>'+
     '<div class="round-name">'+k+'</div>'+
-    '<div class="round-bar-bg"><div class="round-bar-fill" style="width:'+(v.t/maxT*100).toFixed(0)+'%"></div></div>'+
-    '<div class="round-count">'+v.t+'</div>'+
-    '</div>';
+    '<div class="round-bar-bg"><div class="round-bar-fill" style="width:'+(v.t/mx*100).toFixed(0)+'%"></div></div>'+
+    '<div class="round-count">'+v.t+'</div></div>';
   }).join('');
 
-  // Charts
-  var decMap={};
-  d.forEach(function(r){var k=r[C.decision]||'Не указано';decMap[k]=(decMap[k]||0)+1;});
+  // Chart: решения
+  var dm={};d.forEach(function(r){var k=r[C.decision]||'Не указано';dm[k]=(dm[k]||0)+1;});
   if(chartDec)chartDec.destroy();
-  chartDec=new Chart(document.getElementById('c-dec'),{
-    type:'doughnut',
-    data:{labels:Object.keys(decMap),datasets:[{data:Object.values(decMap),
-      backgroundColor:Object.keys(decMap).map(colorDec),borderWidth:2,borderColor:'#fff'}]},
-    options:{plugins:{legend:{position:'bottom',labels:{color:'#666',font:{size:10},padding:8,boxWidth:10}}},cutout:'60%'}
-  });
+  chartDec=new Chart(document.getElementById('c-dec'),{type:'doughnut',
+    data:{labels:Object.keys(dm),datasets:[{data:Object.values(dm),backgroundColor:Object.keys(dm).map(colorDec),borderWidth:2,borderColor:'#fff'}]},
+    options:{plugins:{legend:{position:'bottom',labels:{color:'#666',font:{size:10},padding:6,boxWidth:10}}},cutout:'58%'}});
 
-  var top10=sorted.slice(0,10);
+  // Chart: топ округов
+  var top=sorted.slice(0,10);
   if(chartTop)chartTop.destroy();
-  chartTop=new Chart(document.getElementById('c-top'),{
-    type:'bar',
-    data:{labels:top10.map(function(e){return e[0];}),
-      datasets:[{data:top10.map(function(e){return e[1].t;}),
-      backgroundColor:top10.map(function(_,i){return i===0?'#f6d860':i===1?'#c0c0c0':i===2?'#cd7f32':'#667eea';}),
-      borderRadius:4,borderSkipped:false}]},
+  chartTop=new Chart(document.getElementById('c-top'),{type:'bar',
+    data:{labels:top.map(function(e){return e[0];}),
+      datasets:[{data:top.map(function(e){return e[1].t;}),
+        backgroundColor:top.map(function(_,i){return i===0?'#f6d860':i===1?'#c0c0c0':i===2?'#cd7f32':'#667eea';}),
+        borderRadius:4,borderSkipped:false}]},
     options:{indexAxis:'y',plugins:{legend:{display:false}},
-      scales:{x:{ticks:{color:'#aaa',font:{size:10}},grid:{color:'#f0f0f0'}},
-      y:{ticks:{color:'#555',font:{size:10}},grid:{display:false}}}}
-  });
+      scales:{x:{ticks:{color:'#aaa',font:{size:9}},grid:{color:'#f0f0f0'}},y:{ticks:{color:'#555',font:{size:9}},grid:{display:false}}}}});
 
   // Finance
-  var aEcnt=d.filter(function(r){return n(r[C.price])>0;}).length;
+  var aEc=d.filter(function(r){return n(r[C.price])>0;}).length;
   document.getElementById('fin-block').innerHTML=
-    '<div style="display:flex;flex-direction:column;gap:8px">'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:#f7f8ff;border-radius:8px">'+
-    '<span style="font-size:11px;color:#888">По оценке (сумма)</span><span style="font-size:13px;font-weight:700;color:#667eea">'+rub(tE)+'</span></div>'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:#f0fff4;border-radius:8px">'+
-    '<span style="font-size:11px;color:#888">Договоры ДКП/ДДУ</span><span style="font-size:13px;font-weight:700;color:#2e7d32">'+rub(tC)+'</span></div>'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:#f7f8ff;border-radius:8px">'+
-    '<span style="font-size:11px;color:#888">Средняя оценка</span><span style="font-size:13px;font-weight:700;color:#444">'+rub(aEcnt?tE/aEcnt:0)+'</span></div>'+
-    '</div>';
+    '<div class="fin-item blue"><span class="fin-item-label">По оценке (сумма)</span><span class="fin-item-val">'+rub(tE)+'</span></div>'+
+    '<div class="fin-item green"><span class="fin-item-label">Договоры ДКП/ДДУ</span><span class="fin-item-val">'+rub(tC)+'</span></div>'+
+    '<div class="fin-item gray"><span class="fin-item-label">Средняя оценка</span><span class="fin-item-val">'+rub(aEc?tE/aEc:0)+'</span></div>';
 
   // Funnel
-  var mx=d.length||1;
-  var fsteps=[
-    {l:'Квартир',v:d.length,c:'#667eea'},
-    {l:'Заявлений',v:apps,c:'#9f7aea'},
-    {l:'Полож. решений',v:pos,c:'#48bb78'},
-    {l:'Подписано',v:signed,c:'#ed8936'},
-    {l:'ДКП/ДДУ',v:dkp,c:'#fc8181'},
-    {l:'Оплачено',v:paid,c:'#38b2ac'}
-  ];
-  document.getElementById('funnel-block').innerHTML=fsteps.map(function(s){
-    return'<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">'+
-    '<div style="font-size:11px;color:#888;width:90px;flex-shrink:0">'+s.l+'</div>'+
-    '<div style="flex:1;background:#f0f2f5;border-radius:3px;height:18px;overflow:hidden">'+
-    '<div style="width:'+(s.v/mx*100).toFixed(1)+'%;background:'+s.c+';height:100%;border-radius:3px;display:flex;align-items:center;padding-left:6px">'+
-    '<span style="font-size:10px;font-weight:700;color:#fff">'+(s.v>0?s.v:'')+'</span></div></div>'+
-    '<div style="font-size:11px;font-weight:700;color:#444;width:28px;text-align:right">'+s.v+'</div>'+
-    '</div>';
+  var mx2=d.length||1;
+  var fs=[{l:'Квартир',v:d.length,c:'#667eea'},{l:'Заявлений',v:apps,c:'#9f7aea'},
+    {l:'Положит.',v:pos,c:'#48bb78'},{l:'Подписано',v:sig,c:'#ed8936'},
+    {l:'ДКП/ДДУ',v:dkp,c:'#fc8181'},{l:'Оплачено',v:paid,c:'#38b2ac'}];
+  document.getElementById('funnel-block').innerHTML=fs.map(function(s){
+    return'<div class="f-step"><div class="f-step-label">'+s.l+'</div>'+
+    '<div class="f-step-bg"><div class="f-step-fill" style="width:'+(s.v/mx2*100).toFixed(1)+'%;background:'+s.c+'"><span>'+(s.v>0?s.v:'')+'</span></div></div>'+
+    '<div class="f-step-cnt">'+s.v+'</div></div>';
   }).join('');
 
-  // Detail table
-  document.getElementById('detail-title').textContent=selectedRound?'📍 '+selectedRound+' — детали':'📄 Детальная таблица';
-  document.getElementById('detail-count').textContent='Показано: '+d.length+' строк';
+  // Table
+  document.getElementById('detail-title').textContent=selRound?'📍 '+selRound+' — детали':'📄 Детальная таблица';
+  document.getElementById('detail-count').textContent='Строк: '+d.length;
   document.getElementById('tbl-main').innerHTML=
-    '<thead><tr><th>№</th><th>Округ</th><th>Г.О/М.О</th><th>Адрес</th><th>Кв.</th><th>Площадь м²</th><th>Граждан</th><th>Тип</th><th>Решение</th><th>Подписано</th><th>ДКП</th><th>Стоимость</th></tr></thead>'+
+    '<thead><tr><th>№</th><th>Округ</th><th>Г.О/М.О</th><th>Адрес</th><th>Кв.</th><th>Площадь</th><th>Граждан</th><th>Тип</th><th>Решение</th><th>Подписано</th><th>ДКП</th><th>Стоимость</th></tr></thead>'+
     '<tbody>'+d.map(function(r,i){
-      return'<tr><td>'+(i+1)+'</td><td>'+( r._sheet||'—')+'</td><td>'+(r[C.mo]||'—')+'</td>'+
+      return'<tr><td>'+(i+1)+'</td><td>'+(r._sheet||'—')+'</td><td>'+(r[C.mo]||'—')+'</td>'+
       '<td>'+(r[C.addr]||'—')+'</td><td>'+(r[C.apt]||'—')+'</td>'+
       '<td>'+n(r[C.area]).toFixed(2)+'</td><td>'+(r[C.citizens]||'—')+'</td>'+
       '<td>'+(r[C.certType]||'—')+'</td><td>'+badgeDec(r[C.decision])+'</td>'+
@@ -511,23 +447,16 @@ function renderAll(){
 }
 
 function selectRound(name){
-  if(selectedRound===name){
-    selectedRound=null;
-    document.getElementById('f-round').value='';
-    filteredData=allData.slice();
-  } else {
-    selectedRound=name;
-    document.getElementById('f-round').value=name;
-    filteredData=allData.filter(function(r){return r._sheet===name;});
-  }
-  renderAll();filterMapMarkers();
+  if(selRound===name){selRound=null;document.getElementById('f-round').value='';filteredData=allData.slice();}
+  else{selRound=name;document.getElementById('f-round').value=name;filteredData=allData.filter(function(r){return r._sheet===name;});}
+  document.getElementById('filter-count').textContent=selRound?'Показано: '+filteredData.length+' строк':'';
+  renderAll();filterMarkers();
 }
-
-function sortRounds(val){roundsSort=val;renderAll();}
+function sortRounds(v){roundsSort=v;renderAll();}
 
 // MAP
 function initMap(){
-  if(mapObj)return;
+  if(mapObj){markersLayer.clearLayers();allMarkers=[];geocodeAll(allData);return;}
   mapObj=L.map('map').setView([55.75,37.62],8);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(mapObj);
   markersLayer=L.layerGroup().addTo(mapObj);
@@ -536,9 +465,8 @@ function initMap(){
 
 function geocodeAll(rows){
   var el=document.getElementById('geo-st');
-  el.textContent='🔍 Геокодирование адресов...';
-  var done=0,found=0,bounds=[];
-  var chain=Promise.resolve();
+  el.style.color='#aaa';el.textContent='🔍 Геокодирование адресов...';
+  var done=0,found=0,bounds=[],chain=Promise.resolve();
   rows.forEach(function(r){
     chain=chain.then(function(){
       var addr=String(r[C.addr]||'').trim();
@@ -550,22 +478,12 @@ function geocodeAll(rows){
         .then(function(j){
           if(j&&j[0]){
             var lat=parseFloat(j[0].lat),lon=parseFloat(j[0].lon);
-            var col=colorDec(r[C.decision]);
-            var mk=L.circleMarker([lat,lon],{radius:7,fillColor:col,color:'#fff',weight:1.5,fillOpacity:0.9});
-            mk.bindPopup(
-              '<div style="font-size:12px;min-width:200px">'+
-              '<b style="font-size:13px">'+(r[C.addr]||'—')+'</b><br>'+
-              '<span style="color:#888">'+( r._sheet||'—')+'</span><br><br>'+
+            var mk=L.circleMarker([lat,lon],{radius:7,fillColor:colorDec(r[C.decision]),color:'#fff',weight:1.5,fillOpacity:0.9});
+            mk.bindPopup('<div style="font-size:12px;min-width:180px"><b>'+( r[C.addr]||'—')+'</b><br><span style="color:#888">'+( r._sheet||'—')+'</span><br><br>'+
               'Кв. '+(r[C.apt]||'—')+' · '+n(r[C.area]).toFixed(2)+' м² · '+(r[C.citizens]||'—')+' чел.<br>'+
-              'Тип: '+(r[C.certType]||'—')+'<br>'+
-              'Решение: <b>'+badgeDec(r[C.decision])+'</b>'+
-              '</div>'
-            );
-            mk._decisionRaw=lo(r[C.decision]||'');
-            mk._sheet=r._sheet;
-            mk.addTo(markersLayer);
-            allMarkers.push(mk);
-            bounds.push([lat,lon]);found++;
+              'Решение: '+badgeDec(r[C.decision])+'</div>');
+            mk._dec=lo(r[C.decision]||'');mk._sheet=r._sheet;
+            mk.addTo(markersLayer);allMarkers.push(mk);bounds.push([lat,lon]);found++;
           }
           done++;
           if(done%10===0)el.textContent='🔍 Геокодирование ('+done+'/'+rows.length+', найдено: '+found+')...';
@@ -574,26 +492,23 @@ function geocodeAll(rows){
     });
   });
   chain.then(function(){
-    if(bounds.length){mapObj.fitBounds(bounds,{padding:[20,20]});el.textContent='✅ Отображено '+found+' адресов на карте';}
-    else el.textContent='ℹ️ Адреса не геокодированы';
+    if(bounds.length){mapObj.fitBounds(bounds,{padding:[20,20]});el.style.color='#2e7d32';el.textContent='✅ Отображено '+found+' адресов';}
+    else el.textContent='ℹ️ Адреса не найдены';
   });
 }
 
 function setMapFilter(mode,btn){
-  mapFilterMode=mode;
+  mapFilter=mode;
   document.querySelectorAll('.map-tab').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
-  filterMapMarkers();
+  btn.classList.add('active');filterMarkers();
 }
-
-function filterMapMarkers(){
+function filterMarkers(){
   allMarkers.forEach(function(mk){
-    var d=mk._decisionRaw;
-    var show=true;
-    if(mapFilterMode==='pos')show=d.indexOf('положит')>=0;
-    else if(mapFilterMode==='neg')show=d.indexOf('отриц')>=0||d.indexOf('отказ')>=0;
-    else if(mapFilterMode==='proc')show=d.indexOf('рассм')>=0;
-    if(selectedRound&&mk._sheet!==selectedRound)show=false;
+    var d=mk._dec,show=true;
+    if(mapFilter==='pos')show=d.indexOf('положит')>=0;
+    else if(mapFilter==='neg')show=d.indexOf('отриц')>=0||d.indexOf('отказ')>=0;
+    else if(mapFilter==='proc')show=d.indexOf('рассм')>=0;
+    if(selRound&&mk._sheet!==selRound)show=false;
     if(show){if(!mapObj.hasLayer(mk))mk.addTo(markersLayer);}
     else{if(mapObj.hasLayer(mk))mapObj.removeLayer(mk);}
   });
