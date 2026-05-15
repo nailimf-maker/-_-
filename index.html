@@ -18,9 +18,7 @@ header h1{font-size:17px;font-weight:600;color:#fff}
 #update-time{font-size:11px;color:#666;margin-left:auto}
 #live-badge{background:#1b4332;color:#4caf50;font-size:11px;padding:3px 10px;border-radius:10px}
 .main{padding:16px 20px;display:flex;flex-direction:column;gap:14px}
-
 .top-bar{background:#1a1d2e;border-radius:12px;padding:14px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.top-bar label{font-size:12px;color:#888;white-space:nowrap}
 #progress-wrap{flex:1;min-width:200px}
 #progress-text{font-size:12px;color:#888;margin-bottom:4px}
 #progress-bg{background:#0f1117;border-radius:4px;height:8px}
@@ -32,17 +30,14 @@ header h1{font-size:17px;font-weight:600;color:#fff}
 .status-ok{color:#4caf50;font-size:12px;width:100%}
 .status-err{color:#f44336;font-size:12px;width:100%}
 .status-info{color:#888;font-size:12px;width:100%}
-
 .filters{background:#1a1d2e;border-radius:12px;padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .filters label{font-size:12px;color:#888}
 .filters select{background:#0f1117;border:1px solid #2a2d3e;color:#e0e0e0;border-radius:6px;padding:6px 10px;font-size:12px;outline:none}
-
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
 .kpi{background:#1a1d2e;border-radius:12px;padding:14px 16px;border-left:3px solid #4f8ef7}
 .kpi.g{border-color:#4caf50}.kpi.o{border-color:#ff9800}.kpi.p{border-color:#9c27b0}
 .kpi-val{font-size:26px;font-weight:700;color:#fff;line-height:1}
 .kpi-label{font-size:11px;color:#888;margin-top:5px}
-
 .funnel-box,.chart-box,.map-box,.table-box,.fin-card{background:#1a1d2e;border-radius:12px;padding:16px}
 .sec-title{font-size:13px;color:#aaa;margin-bottom:12px;font-weight:500}
 .funnel-step{display:flex;align-items:center;gap:10px;margin-bottom:7px}
@@ -50,18 +45,16 @@ header h1{font-size:17px;font-weight:600;color:#fff}
 .f-wrap{flex:1;background:#0f1117;border-radius:4px;height:26px;overflow:hidden}
 .f-bar{height:100%;border-radius:4px;transition:width .8s;display:flex;align-items:center;padding-left:10px;font-size:12px;font-weight:600;color:#fff;min-width:28px}
 .f-cnt{font-size:12px;color:#fff;width:40px;text-align:right;flex-shrink:0}
-
 .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.chart-box{background:#1a1d2e;border-radius:12px;padding:16px}
 .chart-wrap{position:relative;height:220px}
 .fin-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
 .fin-val{font-size:20px;font-weight:700;color:#4f8ef7;margin-top:6px}
 .fin-sub{font-size:11px;color:#666;margin-top:4px}
-
 #map{height:400px;border-radius:8px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
 .leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#aaa}
 .leg-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
-
 .table-wrap{overflow:auto;max-height:340px}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th{background:#0f1117;color:#888;padding:8px 12px;text-align:left;position:sticky;top:0;white-space:nowrap;z-index:1}
@@ -71,12 +64,6 @@ tr:hover td{background:#1f2235}
 .b-pos{background:#1b4332;color:#4caf50}.b-neg{background:#3b1a1a;color:#f44336}
 .b-proc{background:#2d2005;color:#ff9800}.b-rej{background:#2d1a2d;color:#ce93d8}
 .no-data{text-align:center;padding:40px;color:#555;font-size:13px}
-
-/* округа-теги */
-.rounds-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.round-tag{background:#1f2235;border:1px solid #2a2d3e;color:#aaa;font-size:11px;padding:3px 10px;border-radius:10px;cursor:pointer;transition:all .15s}
-.round-tag:hover{border-color:#4f8ef7;color:#4f8ef7}
-.round-tag.active{background:#4f8ef7;color:#fff;border-color:#4f8ef7}
 </style>
 </head>
 <body>
@@ -88,7 +75,6 @@ tr:hover td{background:#1f2235}
   <span id="update-time">Загрузка...</span>
 </header>
 <div class="main">
-
   <div class="top-bar">
     <div id="progress-wrap">
       <div id="progress-text">Инициализация...</div>
@@ -98,7 +84,6 @@ tr:hover td{background:#1f2235}
     <button class="btn btn-sm" onclick="loadDemo()" style="background:#7c4dff;color:#fff">🎲 Демо</button>
     <div id="status-msg" class="status-info"></div>
   </div>
-
   <div class="filters" id="filters" style="display:none">
     <label>Округ:</label>
     <select id="f-round" onchange="applyFilters()"><option value="">Все округа</option></select>
@@ -110,23 +95,16 @@ tr:hover td{background:#1f2235}
     <select id="f-type" onchange="applyFilters()"><option value="">Все</option></select>
     <button class="btn btn-sm" onclick="resetFilters()">↺ Сброс</button>
   </div>
-
-  <div class="kpi-row" id="kpi-row">
-    <div class="no-data" style="grid-column:1/-1">Загрузка данных...</div>
-  </div>
-
+  <div class="kpi-row" id="kpi-row"><div class="no-data">Загрузка данных...</div></div>
   <div class="funnel-box" id="funnel-box" style="display:none">
     <div class="sec-title">🔄 Воронка расселения</div>
     <div id="funnel-content"></div>
   </div>
-
   <div class="charts-row" id="charts-row" style="display:none">
     <div class="chart-box"><div class="sec-title">📋 Статус решений</div><div class="chart-wrap"><canvas id="c-dec"></canvas></div></div>
-    <div class="chart-box"><div class="sec-title">🏙️ По округам (топ-15)</div><div class="chart-wrap"><canvas id="c-rounds"></canvas></div></div>
+    <div class="chart-box"><div class="sec-title">🏙️ Рейтинг округов по кол-ву квартир</div><div class="chart-wrap"><canvas id="c-rounds"></canvas></div></div>
   </div>
-
   <div class="fin-row" id="fin-row" style="display:none"></div>
-
   <div class="map-box" id="map-box" style="display:none">
     <div class="sec-title">🗺️ Карта аварийных домов</div>
     <div id="map"></div>
@@ -138,177 +116,133 @@ tr:hover td{background:#1f2235}
       <div class="leg-item"><div class="leg-dot" style="background:#4f8ef7"></div>Не указано</div>
     </div>
   </div>
-
   <div class="table-box" id="tbl-round-box" style="display:none">
-    <div class="sec-title">📍 Сводка по округам</div>
+    <div class="sec-title">🏆 Рейтинг и сводка по округам</div>
     <div class="table-wrap"><table id="tbl-round"></table></div>
   </div>
-
   <div class="table-box" id="tbl-main-box" style="display:none">
     <div class="sec-title">📄 Детальная таблица</div>
     <div class="table-wrap"><table id="tbl-main"></table></div>
   </div>
-
 </div>
 <script>
 const PUB_ID = '2PACX-1vSzyHOAkQRwBuyLTWw0xyAkA3aQWjHNAT1wSRMmmB7zjYARDMG470ErejHEFid200TUUbGvbQNYUPsE';
 const BASE   = `https://docs.google.com/spreadsheets/d/e/${PUB_ID}/pub?output=csv`;
 
-// Все 44 листа с названиями и GID
 const SHEETS = [
-  {name:"Балашиха",          gid:"1795562364"},
-  {name:"Богородский",       gid:"0"},
-  {name:"Бронницы",          gid:"1103582215"},
-  {name:"Волоколамский",     gid:"220979544"},
-  {name:"Дмитровский",       gid:"1892432856"},
-  {name:"Воскресенск",       gid:"1653606013"},
-  {name:"Домодедово",        gid:"1870428576"},
-  {name:"Дубна",             gid:"1718290784"},
-  {name:"Егорьевск",         gid:"1549030074"},
-  {name:"Жуковский",         gid:"305796329"},
-  {name:"Зарайск",           gid:"283920738"},
-  {name:"Истра",             gid:"1434615352"},
-  {name:"Кашира",            gid:"1580393335"},
-  {name:"Клин",              gid:"1338049965"},
-  {name:"Коломна",           gid:"106788836"},
-  {name:"Королев",           gid:"1576913234"},
-  {name:"Котельники",        gid:"1390969273"},
-  {name:"Красногорск",       gid:"1821499361"},
-  {name:"Лобня",             gid:"2065587021"},
-  {name:"Лосино-Петровский", gid:"2082287183"},
-  {name:"Луховицы",          gid:"239748466"},
-  {name:"Люберцы",           gid:"1843254790"},
-  {name:"Можайский",         gid:"661476574"},
-  {name:"Мытищи",            gid:"846842811"},
-  {name:"Наро-Фоминский",    gid:"249806909"},
-  {name:"Одинцовский",       gid:"1539692434"},
-  {name:"Орехово-Зуево",     gid:"696528998"},
-  {name:"Павлово-Посадский", gid:"1190501242"},
-  {name:"Подольск",          gid:"1062490300"},
-  {name:"Пушкинский",        gid:"1496220984"},
-  {name:"Раменский",         gid:"732430860"},
-  {name:"Рузский",           gid:"376297159"},
+  {name:"Балашиха",gid:"1795562364"},
+  {name:"Богородский",gid:"0"},
+  {name:"Бронницы",gid:"1103582215"},
+  {name:"Волоколамский",gid:"220979544"},
+  {name:"Дмитровский",gid:"1892432856"},
+  {name:"Воскресенск",gid:"1653606013"},
+  {name:"Домодедово",gid:"1870428576"},
+  {name:"Дубна",gid:"1718290784"},
+  {name:"Егорьевск",gid:"1549030074"},
+  {name:"Жуковский",gid:"305796329"},
+  {name:"Зарайск",gid:"283920738"},
+  {name:"Истра",gid:"1434615352"},
+  {name:"Кашира",gid:"1580393335"},
+  {name:"Клин",gid:"1338049965"},
+  {name:"Коломна",gid:"106788836"},
+  {name:"Королев",gid:"1576913234"},
+  {name:"Котельники",gid:"1390969273"},
+  {name:"Красногорск",gid:"1821499361"},
+  {name:"Лобня",gid:"2065587021"},
+  {name:"Лосино-Петровский",gid:"2082287183"},
+  {name:"Луховицы",gid:"239748466"},
+  {name:"Люберцы",gid:"1843254790"},
+  {name:"Можайский",gid:"661476574"},
+  {name:"Мытищи",gid:"846842811"},
+  {name:"Наро-Фоминский",gid:"249806909"},
+  {name:"Одинцовский",gid:"1539692434"},
+  {name:"Орехово-Зуево",gid:"696528998"},
+  {name:"Павлово-Посадский",gid:"1190501242"},
+  {name:"Подольск",gid:"1062490300"},
+  {name:"Пушкинский",gid:"1496220984"},
+  {name:"Раменский",gid:"732430860"},
+  {name:"Рузский",gid:"376297159"},
   {name:"Сергиево-Посадский",gid:"782139300"},
-  {name:"Серебряные Пруды",  gid:"344890850"},
-  {name:"Серпухов",          gid:"1919190345"},
-  {name:"Солнечногорск",     gid:"24184888"},
-  {name:"Ступино",           gid:"1528804810"},
-  {name:"Талдомский",        gid:"652495233"},
-  {name:"Химки",             gid:"1817325599"},
-  {name:"Чехов",             gid:"1699541847"},
-  {name:"Шатура",            gid:"1588732400"},
-  {name:"Шаховская",         gid:"1886732760"},
-  {name:"Щелково",           gid:"2101160216"},
-  {name:"Электросталь",      gid:"1617637044"},
+  {name:"Серебряные Пруды",gid:"344890850"},
+  {name:"Серпухов",gid:"1919190345"},
+  {name:"Солнечногорск",gid:"24184888"},
+  {name:"Ступино",gid:"1528804810"},
+  {name:"Талдомский",gid:"652495233"},
+  {name:"Химки",gid:"1817325599"},
+  {name:"Чехов",gid:"1699541847"},
+  {name:"Шатура",gid:"1588732400"},
+  {name:"Шаховская",gid:"1886732760"},
+  {name:"Щелково",gid:"2101160216"},
+  {name:"Электросталь",gid:"1617637044"}
 ];
 
-// Column map (0-based)
-const C = {prog:0,funded:1,mo:2,np:3,addr:4,apt:5,area:6,citizens:7,fio:8,
-  phone:9,owner:10,certType:11,dateApp:12,decision:13,signed:14,negReason:15,
-  buyConsent:16,evalDate:17,agreeDate:18,price:19,dkp:20,district:21,
-  newAddr:22,newArea:23,builder:24,contractType:25,contractPrice:26,minPay:27};
+const C={prog:1,funded:2,mo:3,np:4,addr:5,apt:6,area:7,citizens:8,fio:9,
+  phone:10,owner:11,certType:12,dateApp:13,decision:14,signed:15,negReason:16,
+  buyConsent:17,evalDate:18,agreeDate:19,price:20,dkp:21,district:22,
+  newAddr:23,newArea:24,builder:25,contractType:26,contractPrice:27,minPay:28};
 
-let allData=[], filteredData=[];
-let sheets=[], loadedSheets=0;
-let map, markersLayer, chartDec, chartRounds;
-let autoTimer, cdTimer, secondsLeft=60;
-
-// ─── Sheet discovery ───────────────────────────────────────────────
-async function discoverSheets(){
-  setProg('Получение списка листов...', 0);
-  try {
-    const res = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/pub?output=html&cachebust=${Date.now()}`);
-    const html = await res.text();
-    const doc  = new DOMParser().parseFromString(html,'text/html');
-    let found  = [];
-
-    // Try multiple selectors GitHub Pages will hit the real DOM
-    doc.querySelectorAll('[id^="sheet-button-"]').forEach(el=>{
-      const gid  = el.id.replace('sheet-button-','');
-      const name = el.textContent.trim();
-      if(name && gid) found.push({name,gid});
-    });
-    if(!found.length){
-      doc.querySelectorAll('a[href*="gid="]').forEach(a=>{
-        const m = a.href.match(/gid=(\d+)/);
-        if(m) found.push({name:a.textContent.trim(), gid:m[1]});
-      });
-    }
-    // deduplicate
-    const seen=new Set();
-    found = found.filter(s=>{ if(!s.name||seen.has(s.gid)) return false; seen.add(s.gid); return true; });
-    sheets = found.filter(s=>!SKIP.some(sk=>s.name.toLowerCase().includes(sk)));
-    return sheets.length > 0;
-  } catch(e){ return false; }
-}
-
-// ─── Load all sheets ───────────────────────────────────────────────
-async function loadAllSheets(){
-  allData=[]; loadedSheets=0;
-  const total = sheets.length;
-  if(!total){ setStatus('Не удалось определить листы. Используйте «Демо»','err'); return; }
-
-  for(const sh of sheets){
-    const url = `${BASE}&gid=${sh.gid}&cachebust=${Date.now()}`;
-    await new Promise(resolve=>{
-      Papa.parse(url,{
-        download:true, header:false, skipEmptyLines:true,
-        complete: r=>{
-          if(r.data && r.data.length>1){
-            // skip header row, tag each row with sheet name
-            r.data.slice(1).forEach(row=>{ row._sheet=sh.name; allData.push(row); });
-          }
-          loadedSheets++;
-          const pct = Math.round(loadedSheets/total*100);
-          setProg(`Загружено листов: ${loadedSheets}/${total} (${allData.length} строк)`, pct);
-          resolve();
-        },
-        error:()=>{ loadedSheets++; resolve(); }
-      });
-    });
-    await sleep(120); // small delay to avoid rate-limiting
-  }
-
-  if(!allData.length){ setStatus('Данные не загружены. Проверьте публикацию таблицы.','err'); return; }
-
-  populateFilters();
-  filteredData = [...allData];
-  render();
-  document.getElementById('filters').style.display='flex';
-  setStatus(`✓ Загружено ${allData.length} строк из ${loadedSheets} округов`, 'ok');
-  setTime();
-}
+let allData=[],filteredData=[],loadedSheets=0;
+let map,markersLayer,chartDec,chartRounds;
+let autoTimer,cdTimer,secondsLeft=60;
 
 async function reloadAll(){
-  clearInterval(autoTimer); clearInterval(cdTimer);
+  clearInterval(autoTimer);clearInterval(cdTimer);
   secondsLeft=60;
-  const ok = await discoverSheets();
   await loadAllSheets();
   startAuto();
 }
 
+async function loadAllSheets(){
+  allData=[];loadedSheets=0;
+  const total=SHEETS.length;
+  for(const sh of SHEETS){
+    const url=`${BASE}&gid=${sh.gid}&cachebust=${Date.now()}`;
+    await new Promise(resolve=>{
+      Papa.parse(url,{
+        download:true,header:false,skipEmptyLines:true,
+        complete:r=>{
+          if(r.data&&r.data.length>1){
+            r.data.slice(1).forEach(row=>{row._sheet=sh.name;allData.push(row);});
+          }
+          loadedSheets++;
+          const pct=Math.round(loadedSheets/total*100);
+          setProg(`Загружено: ${loadedSheets}/${total} округов (${allData.length} строк)`,pct);
+          resolve();
+        },
+        error:()=>{loadedSheets++;resolve();}
+      });
+    });
+    await sleep(150);
+  }
+  if(!allData.length){setStatus('Данные не загружены. Проверьте публикацию таблицы.','err');return;}
+  populateFilters();
+  filteredData=[...allData];
+  render();
+  document.getElementById('filters').style.display='flex';
+  setStatus(`✓ Загружено ${allData.length} строк из ${loadedSheets} округов`,'ok');
+  setTime();
+}
+
 function startAuto(){
-  clearInterval(autoTimer); clearInterval(cdTimer);
-  secondsLeft=60; updateBar();
-  autoTimer = setInterval(()=>{ reloadAll(); }, 60000);
-  cdTimer = setInterval(()=>{
+  clearInterval(autoTimer);clearInterval(cdTimer);
+  secondsLeft=60;updateBar();
+  autoTimer=setInterval(()=>{reloadAll();},60000);
+  cdTimer=setInterval(()=>{
     secondsLeft=Math.max(0,secondsLeft-1);
-    updateBar();
-    setTime();
+    updateBar();setTime();
   },1000);
 }
 
-// ─── Filters ───────────────────────────────────────────────────────
 function populateFilters(){
   const fill=(id,getter)=>{
     const s=document.getElementById(id);
     const vals=[...new Set(allData.map(getter).filter(v=>v&&v.trim()))].sort();
     s.innerHTML='<option value="">Все</option>'+vals.map(v=>`<option>${v}</option>`).join('');
   };
-  fill('f-round', r=>r._sheet);
-  fill('f-prog',  r=>r[C.prog]);
-  fill('f-dec',   r=>r[C.decision]);
-  fill('f-type',  r=>r[C.certType]);
+  fill('f-round',r=>r._sheet);
+  fill('f-prog',r=>r[C.prog]);
+  fill('f-dec',r=>r[C.decision]);
+  fill('f-type',r=>r[C.certType]);
 }
 
 function applyFilters(){
@@ -320,24 +254,21 @@ function applyFilters(){
 }
 function resetFilters(){
   ['f-round','f-prog','f-dec','f-type'].forEach(id=>document.getElementById(id).value='');
-  filteredData=[...allData]; render();
+  filteredData=[...allData];render();
 }
 
-// ─── Render ────────────────────────────────────────────────────────
 function render(){
   const d=filteredData;
   if(!d.length){document.getElementById('kpi-row').innerHTML='<div class="no-data">Нет данных</div>';return;}
-
-  const n=v=>parseFloat(String(v||'0').replace(/[^\d.]/g,''))||0;
+  const n=x=>parseFloat(String(x||'0').replace(/[^\d.]/g,''))||0;
   const totalArea=d.reduce((s,r)=>s+n(r[C.area]),0);
-  const totalCit =d.reduce((s,r)=>s+n(r[C.citizens]),0);
-  const signed   =d.filter(r=>up(r[C.signed])==='ДА').length;
-  const dkp      =d.filter(r=>up(r[C.dkp])==='ДА').length;
-  const pos      =d.filter(r=>lo(r[C.decision]).includes('положительн')).length;
-  const paid     =d.filter(r=>lo(r[C.minPay])==='да').length;
-  const apps     =d.filter(r=>r[C.dateApp]&&String(r[C.dateApp]).trim()).length;
+  const totalCit=d.reduce((s,r)=>s+n(r[C.citizens]),0);
+  const signed=d.filter(r=>up(r[C.signed])==='ДА').length;
+  const dkp=d.filter(r=>up(r[C.dkp])==='ДА').length;
+  const pos=d.filter(r=>lo(r[C.decision]).includes('положительн')).length;
+  const paid=d.filter(r=>lo(r[C.minPay])==='да').length;
+  const apps=d.filter(r=>r[C.dateApp]&&String(r[C.dateApp]).trim()).length;
 
-  // KPI
   document.getElementById('kpi-row').innerHTML=`
     <div class="kpi"><div class="kpi-val">${d.length}</div><div class="kpi-label">Всего квартир</div></div>
     <div class="kpi g"><div class="kpi-val">${Math.round(totalCit)}</div><div class="kpi-label">Граждан к расселению</div></div>
@@ -347,7 +278,6 @@ function render(){
     <div class="kpi g"><div class="kpi-val">${paid}</div><div class="kpi-label">Оплата Министерства</div></div>
   `;
 
-  // Funnel
   show('funnel-box');
   const mx=d.length||1;
   const steps=[
@@ -365,69 +295,64 @@ function render(){
       <div class="f-cnt">${s.v}</div>
     </div>`).join('');
 
-  // Charts
   show('charts-row');
   const decMap={};
   d.forEach(r=>{const k=r[C.decision]||'Не указано';decMap[k]=(decMap[k]||0)+1;});
-  if(chartDec) chartDec.destroy();
+  if(chartDec)chartDec.destroy();
   chartDec=new Chart(document.getElementById('c-dec'),{
     type:'doughnut',
-    data:{labels:Object.keys(decMap),datasets:[{data:Object.values(decMap),
-      backgroundColor:Object.keys(decMap).map(colorDec),borderWidth:0}]},
+    data:{labels:Object.keys(decMap),datasets:[{data:Object.values(decMap),backgroundColor:Object.keys(decMap).map(colorDec),borderWidth:0}]},
     options:{plugins:{legend:{labels:{color:'#aaa',font:{size:11}}}},cutout:'65%'}
   });
 
   const roundMap={};
   d.forEach(r=>{const k=r._sheet||'—';roundMap[k]=(roundMap[k]||0)+1;});
-  const rSorted=Object.entries(roundMap).sort((a,b)=>b[1]-a[1]).slice(0,15);
-  if(chartRounds) chartRounds.destroy();
+  const rSorted=Object.entries(roundMap).sort((a,b)=>b[1]-a[1]);
+  if(chartRounds)chartRounds.destroy();
   chartRounds=new Chart(document.getElementById('c-rounds'),{
     type:'bar',
-    data:{labels:rSorted.map(e=>e[0]),datasets:[{data:rSorted.map(e=>e[1]),backgroundColor:'#4f8ef7',borderRadius:4}]},
-    options:{indexAxis:'y',plugins:{legend:{display:false}},
-      scales:{x:{ticks:{color:'#888'},grid:{color:'#1f2235'}},y:{ticks:{color:'#aaa',font:{size:10}},grid:{display:false}}}}
+    data:{labels:rSorted.map(e=>e[0]),datasets:[{data:rSorted.map(e=>e[1]),backgroundColor:rSorted.map((_,i)=>i===0?'#ffd700':i===1?'#c0c0c0':i===2?'#cd7f32':'#4f8ef7'),borderRadius:4}]},
+    options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#888'},grid:{color:'#1f2235'}},y:{ticks:{color:'#aaa',font:{size:10}},grid:{display:false}}}}
   });
 
-  // Finance
   show('fin-row');
   const tE=d.reduce((s,r)=>s+n(r[C.price]),0);
   const tC=d.reduce((s,r)=>s+n(r[C.contractPrice]),0);
-  const aE=d.filter(r=>n(r[C.price])>0).length;
+  const aEcnt=d.filter(r=>n(r[C.price])>0).length;
   document.getElementById('fin-row').innerHTML=`
-    <div class="fin-card"><div class="sec-title">Суммарная стоимость по оценке</div><div class="fin-val">${rub(tE)}</div><div class="fin-sub">Средняя: ${rub(aE?tE/aE:0)}</div></div>
+    <div class="fin-card"><div class="sec-title">Суммарная стоимость по оценке</div><div class="fin-val">${rub(tE)}</div><div class="fin-sub">Средняя: ${rub(aEcnt?tE/aEcnt:0)}</div></div>
     <div class="fin-card"><div class="sec-title">Сумма договоров ДКП/ДДУ</div><div class="fin-val" style="color:#4caf50">${rub(tC)}</div><div class="fin-sub">Заключено: ${dkp}</div></div>
     <div class="fin-card"><div class="sec-title">Разница (оценка vs договор)</div><div class="fin-val" style="color:${tC>=tE?'#4caf50':'#f44336'}">${rub(tC-tE)}</div><div class="fin-sub">${tC>=tE?'Договор выше оценки':'Договор ниже оценки'}</div></div>
   `;
 
-  // Map
   show('map-box');
   if(!map){
-    map=L.map('map').setView([55.75,37.62],6);
+    map=L.map('map').setView([55.75,37.62],8);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
     markersLayer=L.layerGroup().addTo(map);
   } else markersLayer.clearLayers();
   geocodeAll(d);
 
-  // Round summary table
   show('tbl-round-box');
   const rm={};
   d.forEach(r=>{
     const k=r._sheet||'—';
     if(!rm[k])rm[k]={t:0,pos:0,sig:0,dkp:0,area:0,cit:0};
-    rm[k].t++; rm[k].area+=n(r[C.area]); rm[k].cit+=n(r[C.citizens]);
+    rm[k].t++;rm[k].area+=n(r[C.area]);rm[k].cit+=n(r[C.citizens]);
     if(lo(r[C.decision]).includes('положительн'))rm[k].pos++;
     if(up(r[C.signed])==='ДА')rm[k].sig++;
     if(up(r[C.dkp])==='ДА')rm[k].dkp++;
   });
+  const sorted=Object.entries(rm).sort((a,b)=>b[1].t-a[1].t);
   document.getElementById('tbl-round').innerHTML=`
-    <thead><tr><th>Округ</th><th>Квартир</th><th>Граждан</th><th>Площадь м²</th><th>Полож.</th><th>Подписано</th><th>ДКП/ДДУ</th><th>Прогресс</th></tr></thead>
-    <tbody>${Object.entries(rm).sort((a,b)=>b[1].t-a[1].t).map(([k,v])=>{
-      const pct=Math.round(v.dkp/v.t*100);
-      return`<tr><td>${k}</td><td>${v.t}</td><td>${v.cit}</td><td>${v.area.toFixed(0)}</td><td>${v.pos}</td><td>${v.sig}</td><td>${v.dkp}</td>
+    <thead><tr><th>№</th><th>Округ</th><th>Квартир</th><th>Граждан</th><th>Площадь м²</th><th>Полож.</th><th>Подписано</th><th>ДКП/ДДУ</th><th>Прогресс</th></tr></thead>
+    <tbody>${sorted.map(([k,val],i)=>{
+      const pct=Math.round(val.dkp/val.t*100);
+      const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+      return`<tr><td>${i+1}</td><td>${medal} ${k}</td><td>${val.t}</td><td>${val.cit}</td><td>${val.area.toFixed(0)}</td><td>${val.pos}</td><td>${val.sig}</td><td>${val.dkp}</td>
       <td><div style="display:flex;align-items:center;gap:6px"><div style="background:#0f1117;border-radius:3px;height:12px;width:80px"><div style="background:#4f8ef7;height:100%;width:${pct}%;border-radius:3px"></div></div><span style="font-size:10px;color:#888">${pct}%</span></div></td></tr>`;
     }).join('')}</tbody>`;
 
-  // Main detail table
   show('tbl-main-box');
   document.getElementById('tbl-main').innerHTML=`
     <thead><tr><th>№</th><th>Округ</th><th>Г.О/М.О</th><th>Адрес</th><th>Кв.</th><th>Площадь</th><th>Граждан</th><th>Тип</th><th>Решение</th><th>Подписано</th><th>ДКП</th><th>Стоимость</th></tr></thead>
@@ -440,11 +365,10 @@ function render(){
     </tr>`).join('')}</tbody>`;
 }
 
-// ─── Geocoding ─────────────────────────────────────────────────────
 function addMarker(r,lat,lon){
   const col=colorDec(r[C.decision]);
   const mk=L.circleMarker([lat,lon],{radius:7,fillColor:col,color:'#fff',weight:1.5,fillOpacity:0.9}).addTo(markersLayer);
-  mk.bindPopup(`<b>${r[C.addr]||'—'}</b><br>Округ: ${r._sheet||'—'}<br>Кв. ${r[C.apt]||'—'} | ${r[C.area]} м² | ${r[C.citizens]} чел.<br>Решение: <b>${r[C.decision]||'—'}</b>`);
+  mk.bindPopup(`<b>${r[C.addr]||'—'}</b><br>Округ: <b>${r._sheet||'—'}</b><br>Кв. ${r[C.apt]||'—'} | ${r[C.area]} м² | ${r[C.citizens]} чел.<br>Решение: <b>${r[C.decision]||'—'}</b>`);
 }
 
 async function geocodeAll(rows){
@@ -463,27 +387,23 @@ async function geocodeAll(rows){
       if(j&&j[0]){const lat=+j[0].lat,lon=+j[0].lon;addMarker(r,lat,lon);bounds.push([lat,lon]);found++;}
     }catch(e){}
     done++;
-    if(done%5===0) el.textContent=`🔍 Геокодирование (${done}/${rows.length}, найдено: ${found})...`;
+    if(done%5===0)el.textContent=`🔍 Геокодирование (${done}/${rows.length}, найдено: ${found})...`;
     await sleep(1050);
   }
   if(bounds.length){map.fitBounds(bounds,{padding:[30,30]});el.style.color='#4caf50';el.textContent=`✅ Геокодировано: ${found} из ${rows.length}`;}
-  else{el.style.color='#888';el.textContent='ℹ️ Адреса не найдены. Уточните формат в таблице.';}
+  else{el.style.color='#888';el.textContent='ℹ️ Адреса не найдены на карте.';}
 }
 
-// ─── Demo data ─────────────────────────────────────────────────────
 function loadDemo(){
-  const rounds=['Г.О. Казань','Г.О. Набережные Челны','М.О. Альметьевск','Г.О. Нижнекамск','М.О. Чистополь',
-    'Г.О. Зеленодольск','М.О. Бугульма','Г.О. Лениногорск','М.О. Елабуга','Г.О. Менделеевск'];
+  const rounds=SHEETS.map(s=>s.name);
   const streets=['ул. Ленина','пр. Победы','ул. Советская','ул. Мира','пр. Революции'];
   const decs=['Положительное','Отрицательное','На рассмотрении','Отказ'];
-  const builders=['СК Монолит','ПИК','Самолёт','ЛСР','А101'];
   allData=[];
-  for(let i=0;i<120;i++){
+  for(let i=0;i<200;i++){
     const dec=decs[i%4];
-    const r=new Array(28).fill('');
+    const r=new Array(29).fill('');
     r[C.prog]='Подпрограмма '+(i%3+1);
-    r[C.mo]='Г.О. Тест';
-    r[C.np]=rounds[i%rounds.length];
+    r[C.mo]='Г.О. '+rounds[i%rounds.length];
     r[C.addr]=streets[i%streets.length]+', д.'+(i+1);
     r[C.apt]=String(i%50+1);
     r[C.area]=String((20+i%40).toFixed(1));
@@ -495,20 +415,17 @@ function loadDemo(){
     r[C.contractPrice]=String(2500000+i*90000);
     r[C.minPay]=i%3===0?'да':'нет';
     r[C.certType]=i%2===0?'Сертификат':'Выкуп';
-    r[C.builder]=builders[i%builders.length];
     r[C.dateApp]=`${(i%28)+1}.${String((i%12)+1).padStart(2,'0')}.2024`;
     r._sheet=rounds[i%rounds.length];
     allData.push(r);
   }
   filteredData=[...allData];
-  populateFilters();
-  render();
+  populateFilters();render();
   document.getElementById('filters').style.display='flex';
-  setStatus('✓ Загружено 120 демо-строк (10 округов)','ok');
+  setStatus(`✓ Демо: ${allData.length} строк, ${rounds.length} округов`,'ok');
   setProg('Демо-режим',100);
 }
 
-// ─── Helpers ───────────────────────────────────────────────────────
 function colorDec(d){
   const v=lo(d||'');
   if(v.includes('положит'))return'#4caf50';
@@ -517,49 +434,33 @@ function colorDec(d){
   if(v.includes('отказ'))return'#ce93d8';
   return'#4f8ef7';
 }
-function badgeDec(v){
-  const l=lo(v||'');
-  if(l.includes('полож'))return`<span class="b b-pos">${v}</span>`;
-  if(l.includes('отриц'))return`<span class="b b-neg">${v}</span>`;
-  if(l.includes('рассм'))return`<span class="b b-proc">${v}</span>`;
-  if(l.includes('отказ'))return`<span class="b b-rej">${v}</span>`;
-  return v||'—';
+function badgeDec(val){
+  const l=lo(val||'');
+  if(l.includes('полож'))return`<span class="b b-pos">${val}</span>`;
+  if(l.includes('отриц'))return`<span class="b b-neg">${val}</span>`;
+  if(l.includes('рассм'))return`<span class="b b-proc">${val}</span>`;
+  if(l.includes('отказ'))return`<span class="b b-rej">${val}</span>`;
+  return val||'—';
 }
-const rub=v=>new Intl.NumberFormat('ru-RU',{style:'currency',currency:'RUB',maximumFractionDigits:0}).format(v);
+const rub=x=>new Intl.NumberFormat('ru-RU',{style:'currency',currency:'RUB',maximumFractionDigits:0}).format(x);
 const lo=s=>String(s||'').toLowerCase();
 const up=s=>String(s||'').toUpperCase();
 const v=id=>document.getElementById(id).value;
 const show=id=>document.getElementById(id).style.display='block';
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function setProg(txt,pct){document.getElementById('progress-text').textContent=txt;document.getElementById('progress-fill').style.width=pct+'%';}
+function setStatus(msg,type){const el=document.getElementById('status-msg');el.textContent=msg;el.className=type==='ok'?'status-ok':type==='err'?'status-err':'status-info';}
+function setTime(){document.getElementById('update-time').textContent=`${new Date().toLocaleTimeString('ru')} | след. через ${secondsLeft}с`;}
+function updateBar(){const b=document.getElementById('bar');if(b)b.style.width=(secondsLeft/60*100)+'%';}
 
-function setProg(txt,pct){
-  document.getElementById('progress-text').textContent=txt;
-  document.getElementById('progress-fill').style.width=pct+'%';
-}
-function setStatus(msg,type){
-  const el=document.getElementById('status-msg');
-  el.textContent=msg;
-  el.className=type==='ok'?'status-ok':type==='err'?'status-err':'status-info';
-}
-function setTime(){
-  document.getElementById('update-time').textContent=
-    `${new Date().toLocaleTimeString('ru')} | след. через ${secondsLeft}с`;
-}
-function updateBar(){
-  const b=document.getElementById('bar');
-  if(b) b.style.width=(secondsLeft/60*100)+'%';
-}
-
-// ─── Init ──────────────────────────────────────────────────────────
-window.addEventListener('load', async ()=>{
-  const inIframe = window.self !== window.top;
+window.addEventListener('load',()=>{
+  const inIframe=window.self!==window.top;
   if(inIframe){
     setProg('Предпросмотр — нажмите «Демо»',0);
-    setStatus('В claude.ai внешние запросы заблокированы. На GitHub Pages загрузится автоматически.','err');
+    setStatus('В claude.ai внешние запросы заблокированы. На GitHub Pages всё работает автоматически.','err');
     return;
   }
-  await loadAllSheets();
-  startAuto();
+  reloadAll();
 });
 </script>
 </body>
