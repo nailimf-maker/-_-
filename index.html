@@ -127,13 +127,11 @@ body::before{
 .dd-pct{font-size:9px;color:var(--muted);font-weight:700;white-space:nowrap;text-align:right}
 .dd-val{font-size:17px;font-weight:900;white-space:nowrap;text-align:right}
 
-/* TOP — показываем 3, остальные скрыты */
+/* TOP — показываем 3, остальные в скроллящемся окне */
 .top-section{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
 .top-block{background:var(--card);border-radius:6px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.07);border:1px solid var(--border)}
-.tb-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:14px;display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none}
+.tb-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:14px;display:flex;align-items:center;gap:7px}
 .tb-title::before{content:'';width:16px;height:3px;background:var(--accent);display:inline-block;border-radius:2px}
-.tb-title-arrow{margin-left:auto;font-size:10px;color:var(--muted);transition:transform .2s}
-.tb-title-arrow.open{transform:rotate(180deg)}
 .top-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:7px 10px;background:#f8f9fb;border-radius:5px;transition:background .15s}
 .top-bar-row:hover{background:#f0f2f5}
 .tbr-rank{font-size:10px;font-weight:700;color:var(--muted);width:18px;text-align:right;flex-shrink:0}
@@ -141,9 +139,19 @@ body::before{
 .tbr-name:hover{color:var(--accent)}
 .tbr-area{font-size:9px;color:var(--muted);white-space:nowrap;flex-shrink:0}
 .tbr-cnt{font-size:15px;font-weight:900;color:var(--navy);min-width:28px;text-align:right;flex-shrink:0}
-.top-rows-hidden{display:none}
-.top-show-more{text-align:center;padding:8px;font-size:11px;font-weight:700;color:var(--cyan);cursor:pointer;border-top:1px solid var(--border);margin-top:4px}
+.top-show-more{text-align:center;padding:8px 0 0;font-size:11px;font-weight:700;color:var(--cyan);cursor:pointer;border-top:1px solid var(--border);margin-top:8px}
 .top-show-more:hover{color:var(--navy)}
+/* Модальное окошко со списком */
+.top-modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:1000;align-items:center;justify-content:center}
+.top-modal-overlay.open{display:flex}
+.top-modal{background:#fff;border-radius:10px;width:420px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden}
+.top-modal-header{background:var(--navy);padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
+.top-modal-title{font-size:13px;font-weight:700;color:#fff}
+.top-modal-close{background:none;border:none;color:rgba(255,255,255,.6);font-size:20px;cursor:pointer;padding:0;line-height:1;font-family:'Montserrat',sans-serif}
+.top-modal-close:hover{color:#fff}
+.top-modal-body{max-height:60vh;overflow-y:auto;padding:12px}
+.top-modal-body::-webkit-scrollbar{width:4px}
+.top-modal-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
 /* CHARTS */
 .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
@@ -174,15 +182,21 @@ tr:hover td{background:#f7f9fc}
 .bp{background:#e8f5e9;color:#1b5e20}.bn{background:#ffebee;color:#b71c1c}
 .bpr{background:#fff8e1;color:#e65100}.br{background:#f3e5f5;color:#4a148c}.bnone{background:#e3f2fd;color:#1565c0}
 
-/* FIN KPI */
-.fin-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+/* FIN TOP — чистый список без баров */
+.fin-top-row{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid #f0f2f5;transition:background .15s}
+.fin-top-row:hover{background:#f8f9fb;cursor:pointer}
+.fin-top-row:last-child{border-bottom:none}
+.ftr-rank{font-size:10px;font-weight:700;color:var(--muted);width:20px;text-align:right;flex-shrink:0}
+.ftr-name{font-size:12px;font-weight:700;color:var(--navy);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ftr-val{font-size:14px;font-weight:900;color:var(--navy);white-space:nowrap;text-align:right}
 .fin-kpi{background:var(--card);border-radius:6px;padding:20px 18px;border-bottom:4px solid var(--border);box-shadow:0 2px 10px rgba(0,0,0,.07)}
 .fin-kpi.c0{border-color:var(--navy)}.fin-kpi.c1{border-color:var(--green)}.fin-kpi.c2{border-color:var(--gold)}.fin-kpi.c3{border-color:var(--purple)}
 .fk-lbl{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
 .fk-val{font-size:28px;font-weight:900;color:var(--text);line-height:1;letter-spacing:-1px}
 .fk-sub{font-size:11px;color:var(--muted);margin-top:5px;font-weight:600}
 
-/* MAP */
+/* FIN KPI */
+.fin-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .map-content{padding:20px 28px;display:flex;flex-direction:column;gap:14px;position:relative;z-index:1}
 .map-toolbar{background:var(--navy);border-radius:6px;padding:12px 18px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .map-lbl{font-size:13px;font-weight:700;color:#fff;flex:1}
@@ -213,7 +227,13 @@ tr:hover td{background:#f7f9fc}
     <button class="ptab" onclick="switchPage('finance',this)">💰 Финансирование</button>
     <button class="ptab" onclick="switchPage('mappage',this)">🗺️ Карта</button>
   </div>
-  <div style="display:flex;align-items:center;gap:7px"><div class="live-dot"></div><span id="upd-time">Загрузка...</span></div>
+  <div style="display:flex;align-items:center;gap:7px">
+    <div class="live-dot"></div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end">
+      <span id="msk-time" style="font-size:13px;color:#fff;font-weight:700;letter-spacing:.3px">—</span>
+      <span id="upd-time" style="font-size:10px;color:rgba(255,255,255,.35)">Загрузка...</span>
+    </div>
+  </div>
   <button class="btn-upd" onclick="reloadAll()">↺ Обновить</button>
 </div>
 
@@ -232,6 +252,17 @@ tr:hover td{background:#f7f9fc}
   <div class="spin"></div>
   <div class="ldtxt" id="ldtxt">Подключение к данным...</div>
   <div class="pgwrap"><div class="pgfill" id="pgfill"></div></div>
+</div>
+
+<!-- Модальное окно для топа -->
+<div class="top-modal-overlay" id="top-modal" onclick="closeTopModal(event)">
+  <div class="top-modal">
+    <div class="top-modal-header">
+      <div class="top-modal-title" id="top-modal-title">Все округа</div>
+      <button class="top-modal-close" onclick="closeTopModal()">✕</button>
+    </div>
+    <div class="top-modal-body" id="top-modal-body"></div>
+  </div>
 </div>
 
 <!-- ОБЗОР -->
@@ -409,71 +440,127 @@ function switchPage(name,btn){
   if(name==='finance')renderFinance();
 }
 
+// ── КАРТА — Leaflet с хорошими тайлами ──────────────────────────────────────
+var HOUSES=[
+  {addr:'ул. Евстафьева, д. 11', lat:55.788404, lon:37.937939},
+  {addr:'ул. Ленина, д. 2',      lat:55.796638, lon:37.925102},
+  {addr:'ул. Саввинская, д. 2',  lat:55.729260, lon:38.029055},
+  {addr:'ул. Первомайская, д. 20',lat:55.788727, lon:37.938478},
+  {addr:'ул. Гагарина, д. 3',    lat:55.828399, lon:37.910809}
+];
+
 function renderMapPage(){
-  // Балашиха — реальные координаты аварийных домов
-  var houses=[
-    {addr:'ул. Евстафьева, д. 11', fromLat:55.788404, fromLon:37.937939},
-    {addr:'ул. Ленина, д. 2',      fromLat:55.796638, fromLon:37.925102},
-    {addr:'ул. Саввинская, д. 2',  fromLat:55.729260, fromLon:38.029055},
-    {addr:'ул. Первомайская, д. 20',fromLat:55.788727, fromLon:37.938478},
-    {addr:'ул. Гагарина, д. 3',    fromLat:55.828399, fromLon:37.910809}
-  ];
+  if(!mapInited){
+    mapInited=true;
+    // Используем Stamen Toner-lite — нейтральные тайлы без политических надписей
+    mapObj=L.map('map',{zoomControl:true}).setView([55.796638,37.925102],13);
+    L.tileLayer('https://tile.openstreetmap.bzh/br/{z}/{x}/{y}.png',{
+      attribution:'',maxZoom:19,
+      // fallback на стандартный OSM если bzh недоступен
+    }).addTo(mapObj);
+    // Резервный слой
+    var osmLayer=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      attribution:'© OpenStreetMap',maxZoom:19,opacity:0.85
+    });
+    // Пробуем загрузить bzh, при ошибке переключаем
+    var testImg=new Image();
+    testImg.onerror=function(){
+      mapObj.eachLayer(function(l){if(l.options&&l.options.maxZoom===19)mapObj.removeLayer(l);});
+      osmLayer.addTo(mapObj);
+    };
+    testImg.src='https://tile.openstreetmap.bzh/br/10/548/338.png';
 
-  // Ищем данные по Балашихе из таблицы — координаты нового жилья из столбцов lat(29)/lon(30)
+    mkLayer=L.layerGroup().addTo(mapObj);
+    setTimeout(function(){mapObj.invalidateSize();},200);
+  }
+
+  // Очищаем старые маркеры
+  if(mkLayer)mkLayer.clearLayers();
+
   var balData=allData.filter(function(r){return r._sheet==='Балашиха';});
+  var bounds=[];
+  var mapRowsHtml=[];
 
-  var mapRowsEl=document.getElementById('map-rows');
-  if(!mapRowsEl)return;
+  HOUSES.forEach(function(h){
+    // Красный маркер — аварийный дом
+    var fromIcon=L.divIcon({className:'',
+      html:'<div style="width:22px;height:22px;background:#e74c3c;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center"><div style="width:7px;height:7px;background:#fff;border-radius:50%"></div></div>',
+      iconSize:[22,22],iconAnchor:[11,11]});
 
-  var rows=houses.map(function(h){
-    // Ищем запись по адресу
     var match=balData.filter(function(r){
-      var ra=String(r[C.addr]||'').toLowerCase();
-      var ha=h.addr.toLowerCase().replace('ул.','').replace('д.','').replace(/\s+/g,' ').trim();
-      return ra.indexOf(ha.split(',')[0].trim())>=0||ra.indexOf(ha.split(' ')[0].trim())>=0;
+      var ra=String(r[C.addr]||'').toLowerCase().replace(/[.,]/g,'');
+      var ha=h.addr.toLowerCase().replace(/[ул\. ]/g,'').split(',')[0].trim();
+      return ra.indexOf(ha)>=0;
     })[0];
 
-    var toLat=match?n(String(match[C.lat]||'').replace(',','.')):null;
-    var toLon=match?n(String(match[C.lon]||'').replace(',','.')):null;
-    var hasRoute=toLat&&toLon&&toLat>50&&toLon>30;
+    var toLat=match?n(String(match[C.lat]||'').replace(',','.')):0;
+    var toLon=match?n(String(match[C.lon]||'').replace(',','.')):0;
+    var hasRoute=toLat>50&&toLon>30;
     var newAddrTxt=match?String(match[C.newAddr]||'').trim():'';
 
-    // Google Maps маршрут: от аварийного до нового
-    var mapsUrl=hasRoute
-      ?'https://maps.google.com/maps/dir/'+h.fromLat+','+h.fromLon+'/'+toLat+','+toLon+'?hl=ru'
-      :'https://maps.google.com/maps?q='+h.fromLat+','+h.fromLon+'&hl=ru&z=16';
+    var popHtml='<div style="font-family:Montserrat,sans-serif;font-size:12px;min-width:200px">'+
+      '<b style="color:#e74c3c">🏚️ '+h.addr+'</b><br><span style="color:#888;font-size:10px">Балашиха · Аварийный дом</span>';
+    if(match){
+      popHtml+='<hr style="margin:5px 0;border:none;border-top:1px solid #f0f2f5">'+
+        'Площадь: <b>'+n(match[C.area]).toFixed(1)+' м²</b> · Граждан: <b>'+(match[C.citizens]||'—')+'</b><br>'+
+        'Решение: <b style="color:'+cdec(match[C.decision])+'">'+normDecision(match[C.decision])+'</b>';
+    }
+    popHtml+='</div>';
 
-    return'<div style="background:#f8f9fb;border-radius:6px;padding:11px 14px;display:flex;align-items:center;gap:12px;border-left:3px solid '+(hasRoute?'#27ae60':'#e74c3c')+'">'+
-      '<div style="width:10px;height:10px;border-radius:50%;background:#e74c3c;flex-shrink:0"></div>'+
+    L.marker([h.lat,h.lon],{icon:fromIcon}).bindPopup(popHtml).addTo(mkLayer);
+    bounds.push([h.lat,h.lon]);
+
+    // Если есть координаты нового жилья — рисуем маршрут
+    if(hasRoute){
+      var toIcon=L.divIcon({className:'',
+        html:'<div style="width:22px;height:22px;background:#27ae60;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.35)"></div>',
+        iconSize:[22,22],iconAnchor:[11,11]});
+
+      var toPopHtml='<div style="font-family:Montserrat,sans-serif;font-size:12px">'+
+        '<b style="color:#27ae60">🏠 Новое жильё</b><br>'+
+        (newAddrTxt||toLat.toFixed(4)+', '+toLon.toFixed(4))+'<br>'+
+        '<span style="color:#888;font-size:10px">← Переселён из: '+h.addr+'</span></div>';
+
+      L.marker([toLat,toLon],{icon:toIcon}).bindPopup(toPopHtml).addTo(mkLayer);
+      bounds.push([toLat,toLon]);
+
+      // Пунктирная стрелка
+      L.polyline([[h.lat,h.lon],[toLat,toLon]],{
+        color:'#2980b9',weight:2.5,opacity:.85,dashArray:'8 5'
+      }).addTo(mkLayer);
+    }
+
+    // Строка под картой
+    var gmUrl=hasRoute
+      ?'https://maps.google.com/maps/dir/'+h.lat+','+h.lon+'/'+toLat+','+toLon+'?hl=ru'
+      :'https://maps.google.com/maps?q='+h.lat+','+h.lon+'&hl=ru&z=17';
+
+    mapRowsHtml.push(
+      '<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#f8f9fb;border-radius:6px;border-left:3px solid '+(hasRoute?'#27ae60':'#e74c3c')+'">'+
+      '<div style="width:9px;height:9px;border-radius:50%;background:#e74c3c;flex-shrink:0"></div>'+
       '<div style="flex:1;min-width:0">'+
         '<div style="font-size:12px;font-weight:700;color:var(--navy)">'+h.addr+'</div>'+
-        (match?'<div style="font-size:10px;color:var(--muted);margin-top:2px">Площадь: '+n(match[C.area]).toFixed(1)+' м² · Граждан: '+(match[C.citizens]||'—')+' · '+normDecision(match[C.decision])+'</div>':'<div style="font-size:10px;color:var(--muted)">Нет данных в таблице</div>')+
+        (hasRoute?'<div style="font-size:10px;color:#27ae60;font-weight:600">→ '+(newAddrTxt||'Новый адрес задан ('+toLat.toFixed(3)+', '+toLon.toFixed(3)+')')+'</div>':
+          '<div style="font-size:10px;color:var(--muted)">Координаты нового жилья не заданы в таблице</div>')+
       '</div>'+
-      (hasRoute?
-        '<div style="display:flex;align-items:center;gap:8px">'+
-          '<span style="font-size:16px;color:#2980b9;font-weight:900">→</span>'+
-          '<div style="width:10px;height:10px;border-radius:50%;background:#27ae60;flex-shrink:0"></div>'+
-          '<div style="min-width:0">'+
-            '<div style="font-size:11px;font-weight:700;color:#27ae60">Новое жильё</div>'+
-            (newAddrTxt?'<div style="font-size:10px;color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+newAddrTxt+'">'+newAddrTxt+'</div>':'<div style="font-size:10px;color:var(--muted)">'+toLat.toFixed(4)+', '+toLon.toFixed(4)+'</div>')+
-          '</div>'+
-        '</div>'
-      :'<div style="font-size:10px;color:var(--muted);font-style:italic">Координаты нового жилья не заданы</div>')+
-      '<a href="'+mapsUrl+'" target="_blank" style="background:var(--navy);color:#fff;border-radius:4px;padding:6px 12px;font-size:10px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0">'+(hasRoute?'🗺️ Маршрут':'📍 На карте')+'</a>'+
-    '</div>';
+      '<a href="'+gmUrl+'" target="_blank" style="background:var(--navy);color:#fff;border-radius:4px;padding:6px 12px;font-size:10px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0">'+(hasRoute?'🗺️ Маршрут':'📍 Карта')+'</a>'+
+      '</div>'
+    );
   });
 
-  mapRowsEl.innerHTML=rows.join('');
+  document.getElementById('map-rows').innerHTML=mapRowsHtml.join('');
 
-  // Обновляем iframe центром на Балашиху
-  var gmap=document.getElementById('gmap');
-  if(gmap)gmap.src='https://maps.google.com/maps?q=55.80,37.94&z=12&t=m&output=embed&hl=ru';
+  if(bounds.length>0){
+    mapObj.fitBounds(L.latLngBounds(bounds),{padding:[40,40]});
+  }
 
-  var withRoute=houses.filter(function(h){
-    var m=balData.filter(function(r){var ra=String(r[C.addr]||'').toLowerCase();var ha=h.addr.toLowerCase().replace('ул.','').replace(/\s+/g,' ').trim();return ra.indexOf(ha.split(',')[0].trim())>=0;})[0];
-    return m&&n(String(m[C.lat]||'').replace(',','.'))>50;
+  var withRoute=HOUSES.filter(function(h){
+    var m=balData.filter(function(r){return n(String(r[C.lat]||'').replace(',','.'))>50;})[0];
+    return !!m;
   }).length;
-  document.getElementById('geost').textContent='Балашиха: '+houses.length+' аварийных домов, '+withRoute+' с маршрутами переселения';
+
+  document.getElementById('geost').textContent=
+    'Балашиха: '+HOUSES.length+' домов на карте'+(withRoute>0?' · '+withRoute+' маршрутов':'');
 }
 
 function kpiClick(type){
@@ -568,7 +655,25 @@ function reloadAll(){
   });
 }
 
-function startAuto(){clearInterval(autoT);clearInterval(cdT);secs=7200;autoT=setInterval(reloadAll,7200000);cdT=setInterval(function(){secs=Math.max(0,secs-1);var h=Math.floor(secs/3600),m=Math.floor((secs%3600)/60),s=secs%60,ts=h>0?(h+'ч '+m+'м'):(m>0?(m+'м'):(s+'с'));document.getElementById('upd-time').textContent=new Date().toLocaleTimeString('ru')+' · через '+ts;},1000);}
+// МСК время
+function updateMskTime(){
+  var now=new Date();
+  var msk=new Date(now.getTime()+now.getTimezoneOffset()*60000+3*3600000);
+  var pad=function(n){return n<10?'0'+n:n;};
+  var timeStr=pad(msk.getHours())+':'+pad(msk.getMinutes())+':'+pad(msk.getSeconds());
+  var days=['вс','пн','вт','ср','чт','пт','сб'];
+  var months=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  var dateStr=msk.getDate()+' '+months[msk.getMonth()]+' '+msk.getFullYear()+', '+days[msk.getDay()];
+  var el=document.getElementById('msk-time');
+  if(el)el.textContent=timeStr+' МСК';
+  // Дата в subtitle
+  var el2=document.getElementById('msk-date');
+  if(el2)el2.textContent=dateStr;
+}
+setInterval(updateMskTime,1000);
+updateMskTime();
+
+function startAuto(){clearInterval(autoT);clearInterval(cdT);secs=7200;autoT=setInterval(reloadAll,7200000);cdT=setInterval(function(){secs=Math.max(0,secs-1);var h=Math.floor(secs/3600),m=Math.floor((secs%3600)/60),s=secs%60,ts=h>0?(h+'ч '+m+'м'):(m>0?(m+'м'):(s+'с'));document.getElementById('upd-time').textContent='Данные: '+new Date().toLocaleTimeString('ru')+' · обн. через '+ts;},1000);}
 
 function fillF(){
   function fill(id,fn){var s=document.getElementById(id),v={};allData.forEach(function(r){var x=fn(r);if(x&&x.trim()&&x!=='—'&&x!=='-')v[x]=1;});s.innerHTML='<option value="">—</option>'+Object.keys(v).sort().map(function(x){return'<option>'+x+'</option>';}).join('');}
@@ -622,25 +727,31 @@ function renderAll(){
   var rm={};
   d.forEach(function(r){var k=r._sheet||'—';if(!rm[k])rm[k]={t:0,sob:0,nan:0,cert:0,vyk:0,pos:0,area:0};rm[k].t++;rm[k].area+=n(r[C.area]);if(normOwner(r[C.owner])==='Собственник')rm[k].sob++;if(normOwner(r[C.owner])==='Наниматель')rm[k].nan++;var nt=normType(r[C.certType]);if(nt==='Сертификат')rm[k].cert++;if(nt==='Выкуп')rm[k].vyk++;if(normDecision(r[C.decision])==='Положительное')rm[k].pos++;});
 
-  function renderTop(cid,sk){
+  function renderTop(cid,sk,label){
     var srt=Object.entries(rm).sort(function(a,b){return b[1][sk]-a[1][sk];}).filter(function(e){return e[1][sk]>0;});
-    var visible=srt.slice(0,3);
-    var hidden=srt.slice(3);
-    function makeRow(e,i,globalIdx){
+    function makeRow(e,i){
       var astr=e[1].area>0?e[1].area.toFixed(0)+' м²':'';
       return'<div class="top-bar-row">'+
-        '<span class="tbr-rank">'+(globalIdx+1)+'</span>'+
+        '<span class="tbr-rank">'+(i+1)+'</span>'+
         '<span class="tbr-name" onclick="selRound(\''+e[0].replace(/'/g,"\\'")+'\')" title="'+e[0]+'">'+e[0]+'</span>'+
         (astr?'<span class="tbr-area">'+astr+'</span>':'')+
         '<span class="tbr-cnt">'+e[1][sk]+'</span>'+
         '</div>';
     }
-    var hiddenHtml=hidden.length?
-      '<div class="top-rows-hidden" id="hidden-'+cid+'">'+hidden.map(function(e,i){return makeRow(e,i,i+3);}).join('')+'</div>'+
-      '<div class="top-show-more" id="btn-'+cid+'" onclick="toggleTopHidden(\''+cid+'\')">▼ Показать ещё '+hidden.length+'</div>'
+    var top3html=srt.slice(0,3).map(function(e,i){return makeRow(e,i);}).join('');
+    var allHtml=srt.map(function(e,i){return makeRow(e,i);}).join('');
+    var moreBtn=srt.length>3
+      ?'<div class="top-show-more" onclick="openTopModal(\''+label+'\',\''+cid+'\')">▼ Показать все ('+srt.length+')</div>'
       :'';
-    document.getElementById(cid).innerHTML=visible.map(function(e,i){return makeRow(e,i,i);}).join('')+hiddenHtml;
+    document.getElementById(cid).innerHTML=top3html+moreBtn;
+    document.getElementById(cid).setAttribute('data-all',allHtml);
   }
+  renderTop('top-total','t','По количеству квартир');
+  renderTop('top-sob','sob','По собственникам');
+  renderTop('top-nan','nan','По нанимателям');
+  renderTop('top-cert','cert','По сертификатам');
+  renderTop('top-vyk','vyk','По выкупу');
+  renderTop('top-pos','pos','По положительным решениям');
   renderTop('top-total','t');renderTop('top-sob','sob');renderTop('top-nan','nan');
   renderTop('top-cert','cert');renderTop('top-vyk','vyk');renderTop('top-pos','pos');
 
@@ -720,13 +831,16 @@ function renderRegistry(){
     }).join('')+'</tbody>';
 }
 
-function toggleTopHidden(cid){
-  var el=document.getElementById('hidden-'+cid);
-  var btn=document.getElementById('btn-'+cid);
-  if(!el||!btn)return;
-  var isOpen=el.style.display==='block';
-  el.style.display=isOpen?'none':'block';
-  btn.textContent=isOpen?'▼ Показать ещё':'▲ Свернуть';
+function openTopModal(label,cid){
+  var el=document.getElementById(cid);
+  if(!el)return;
+  document.getElementById('top-modal-title').textContent=label+' — все округа';
+  document.getElementById('top-modal-body').innerHTML=el.getAttribute('data-all')||'';
+  document.getElementById('top-modal').classList.add('open');
+}
+function closeTopModal(e){
+  if(!e||e.target===document.getElementById('top-modal'))
+    document.getElementById('top-modal').classList.remove('open');
 }
 
 function selRound(name){
