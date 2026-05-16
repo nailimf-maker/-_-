@@ -13,7 +13,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--ink:#0a0e1a;--navy:#0d1b2e;--accent:#c0392b;--cyan:#00c9b1;--gold:#f39c12;--green:#27ae60;--blue:#2980b9;--purple:#8e44ad;--bg:#f0f2f5;--card:#fff;--border:#e0e4ed;--muted:#7a8499;--text:#0a0e1a}
 body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:url('bg.png') center/cover no-repeat;opacity:.06;pointer-events:none;z-index:0}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:url('bg.png') center/cover no-repeat;opacity:.07;pointer-events:none;z-index:0}
 
 /* HEADER */
 .hdr{background:var(--navy);min-height:60px;display:flex;align-items:center;padding:0 28px;gap:16px;position:relative;z-index:10;box-shadow:0 4px 20px rgba(0,0,0,.35)}
@@ -269,22 +269,21 @@ tr:hover td{background:#f7f9fc}
 <div class="map-content">
   <div class="map-toolbar">
     <div class="map-lbl">Карта аварийных домов · Московская область</div>
-    <button class="mtab active" onclick="setMF('all',this)">Все</button>
-    <button class="mtab" onclick="setMF('pos',this)">Положит.</button>
-    <button class="mtab" onclick="setMF('proc',this)">На рассм.</button>
-    <button class="mtab" onclick="setMF('neg',this)">Отриц.</button>
   </div>
   <div class="map-stats" id="map-stats"></div>
-  <div class="map-wrap">
-    <div id="map"></div>
-    <div class="map-legend">
-      <div class="leg"><div class="ldot" style="background:#27ae60"></div>Положительное</div>
-      <div class="leg"><div class="ldot" style="background:#e74c3c"></div>Отрицательное</div>
-      <div class="leg"><div class="ldot" style="background:#f39c12"></div>На рассмотрении</div>
-      <div class="leg"><div class="ldot" style="background:#9b59b6"></div>Отказ</div>
-      <div class="leg"><div class="ldot" style="background:#2980b9"></div>Не указано</div>
+  <div class="map-wrap" style="border-radius:6px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.1);border:1px solid var(--border)">
+    <iframe
+      src="https://yandex.ru/maps/?ll=37.618423%2C55.751574&z=9&l=map&mode=whatshere"
+      width="100%"
+      style="height:calc(100vh - 300px);min-height:440px;border:none;display:block"
+      allowfullscreen
+      loading="lazy"
+      title="Карта Московской области">
+    </iframe>
+    <div style="padding:8px 14px;background:#fafbfc;border-top:1px solid var(--border);font-size:11px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:8px">
+      <span>🗺️ Яндекс.Карты · Московская область</span>
+      <span style="margin-left:auto;color:var(--cyan)">Геокодирование адресов доступно по запросу</span>
     </div>
-    <div id="geost">Геокодирование не запущено. Добавьте адреса для отображения точек.</div>
   </div>
 </div>
 </div>
@@ -310,7 +309,7 @@ var SHEETS=[
 ];
 var C={mo:3,np:4,addr:5,apt:6,area:7,citizens:8,owner:11,certType:12,dateApp:13,decision:14,signed:15,buyConsent:17,price:20,dkp:21,minPay:28};
 
-// Нормализация типа (сертификат/выкуп)
+// Нормализация типа
 function normType(raw){
   var s=String(raw||'').trim().toLowerCase();
   if(!s||s==='-'||s==='—')return'Не указано';
@@ -318,6 +317,26 @@ function normType(raw){
   if(s.indexOf('выкуп')>=0)return'Выкуп';
   if(s.indexOf('не подавал')>=0)return'Не подавалось';
   return'Другое';
+}
+
+// Нормализация собственника
+function normOwner(raw){
+  var s=String(raw||'').trim().toLowerCase();
+  if(!s||s==='-'||s==='—')return'Не указано';
+  if(s.indexOf('собственник')>=0)return'Собственник';
+  if(s.indexOf('наниматель')>=0)return'Наниматель';
+  return'Другое';
+}
+
+// Нормализация решения
+function normDecision(raw){
+  var s=String(raw||'').trim().toLowerCase();
+  if(!s||s==='-'||s==='—')return'Не указано';
+  if(s.indexOf('положительн')>=0)return'Положительное';
+  if(s.indexOf('отриц')>=0)return'Отрицательное';
+  if(s.indexOf('отказ')>=0)return'Отказ';
+  if(s.indexOf('рассм')>=0||s.indexOf('приостановк')>=0)return'На рассмотрении';
+  return'Не указано';
 }
 
 var allData=[],filteredData=[],loaded=0;
@@ -339,10 +358,6 @@ function switchPage(name,btn){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
   btn.classList.add('active');
   document.getElementById('page-'+name).classList.add('active');
-  if(name==='mappage'){
-    if(!mapInited)initMap();
-    else if(mapObj)setTimeout(function(){mapObj.invalidateSize();},150);
-  }
 }
 
 // KPI детализация
@@ -459,7 +474,7 @@ function startAuto(){clearInterval(autoT);clearInterval(cdT);secs=7200;autoT=set
 function fillF(){
   function fill(id,fn){var s=document.getElementById(id),v={};allData.forEach(function(r){var x=fn(r);if(x&&x.trim()&&x!=='—'&&x!=='-')v[x]=1;});s.innerHTML='<option value="">—</option>'+Object.keys(v).sort().map(function(x){return'<option>'+x+'</option>';}).join('');}
   fill('f-round',function(r){return r._sheet;});
-  fill('f-dec',function(r){return r[C.decision];});
+  fill('f-dec',function(r){return normDecision(r[C.decision]);});
   // Тип — нормализованный
   var s=document.getElementById('f-type'),v={};
   allData.forEach(function(r){var x=normType(r[C.certType]);v[x]=1;});
@@ -471,7 +486,7 @@ function applyF(){
   selR=fr||null;activeDecKey=null;
   document.querySelectorAll('.dec-card').forEach(function(c){c.classList.remove('active-dec');});
   document.getElementById('dec-detail').classList.remove('show');
-  filteredData=allData.filter(function(r){return(!fr||r._sheet===fr)&&(!fd||r[C.decision]===fd)&&(!ft||normType(r[C.certType])===ft);});
+  filteredData=allData.filter(function(r){return(!fr||r._sheet===fr)&&(!fd||normDecision(r[C.decision])===fd)&&(!ft||normType(r[C.certType])===ft);});
   document.getElementById('fcnt').textContent=filteredData.length<allData.length?'▶ '+filteredData.length+' строк':'';
   renderAll();fmk();
 }
@@ -548,25 +563,36 @@ function renderAll(){
 }
 
 function renderCharts(d){
-  // Chart решения
-  var dm={};d.forEach(function(r){var k=r[C.decision]||'Не указано';if(k&&k!=='-')dm[k]=(dm[k]||0)+1;});
+  // Chart решения — нормализованный горизонтальный бар
+  var dm={};d.forEach(function(r){var k=normDecision(r[C.decision]);dm[k]=(dm[k]||0)+1;});
+  var decOrder=['Положительное','На рассмотрении','Отрицательное','Отказ','Не указано'];
+  var decCols={'Положительное':'#27ae60','На рассмотрении':'#f39c12','Отрицательное':'#e74c3c','Отказ':'#9b59b6','Не указано':'#2980b9'};
+  var dmLabels=decOrder.filter(function(k){return dm[k]>0;});
+  var dmVals=dmLabels.map(function(k){return dm[k];});
+  var dmColors=dmLabels.map(function(k){return decCols[k];});
   var c1=document.getElementById('c-dec');
   if(c1){if(charts.dec){charts.dec.destroy();charts.dec=null;}
-    charts.dec=new Chart(c1,{type:'polarArea',
-      data:{labels:Object.keys(dm),datasets:[{data:Object.values(dm),backgroundColor:Object.keys(dm).map(function(k){return cdec(k)+'bb';}),borderColor:Object.keys(dm).map(cdec),borderWidth:2}]},
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{position:'right',labels:{color:'#444',font:{size:11,family:'Montserrat',weight:'600'},padding:12,boxWidth:14}}},
-        scales:{r:{ticks:{backdropColor:'transparent',color:'#aaa',font:{size:9}},grid:{color:'rgba(0,0,0,.06)'}}}}});}
+    charts.dec=new Chart(c1,{type:'bar',
+      data:{labels:dmLabels,datasets:[{data:dmVals,backgroundColor:dmColors,borderRadius:8,borderSkipped:false,barThickness:36}]},
+      options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:function(i){return' '+i.parsed.x+' домов';}}}},
+        scales:{x:{ticks:{color:'#888',font:{size:11,family:'Montserrat'}},grid:{color:'rgba(0,0,0,.05)'}},
+          y:{ticks:{color:'#444',font:{size:12,family:'Montserrat',weight:'600'}},grid:{display:false}}}}});}
 
-  // Chart собственники
-  var om={};d.forEach(function(r){var k=String(r[C.owner]||'').trim();if(k&&k!=='-'&&k!=='—'){var lk=lo(k);if(lk.indexOf('собственник')>=0)om['Собственник']=(om['Собственник']||0)+1;else if(lk.indexOf('наниматель')>=0)om['Наниматель']=(om['Наниматель']||0)+1;else om[k]=(om[k]||0)+1;}});
+  // Chart собственники — нормализованный doughnut
+  var om={};d.forEach(function(r){var k=normOwner(r[C.owner]);om[k]=(om[k]||0)+1;});
+  var ownOrder=['Собственник','Наниматель','Не указано','Другое'];
+  var ownCols={'Собственник':'#c0392b','Наниматель':'#0d1b2e','Не указано':'#2980b9','Другое':'#f39c12'};
+  var omLabels=ownOrder.filter(function(k){return om[k]>0;});
+  var omVals=omLabels.map(function(k){return om[k];});
+  var omColors=omLabels.map(function(k){return ownCols[k];});
   var c2=document.getElementById('c-own');
   if(c2){if(charts.own){charts.own.destroy();charts.own=null;}
     charts.own=new Chart(c2,{type:'doughnut',
-      data:{labels:Object.keys(om),datasets:[{data:Object.values(om),backgroundColor:['#0d1b2e','#c0392b','#2980b9','#27ae60','#f39c12','#9b59b6'],borderColor:'#fff',borderWidth:4,hoverOffset:22,hoverBorderWidth:5}]},
-      options:{responsive:true,maintainAspectRatio:false,cutout:'50%',
-        plugins:{legend:{position:'right',labels:{color:'#444',font:{size:11,family:'Montserrat',weight:'600'},padding:12,boxWidth:14}}},
-        animation:{animateRotate:true,animateScale:true,duration:1100,easing:'easeInOutQuart'}}});}
+      data:{labels:omLabels,datasets:[{data:omVals,backgroundColor:omColors,borderColor:'#fff',borderWidth:4,hoverOffset:22}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'55%',
+        plugins:{legend:{position:'right',labels:{color:'#444',font:{size:12,family:'Montserrat',weight:'600'},padding:14,boxWidth:16}}},
+        animation:{animateRotate:true,animateScale:true,duration:1100}}});}
 
   // Timeline
   var mm={};
