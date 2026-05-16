@@ -9,212 +9,570 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap');
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--navy:#0d1b2e;--accent:#c0392b;--cyan:#00c9b1;--gold:#f39c12;--green:#27ae60;--blue:#2980b9;--purple:#8e44ad;--bg:#f0f2f5;--card:#fff;--border:#e0e4ed;--muted:#7a8499;--text:#0a0e1a}
-body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-body::before{
-  content:'';
-  position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
-  background-image:url('bg.png');
-  background-size:cover;
-  background-position:center center;
-  background-repeat:no-repeat;
-  background-attachment:fixed;
-  opacity:.10;
-  pointer-events:none;
-  z-index:0;
-  mix-blend-mode:multiply;
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #060609;
+  --surface: rgba(18, 18, 24, 0.75);
+  --surface-hover: rgba(25, 25, 32, 0.85);
+  --border: rgba(255, 255, 255, 0.05);
+  --border-glow: rgba(0, 229, 255, 0.25);
+  --text: #ffffff;
+  --muted: rgba(255, 255, 255, 0.5);
+  --accent: #ff4d4d;
+  --cyan: #00e5ff;
+  --gold: #ffd740;
+  --green: #00e676;
+  --blue: #40c4ff;
+  --purple: #b388ff;
+  --navy: #0d0d12;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+  --glow-cyan: 0 0 30px rgba(0, 229, 255, 0.25);
+  --radius-card: 35px 10px 40px 20px;
+  --radius-btn: 25px 6px 25px 10px;
 }
 
-.hdr{background:var(--navy);min-height:60px;display:flex;align-items:center;padding:0 28px;gap:16px;position:relative;z-index:10;box-shadow:0 4px 20px rgba(0,0,0,.35)}
-.hdr-icon{width:40px;height:40px;background:var(--accent);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.hdr-t1{font-size:14px;font-weight:700;color:#fff}
-.hdr-t2{font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
-.hdr-prog{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:3px;padding:5px 14px;font-size:11px;color:rgba(255,255,255,.7);white-space:nowrap}
-.page-tabs{display:flex;gap:5px}
-.ptab{padding:7px 16px;border-radius:3px;border:1px solid rgba(255,255,255,.18);background:transparent;color:rgba(255,255,255,.5);font-size:12px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;transition:all .2s}
-.ptab:hover{color:#fff;background:rgba(255,255,255,.08)}
-.ptab.active{background:#fff;color:var(--navy)}
-.live-dot{width:7px;height:7px;border-radius:50%;background:#00c9b1;animation:pulse 2s infinite;flex-shrink:0}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,201,177,.5)}50%{box-shadow:0 0 0 6px rgba(0,201,177,0)}}
-#upd-time{font-size:11px;color:rgba(255,255,255,.35);white-space:nowrap}
-.btn-upd{background:var(--accent);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif}
-.btn-upd:hover{background:#e74c3c}
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-weight: 300;
+  line-height: 1.5;
+}
 
-.fbar{background:var(--navy);padding:10px 28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:2px solid rgba(0,201,177,.2);position:relative;z-index:9}
-.fbar-group{display:flex;align-items:center;gap:8px}
-.fbar-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.8px;white-space:nowrap}
-.fbar-select{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;border-radius:3px;padding:8px 12px;font-size:12px;outline:none;font-family:'Montserrat',sans-serif;font-weight:600;cursor:pointer;min-width:150px}
-.fbar-select option{background:#1a2e4a;color:#fff}
-.fbar-select:focus{border-color:var(--cyan)}
-.btn-rst{background:transparent;color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.12);border-radius:3px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif}
-.btn-rst:hover{color:#fff}
-#fcnt{font-size:11px;color:var(--cyan);margin-left:auto;font-weight:700}
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(0,229,255,0.03) 0px, transparent 1px, transparent 40px, rgba(0,229,255,0.03) 41px),
+    repeating-linear-gradient(90deg, rgba(0,229,255,0.03) 0px, transparent 1px, transparent 40px, rgba(0,229,255,0.03) 41px);
+  pointer-events: none;
+  z-index: 0;
+}
 
-.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 110px);gap:18px;position:relative;z-index:5}
-.spin{width:46px;height:46px;border:3px solid rgba(0,201,177,.15);border-top:3px solid var(--cyan);border-radius:50%;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.ldtxt{font-size:13px;color:var(--muted);font-weight:600}
-.pgwrap{width:280px;background:rgba(0,201,177,.1);border-radius:2px;height:3px}
-.pgfill{height:3px;border-radius:2px;background:var(--cyan);transition:width .3s;width:0%}
+/* HEADER */
+.hdr {
+  background: rgba(8, 8, 12, 0.8);
+  backdrop-filter: blur(25px);
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  padding: 12px 28px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.6);
+}
 
-.page{display:none;position:relative;z-index:1}
-.page.active{display:block}
-.content{padding:24px 28px;display:flex;flex-direction:column;gap:20px}
+.hdr-icon {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  border-radius: 15px 5px 22px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 0 20px rgba(0,229,255,0.5);
+}
+
+.hdr-t1 { font-size: 15px; font-weight: 300; color: #fff; letter-spacing: 0.3px; }
+.hdr-t2 { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 2px; font-weight: 300; }
+
+.hdr-prog {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 30px;
+  padding: 7px 20px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.6);
+  backdrop-filter: blur(10px);
+  font-weight: 400;
+}
+
+.page-tabs { display: flex; gap: 6px; }
+.ptab {
+  padding: 8px 18px;
+  border-radius: 30px 6px 30px 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: transparent;
+  color: rgba(255,255,255,0.5);
+  font-size: 12px;
+  font-weight: 400;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+.ptab:hover { color: #fff; background: rgba(255,255,255,0.05); box-shadow: 0 0 20px rgba(0,229,255,0.2); }
+.ptab.active { background: rgba(255,255,255,0.1); color: #fff; border-color: var(--cyan); box-shadow: 0 0 25px rgba(0,229,255,0.3); }
+
+.live-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+  box-shadow: 0 0 10px var(--green);
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,230,118,0.7); }
+  50% { box-shadow: 0 0 0 10px rgba(0,230,118,0); }
+}
+
+#msk-time { font-size: 13px; color: #fff; font-weight: 300; letter-spacing: 0.5px; }
+#upd-time { font-size: 10px; color: rgba(255,255,255,0.3); }
+
+.btn-upd {
+  background: linear-gradient(135deg, var(--accent), #c0392b);
+  color: #fff;
+  border: none;
+  border-radius: 20px 4px 20px 8px;
+  padding: 10px 22px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  box-shadow: 0 4px 15px rgba(231,76,60,0.3);
+  transition: all 0.3s;
+}
+.btn-upd:hover { box-shadow: 0 6px 25px rgba(231,76,60,0.5); transform: translateY(-1px); }
+
+/* FILTER BAR */
+.fbar {
+  background: rgba(15, 15, 22, 0.7);
+  backdrop-filter: blur(15px);
+  padding: 12px 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  position: relative;
+  z-index: 9;
+}
+.fbar-group { display: flex; align-items: center; gap: 8px; }
+.fbar-label {
+  font-size: 10px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.fbar-select {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #fff;
+  border-radius: 20px 4px 20px 6px;
+  padding: 8px 14px;
+  font-size: 12px;
+  outline: none;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  cursor: pointer;
+  min-width: 150px;
+  backdrop-filter: blur(5px);
+}
+.fbar-select option { background: #111; color: #fff; }
+.fbar-select:focus { border-color: var(--cyan); box-shadow: 0 0 12px rgba(0,229,255,0.3); }
+
+.btn-rst {
+  background: transparent;
+  color: rgba(255,255,255,0.4);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px 4px 20px 6px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.btn-rst:hover { color: #fff; border-color: var(--cyan); box-shadow: 0 0 15px rgba(0,229,255,0.3); }
+#fcnt { font-size: 11px; color: var(--cyan); margin-left: auto; font-weight: 400; }
+
+/* LOADING */
+.loading {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: calc(100vh - 130px); gap: 20px; position: relative; z-index: 5;
+}
+.spin {
+  width: 50px; height: 50px;
+  border: 2px solid rgba(0,229,255,0.15);
+  border-top: 2px solid var(--cyan);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  box-shadow: 0 0 25px rgba(0,229,255,0.3);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.ldtxt { font-size: 13px; color: rgba(255,255,255,0.5); font-weight: 300; }
+.pgwrap { width: 280px; background: rgba(0,229,255,0.1); border-radius: 2px; height: 3px; }
+.pgfill { height: 3px; border-radius: 2px; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); width: 0%; transition: width 0.3s; }
+
+/* PAGES */
+.page { display: none; position: relative; z-index: 1; }
+.page.active { display: block; }
+.content { padding: 24px 28px; display: flex; flex-direction: column; gap: 24px; }
 
 /* KPI HERO */
-.kpi-hero{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
-.kpi-h{background:var(--card);border-radius:6px;padding:22px 18px;border-bottom:4px solid var(--border);cursor:pointer;transition:all .22s;box-shadow:0 2px 10px rgba(0,0,0,.07);position:relative;overflow:hidden}
-.kpi-h::after{content:'';position:absolute;top:-16px;right:-16px;width:64px;height:64px;border-radius:50%;opacity:.06}
-.kpi-h.c0{border-color:var(--navy)}.kpi-h.c0::after{background:var(--navy)}
-.kpi-h.c1{border-color:var(--green)}.kpi-h.c1::after{background:var(--green)}
-.kpi-h.c2{border-color:var(--blue)}.kpi-h.c2::after{background:var(--blue)}
-.kpi-h.c3{border-color:var(--gold)}.kpi-h.c3::after{background:var(--gold)}
-.kpi-h.c4{border-color:var(--purple)}.kpi-h.c4::after{background:var(--purple)}
-.kpi-h:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
-.kpi-h.active-kpi{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.14)}
-.kh-lbl{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:8px}
-.kh-val{font-size:38px;font-weight:900;color:var(--text);line-height:1;letter-spacing:-1px}
-.kh-sub{font-size:11px;color:var(--muted);margin-top:5px;font-weight:600}
-.kh-hint{font-size:9px;color:var(--accent);margin-top:7px;font-weight:700;letter-spacing:.4px;opacity:0;transition:opacity .2s}
-.kpi-h:hover .kh-hint,.kpi-h.active-kpi .kh-hint{opacity:1}
+.kpi-hero { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; }
+.kpi-h {
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-card);
+  padding: 28px 22px;
+  border: 1px solid rgba(255,255,255,0.04);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.kpi-h::after {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+}
+.kpi-h:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 40px rgba(0,229,255,0.3);
+  border-color: rgba(255,255,255,0.1);
+}
+.kpi-h.active-kpi {
+  border-color: var(--cyan);
+  box-shadow: 0 0 50px rgba(0,229,255,0.35);
+}
+.kh-lbl {
+  font-size: 9px; font-weight: 400; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 12px;
+}
+.kh-val {
+  font-size: 48px; font-weight: 200; color: #fff; line-height: 1;
+  letter-spacing: -1px; text-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+.kh-sub { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 6px; font-weight: 300; }
+.kh-hint {
+  font-size: 9px; color: var(--cyan); margin-top: 10px; font-weight: 400;
+  letter-spacing: 0.5px; opacity: 0; transition: opacity 0.3s;
+}
+.kpi-h:hover .kh-hint, .kpi-h.active-kpi .kh-hint { opacity: 1; }
 
 /* KPI PANEL */
-.kpi-panel{background:linear-gradient(135deg,#e8f8f5,#f0faf8);border-radius:8px;padding:20px 24px;display:none;box-shadow:0 6px 28px rgba(0,201,177,.15);border:2px solid rgba(0,201,177,.3)}
-.kpi-panel.show{display:block}
-.kpp-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid rgba(0,201,177,.25)}
-.kpp-total{font-size:28px;font-weight:900;color:var(--navy);line-height:1}
-.kpp-title-txt{font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.7px}
-.kpp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
-.kpp-item{background:#fff;border-radius:6px;padding:10px 12px;display:grid;grid-template-columns:20px 1fr auto auto auto;align-items:center;gap:6px;border-left:4px solid var(--cyan);box-shadow:0 1px 6px rgba(0,0,0,.06);cursor:pointer;transition:all .2s;overflow:hidden}
-.kpp-item:hover{transform:translateX(4px);box-shadow:0 3px 12px rgba(0,201,177,.2);border-left-color:var(--navy)}
-.kpp-rank{font-size:10px;font-weight:700;color:var(--muted);text-align:right}
-.kpp-name{font-size:11px;color:var(--navy);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-.kpp-area{font-size:9px;color:var(--muted);white-space:nowrap;text-align:right}
-.kpp-pct{font-size:9px;color:var(--muted);font-weight:700;white-space:nowrap;text-align:right}
-.kpp-val{font-size:17px;font-weight:900;white-space:nowrap;text-align:right}
+.kpi-panel {
+  background: rgba(15,15,20,0.85);
+  backdrop-filter: blur(30px);
+  border-radius: 28px 10px 40px 20px;
+  padding: 28px 28px;
+  display: none;
+  border: 1px solid rgba(0,229,255,0.2);
+  box-shadow: 0 15px 50px rgba(0,229,255,0.25);
+}
+.kpi-panel.show { display: block; }
+.kpp-header { display: flex; align-items: baseline; gap: 15px; margin-bottom: 24px; }
+.kpp-total { font-size: 42px; font-weight: 200; color: #fff; letter-spacing: -1px; }
+.kpp-title-txt { font-size: 14px; font-weight: 300; color: var(--cyan); text-transform: uppercase; letter-spacing: 1.2px; }
+.kpp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.kpp-item {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(10px);
+  border-radius: 20px 6px 24px 12px;
+  padding: 16px 18px;
+  display: grid;
+  grid-template-columns: 24px 1fr auto auto auto;
+  align-items: center;
+  gap: 10px;
+  border-left: 4px solid var(--cyan);
+  transition: all 0.25s;
+  cursor: pointer;
+}
+.kpp-item:hover { background: rgba(255,255,255,0.06); transform: translateX(6px); box-shadow: 0 0 25px rgba(0,229,255,0.3); }
+
+.kpp-rank, .dd-rank { font-size: 10px; font-weight: 400; color: var(--muted); text-align: right; }
+.kpp-name, .dd-name { font-size: 11px; font-weight: 400; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.kpp-area, .dd-area { font-size: 9px; color: var(--muted); white-space: nowrap; text-align: right; }
+.kpp-pct, .dd-pct { font-size: 9px; color: var(--muted); font-weight: 400; white-space: nowrap; text-align: right; }
+.kpp-val, .dd-val { font-size: 17px; font-weight: 300; white-space: nowrap; text-align: right; }
 
 /* DECISION CARDS */
-.dec-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.dec-card{border-radius:6px;padding:20px 18px;cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden}
-.dec-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.2)}
-.dec-card.active-dec{transform:translateY(-5px);box-shadow:0 14px 36px rgba(0,0,0,.25);outline:3px solid rgba(255,255,255,.7)}
-.dc-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;opacity:.8;margin-bottom:8px}
-.dc-val{font-size:38px;font-weight:900;line-height:1;letter-spacing:-1px}
-.dc-sub{font-size:11px;opacity:.7;margin-top:5px;font-weight:600}
-.dc-icon{position:absolute;bottom:10px;right:14px;font-size:32px;opacity:.15}
-.dc-pos{background:linear-gradient(135deg,#1a7a40,#27ae60);color:#fff}
-.dc-proc{background:linear-gradient(135deg,#b7770d,#f39c12);color:#fff}
-.dc-neg{background:linear-gradient(135deg,#922b21,#e74c3c);color:#fff}
-.dc-rej{background:linear-gradient(135deg,#6c3483,#9b59b6);color:#fff}
-.dc-none{background:linear-gradient(135deg,#154360,#2980b9);color:#fff}
+.dec-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+.dec-card {
+  border-radius: 30px 8px 35px 18px;
+  padding: 28px 20px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.dec-card:hover { transform: translateY(-8px); box-shadow: 0 25px 60px rgba(0,0,0,0.8); }
+.dec-card.active-dec { outline: 2px solid rgba(255,255,255,0.4); box-shadow: 0 0 45px currentColor; }
+.dc-label { font-size: 9px; font-weight: 400; text-transform: uppercase; letter-spacing: 1.2px; opacity: 0.9; margin-bottom: 12px; }
+.dc-val { font-size: 44px; font-weight: 200; line-height: 1; letter-spacing: -1px; }
+.dc-sub { font-size: 11px; opacity: 0.7; margin-top: 6px; font-weight: 300; }
+.dc-icon { position: absolute; bottom: 12px; right: 18px; font-size: 36px; opacity: 0.15; }
 
-/* DEC DETAIL */
-.dec-detail{background:linear-gradient(135deg,#eaf4ff,#f0f8ff);border-radius:8px;padding:20px 24px;display:none;box-shadow:0 6px 28px rgba(41,128,185,.12);border:2px solid rgba(41,128,185,.2)}
-.dec-detail.show{display:block}
-.dd-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid rgba(0,0,0,.08)}
-.dd-total{font-size:28px;font-weight:900;line-height:1}
-.dd-title-txt{font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.7px}
-.dd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
-.dd-item{background:#fff;border-radius:6px;padding:10px 12px;display:grid;grid-template-columns:20px 1fr auto auto auto;align-items:center;gap:6px;border-left:4px solid #ccc;box-shadow:0 1px 6px rgba(0,0,0,.05);cursor:pointer;transition:all .2s;overflow:hidden}
-.dd-item:hover{transform:translateX(4px);box-shadow:0 3px 12px rgba(0,0,0,.1)}
-.dd-rank{font-size:10px;font-weight:700;color:var(--muted);text-align:right}
-.dd-name{font-size:11px;color:var(--navy);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-.dd-area{font-size:9px;color:var(--muted);white-space:nowrap;text-align:right}
-.dd-pct{font-size:9px;color:var(--muted);font-weight:700;white-space:nowrap;text-align:right}
-.dd-val{font-size:17px;font-weight:900;white-space:nowrap;text-align:right}
+/* Цвета карточек решений */
+.dc-pos { background: linear-gradient(135deg, #0d3d1f, #1b5e20); color: #fff; border-left: 3px solid #27ae60; }
+.dc-proc { background: linear-gradient(135deg, #3e2a0d, #e65100); color: #fff; border-left: 3px solid #f39c12; }
+.dc-neg { background: linear-gradient(135deg, #3d0f0f, #b71c1c); color: #fff; border-left: 3px solid #e74c3c; }
+.dc-rej { background: linear-gradient(135deg, #1e0a2b, #4a148c); color: #fff; border-left: 3px solid #9b59b6; }
+.dc-none { background: linear-gradient(135deg, #0a1e2e, #1565c0); color: #fff; border-left: 3px solid #2980b9; }
 
-/* TOP — показываем 3, остальные в скроллящемся окне */
-.top-section{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
-.top-block{background:var(--card);border-radius:6px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.07);border:1px solid var(--border)}
-.tb-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:14px;display:flex;align-items:center;gap:7px}
-.tb-title::before{content:'';width:16px;height:3px;background:var(--accent);display:inline-block;border-radius:2px}
-.top-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:7px 10px;background:#f8f9fb;border-radius:5px;transition:background .15s}
-.top-bar-row:hover{background:#f0f2f5}
-.tbr-rank{font-size:10px;font-weight:700;color:var(--muted);width:18px;text-align:right;flex-shrink:0}
-.tbr-name{font-size:12px;font-weight:700;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;transition:color .15s}
-.tbr-name:hover{color:var(--accent)}
-.tbr-area{font-size:9px;color:var(--muted);white-space:nowrap;flex-shrink:0}
-.tbr-cnt{font-size:15px;font-weight:900;color:var(--navy);min-width:28px;text-align:right;flex-shrink:0}
-.top-show-more{text-align:center;padding:8px 0 0;font-size:11px;font-weight:700;color:var(--cyan);cursor:pointer;border-top:1px solid var(--border);margin-top:8px}
-.top-show-more:hover{color:var(--navy)}
-/* Модальное окошко со списком */
-.top-modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:1000;align-items:center;justify-content:center}
-.top-modal-overlay.open{display:flex}
-.top-modal{background:#fff;border-radius:10px;width:420px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden}
-.top-modal-header{background:var(--navy);padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
-.top-modal-title{font-size:13px;font-weight:700;color:#fff}
-.top-modal-close{background:none;border:none;color:rgba(255,255,255,.6);font-size:20px;cursor:pointer;padding:0;line-height:1;font-family:'Montserrat',sans-serif}
-.top-modal-close:hover{color:#fff}
-.top-modal-body{max-height:60vh;overflow-y:auto;padding:12px}
-.top-modal-body::-webkit-scrollbar{width:4px}
-.top-modal-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+/* DECISION DETAIL PANEL */
+.dec-detail {
+  background: rgba(20,20,28,0.85);
+  backdrop-filter: blur(25px);
+  border-radius: 28px 10px 40px 20px;
+  padding: 24px 28px;
+  display: none;
+  border: 1px solid rgba(64, 196, 255, 0.2);
+  box-shadow: 0 15px 45px rgba(64, 196, 255, 0.2);
+}
+.dec-detail.show { display: block; }
+.dd-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; }
+.dd-total { font-size: 36px; font-weight: 200; color: #fff; }
+.dd-title-txt { font-size: 13px; font-weight: 300; color: var(--blue); text-transform: uppercase; letter-spacing: 1px; }
+.dd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.dd-item {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(10px);
+  border-radius: 18px 4px 22px 10px;
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: 22px 1fr auto auto auto;
+  align-items: center;
+  gap: 8px;
+  border-left: 4px solid #40c4ff;
+  transition: all 0.25s;
+  cursor: pointer;
+}
+.dd-item:hover { background: rgba(255,255,255,0.06); transform: translateX(6px); }
+
+/* TOP SECTIONS */
+.top-section { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+.top-block {
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  border-radius: 20px 6px 30px 14px;
+  padding: 22px 18px;
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow: var(--shadow);
+}
+.tb-title {
+  font-size: 10px; font-weight: 400; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.tb-title::before {
+  content: '';
+  width: 16px; height: 3px;
+  background: var(--accent);
+  display: inline-block;
+  border-radius: 2px;
+}
+.top-bar-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 8px; padding: 10px 12px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 12px 4px 12px 6px;
+  transition: background 0.2s;
+}
+.top-bar-row:hover { background: rgba(255,255,255,0.05); }
+.tbr-rank { font-size: 10px; font-weight: 400; color: var(--muted); width: 18px; text-align: right; }
+.tbr-name { font-size: 12px; font-weight: 400; color: #fff; flex: 1; cursor: pointer; }
+.tbr-name:hover { color: var(--cyan); }
+.tbr-area { font-size: 9px; color: var(--muted); }
+.tbr-cnt { font-size: 16px; font-weight: 300; color: #fff; min-width: 28px; text-align: right; }
+.top-show-more {
+  text-align: center; padding: 10px 0 0; font-size: 11px; font-weight: 400;
+  color: var(--cyan); cursor: pointer; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 8px;
+}
+.top-show-more:hover { color: #fff; }
+
+/* MODAL */
+.top-modal-overlay {
+  display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;
+}
+.top-modal-overlay.open { display: flex; }
+.top-modal {
+  background: rgba(20,20,25,0.95);
+  backdrop-filter: blur(35px);
+  border-radius: 30px 10px 40px 18px;
+  width: 450px; max-width: 95vw;
+  box-shadow: 0 25px 70px rgba(0,0,0,0.8);
+  border: 1px solid rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.top-modal-header {
+  background: rgba(255,255,255,0.03);
+  padding: 16px 22px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.top-modal-title { font-size: 14px; font-weight: 300; color: #fff; letter-spacing: 0.5px; }
+.top-modal-close {
+  background: none; border: none; color: rgba(255,255,255,0.5); font-size: 22px;
+  cursor: pointer; font-family: 'Montserrat', sans-serif;
+}
+.top-modal-close:hover { color: #fff; }
+.top-modal-body { max-height: 60vh; overflow-y: auto; padding: 14px; }
 
 /* CHARTS */
-.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.chart-card{background:var(--card);border-radius:6px;padding:24px 28px;box-shadow:0 2px 10px rgba(0,0,0,.07);border:1px solid var(--border)}
-.cc-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:18px;display:flex;align-items:center;gap:8px}
-.cc-title::before{content:'';width:18px;height:3px;background:var(--cyan);display:inline-block;border-radius:2px}
-.cwrap{position:relative;height:360px;width:100%}
-.timeline-card{background:var(--card);border-radius:6px;padding:24px 28px;box-shadow:0 2px 10px rgba(0,0,0,.07);border:1px solid var(--border)}
-.twrap-h{position:relative;height:280px;width:100%}
-
-/* CARD */
-.card{background:var(--card);border-radius:6px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.07);border:1px solid var(--border)}
-.ctitle{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px}
+.charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.chart-card, .timeline-card {
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  border-radius: 24px 8px 32px 16px;
+  padding: 28px;
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow: var(--shadow);
+}
+.cc-title {
+  font-size: 10px; font-weight: 400; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 22px;
+  display: flex; align-items: center; gap: 8px;
+}
+.cc-title::before {
+  content: '';
+  width: 18px; height: 3px;
+  background: var(--cyan);
+  display: inline-block;
+  border-radius: 2px;
+}
+.cwrap, .twrap-h { position: relative; height: 320px; width: 100%; }
 
 /* REGISTRY */
-.registry-card{background:var(--card);border-radius:6px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07);border:1px solid var(--border)}
-.reg-header{background:var(--navy);padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.reg-title{font-size:13px;font-weight:700;color:#fff;flex:1}
-.reg-cnt{font-size:11px;color:var(--cyan);font-weight:700}
-.reg-sort{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:3px;padding:6px 10px;font-size:11px;outline:none;font-family:'Montserrat',sans-serif;font-weight:600;cursor:pointer}
-.reg-sort option{background:var(--navy)}
-.twrap{overflow:auto;max-height:500px}
-table{width:100%;border-collapse:collapse;font-size:11px}
-th{background:#f8f9fb;color:var(--muted);padding:9px 11px;text-align:left;position:sticky;top:0;white-space:nowrap;z-index:2;border-bottom:2px solid var(--border);font-weight:700;text-transform:uppercase;letter-spacing:.4px;font-size:9px}
-td{padding:8px 11px;border-bottom:1px solid #f0f2f5;white-space:nowrap}
-tr:hover td{background:#f7f9fc}
-.b{display:inline-block;padding:3px 8px;border-radius:3px;font-size:10px;font-weight:700}
-.bp{background:#e8f5e9;color:#1b5e20}.bn{background:#ffebee;color:#b71c1c}
-.bpr{background:#fff8e1;color:#e65100}.br{background:#f3e5f5;color:#4a148c}.bnone{background:#e3f2fd;color:#1565c0}
+.registry-card {
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  border-radius: 24px 6px 36px 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow: var(--shadow);
+}
+.reg-header {
+  background: rgba(255,255,255,0.03);
+  padding: 18px 22px;
+  display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.reg-title { font-size: 14px; font-weight: 300; color: #fff; }
+.reg-cnt { font-size: 11px; color: var(--cyan); font-weight: 300; }
+.reg-sort {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #fff;
+  border-radius: 20px 4px 20px 6px;
+  padding: 6px 12px;
+  font-size: 11px;
+  outline: none;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+}
+.reg-sort option { background: #111; }
+.twrap { max-height: 500px; overflow: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 11px; }
+th {
+  background: rgba(255,255,255,0.03);
+  color: rgba(255,255,255,0.5);
+  padding: 12px 14px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-size: 9px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.02); }
+tr:hover td { background: rgba(255,255,255,0.02); }
 
-/* FIN TOP — чистый список без баров */
-.fin-top-row{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid #f0f2f5;transition:background .15s}
-.fin-top-row:hover{background:#f8f9fb;cursor:pointer}
-.fin-top-row:last-child{border-bottom:none}
-.ftr-rank{font-size:10px;font-weight:700;color:var(--muted);width:20px;text-align:right;flex-shrink:0}
-.ftr-name{font-size:12px;font-weight:700;color:var(--navy);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ftr-val{font-size:14px;font-weight:900;color:var(--navy);white-space:nowrap;text-align:right}
-.fin-kpi{background:var(--card);border-radius:6px;padding:20px 18px;border-bottom:4px solid var(--border);box-shadow:0 2px 10px rgba(0,0,0,.07)}
-.fin-kpi.c0{border-color:var(--navy)}.fin-kpi.c1{border-color:var(--green)}.fin-kpi.c2{border-color:var(--gold)}.fin-kpi.c3{border-color:var(--purple)}
-.fk-lbl{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
-.fk-val{font-size:28px;font-weight:900;color:var(--text);line-height:1;letter-spacing:-1px}
-.fk-sub{font-size:11px;color:var(--muted);margin-top:5px;font-weight:600}
+/* BADGES */
+.b { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 400; }
+.bp { background: rgba(39,174,96,0.15); color: #00e676; }
+.bn { background: rgba(231,76,60,0.15); color: #ff5252; }
+.bpr { background: rgba(243,156,18,0.15); color: #ffd740; }
+.br { background: rgba(155,89,182,0.15); color: #b388ff; }
+.bnone { background: rgba(41,128,185,0.15); color: #40c4ff; }
 
-/* FIN KPI */
-.fin-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.map-content{padding:20px 28px;display:flex;flex-direction:column;gap:14px;position:relative;z-index:1}
-.map-toolbar{background:var(--navy);border-radius:6px;padding:12px 18px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.map-lbl{font-size:13px;font-weight:700;color:#fff;flex:1}
-.map-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.mstat{background:var(--card);border-radius:6px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 6px rgba(0,0,0,.07);border:1px solid var(--border)}
-.mstat-dot{width:14px;height:14px;border-radius:3px;flex-shrink:0}
-.mstat-val{font-size:22px;font-weight:900;color:var(--text)}
-.mstat-lbl{font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:2px}
-.map-wrap{background:var(--card);border-radius:6px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07);border:1px solid var(--border)}
-#map{height:calc(100vh - 320px);min-height:440px}
-.map-legend{display:flex;gap:12px;padding:8px 14px;background:#fafbfc;border-top:1px solid var(--border);flex-wrap:wrap;align-items:center}
-.leg{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);font-weight:600}
-.ldot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-#geost{font-size:10px;color:var(--muted);padding:5px 14px;background:#fafbfc;border-top:1px solid var(--border);font-weight:600;text-align:center}
+/* FINANCE PAGE */
+.fin-kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.fin-kpi {
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-card);
+  padding: 22px 18px;
+  border-bottom: 4px solid;
+  box-shadow: var(--shadow);
+}
+.fin-kpi.c0 { border-bottom-color: #27ae60; }
+.fin-kpi.c1 { border-bottom-color: #f39c12; }
+.fin-kpi.c2 { border-bottom-color: #40c4ff; }
+.fin-kpi.c3 { border-bottom-color: #b388ff; }
+.fk-lbl { font-size: 9px; font-weight: 400; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
+.fk-val { font-size: 32px; font-weight: 200; color: #fff; line-height: 1; }
+.fk-sub { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 6px; font-weight: 300; }
+
+/* MAP PAGE */
+.map-content { padding: 20px 28px; display: flex; flex-direction: column; gap: 14px; }
+.map-toolbar {
+  background: rgba(10,10,16,0.8);
+  backdrop-filter: blur(15px);
+  border-radius: 24px 6px 32px 12px;
+  padding: 14px 22px;
+  display: flex; align-items: center; gap: 12px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.map-lbl { font-size: 13px; font-weight: 300; color: #fff; }
+.map-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.mstat {
+  background: var(--surface);
+  backdrop-filter: blur(15px);
+  border-radius: 18px 6px 24px 10px;
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.mstat-dot { width: 14px; height: 14px; border-radius: 4px; }
+.mstat-val { font-size: 22px; font-weight: 200; color: #fff; }
+.mstat-lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
+.map-wrap {
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  border-radius: 20px 6px 30px 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+#map { height: calc(100vh - 280px); min-height: 480px; }
+.map-legend {
+  display: flex; gap: 14px; padding: 12px 18px;
+  background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.05);
+  align-items: center;
+}
+.leg { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--muted); font-weight: 300; }
+.ldot { width: 10px; height: 10px; border-radius: 50%; }
+#geost { font-size: 10px; color: var(--muted); padding: 6px 16px; background: rgba(0,0,0,0.2); border-top: 1px solid rgba(255,255,255,0.05); text-align: center; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="hdr">
   <div class="hdr-icon">🏛️</div>
   <div style="flex:1">
@@ -227,16 +585,17 @@ tr:hover td{background:#f7f9fc}
     <button class="ptab" onclick="switchPage('finance',this)">💰 Финансирование</button>
     <button class="ptab" onclick="switchPage('mappage',this)">🗺️ Карта</button>
   </div>
-  <div style="display:flex;align-items:center;gap:7px">
+  <div style="display:flex;align-items:center;gap:8px">
     <div class="live-dot"></div>
     <div style="display:flex;flex-direction:column;align-items:flex-end">
-      <span id="msk-time" style="font-size:13px;color:#fff;font-weight:700;letter-spacing:.3px">—</span>
-      <span id="upd-time" style="font-size:10px;color:rgba(255,255,255,.35)">Загрузка...</span>
+      <span id="msk-time" style="font-size:13px;color:#fff;font-weight:300;letter-spacing:0.3px">—</span>
+      <span id="upd-time" style="font-size:10px;color:rgba(255,255,255,0.3)">Загрузка...</span>
     </div>
   </div>
   <button class="btn-upd" onclick="reloadAll()">↺ Обновить</button>
 </div>
 
+<!-- FILTER BAR -->
 <div class="fbar">
   <div class="fbar-group"><span class="fbar-label">Округ</span>
     <select class="fbar-select" id="f-round" onchange="applyF()"><option value="">Все округа</option></select></div>
@@ -248,13 +607,14 @@ tr:hover td{background:#f7f9fc}
   <span id="fcnt"></span>
 </div>
 
+<!-- LOADING -->
 <div class="loading" id="loading">
   <div class="spin"></div>
   <div class="ldtxt" id="ldtxt">Подключение к данным...</div>
   <div class="pgwrap"><div class="pgfill" id="pgfill"></div></div>
 </div>
 
-<!-- Модальное окно для топа -->
+<!-- MODAL -->
 <div class="top-modal-overlay" id="top-modal" onclick="closeTopModal(event)">
   <div class="top-modal">
     <div class="top-modal-header">
@@ -265,29 +625,29 @@ tr:hover td{background:#f7f9fc}
   </div>
 </div>
 
-<!-- ОБЗОР -->
+<!-- PAGES -->
 <div class="page active" id="page-overview">
 <div class="content">
   <div class="kpi-hero">
-    <div class="kpi-h c0" onclick="kpiClick('total')"><div class="kh-lbl">Всего квартир</div><div class="kh-val" id="kv-total">—</div><div class="kh-sub" id="kv-area">—</div><div class="kh-hint">▼ ПО ОКРУГАМ</div></div>
-    <div class="kpi-h c1" onclick="kpiClick('sob')"><div class="kh-lbl">Собственники</div><div class="kh-val" id="kv-sob">—</div><div class="kh-sub" id="kv-sob-s">—</div><div class="kh-hint">▼ ПО ОКРУГАМ</div></div>
-    <div class="kpi-h c2" onclick="kpiClick('nan')"><div class="kh-lbl">Наниматели</div><div class="kh-val" id="kv-nan">—</div><div class="kh-sub" id="kv-nan-s">—</div><div class="kh-hint">▼ ПО ОКРУГАМ</div></div>
-    <div class="kpi-h c3" onclick="kpiClick('cert')"><div class="kh-lbl">Сертификаты</div><div class="kh-val" id="kv-cert">—</div><div class="kh-sub" id="kv-cert-s">—</div><div class="kh-hint">▼ ПО ОКРУГАМ</div></div>
-    <div class="kpi-h c4" onclick="kpiClick('vyk')"><div class="kh-lbl">Выкуп</div><div class="kh-val" id="kv-vyk">—</div><div class="kh-sub" id="kv-vyk-s">—</div><div class="kh-hint">▼ ПО ОКРУГАМ</div></div>
+    <div class="kpi-h" onclick="kpiClick('total')"><div class="kh-lbl">Всего квартир</div><div class="kh-val" id="kv-total">—</div><div class="kh-sub" id="kv-area">—</div><div class="kh-hint">▼ ПО ОКРУГАМ</div></div>
+    <div class="kpi-h" onclick="kpiClick('sob')"><div class="kh-lbl">Собственники</div><div class="kh-val" id="kv-sob">—</div><div class="kh-sub" id="kv-sob-s">—</div><div class="kh-hint">▼ ПО ОКРУГАМ</div></div>
+    <div class="kpi-h" onclick="kpiClick('nan')"><div class="kh-lbl">Наниматели</div><div class="kh-val" id="kv-nan">—</div><div class="kh-sub" id="kv-nan-s">—</div><div class="kh-hint">▼ ПО ОКРУГАМ</div></div>
+    <div class="kpi-h" onclick="kpiClick('cert')"><div class="kh-lbl">Сертификаты</div><div class="kh-val" id="kv-cert">—</div><div class="kh-sub" id="kv-cert-s">—</div><div class="kh-hint">▼ ПО ОКРУГАМ</div></div>
+    <div class="kpi-h" onclick="kpiClick('vyk')"><div class="kh-lbl">Выкуп</div><div class="kh-val" id="kv-vyk">—</div><div class="kh-sub" id="kv-vyk-s">—</div><div class="kh-hint">▼ ПО ОКРУГАМ</div></div>
   </div>
   <div class="kpi-panel" id="kpi-panel">
     <div class="kpp-header"><span class="kpp-total" id="kpp-total">—</span><span class="kpp-title-txt" id="kpp-title">—</span></div>
     <div class="kpp-grid" id="kpp-grid"></div>
   </div>
 
-  <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">Решения</div>
+  <div style="font-size:10px;font-weight:400;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Решения</div>
   <div class="dec-row" id="dec-row"></div>
   <div class="dec-detail" id="dec-detail">
     <div class="dd-header"><span class="dd-total" id="dd-total">—</span><span class="dd-title-txt" id="dd-title-txt">—</span></div>
     <div class="dd-grid" id="dd-grid"></div>
   </div>
 
-  <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">Топ округов</div>
+  <div style="font-size:10px;font-weight:400;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Топ округов</div>
   <div class="top-section">
     <div class="top-block"><div class="tb-title">По количеству квартир</div><div id="top-total"></div></div>
     <div class="top-block"><div class="tb-title">По собственникам</div><div id="top-sob"></div></div>
@@ -323,13 +683,13 @@ tr:hover td{background:#f7f9fc}
 </div>
 </div>
 
-<!-- ФИНАНСИРОВАНИЕ -->
+<!-- FINANCE PAGE -->
 <div class="page" id="page-finance">
 <div class="content">
   <div class="fin-kpi-row" id="fin-kpi-row"></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
-    <div class="card"><div class="ctitle">Топ по стоимости оценки</div><div id="fin-top-eval"></div></div>
-    <div class="card"><div class="ctitle">Топ по цене договора ДКП/ДДУ</div><div id="fin-top-dkp"></div></div>
+    <div class="chart-card" style="padding:20px"><div class="cc-title">Топ по стоимости оценки</div><div id="fin-top-eval"></div></div>
+    <div class="chart-card" style="padding:20px"><div class="cc-title">Топ по цене договора ДКП/ДДУ</div><div id="fin-top-dkp"></div></div>
   </div>
   <div class="chart-card">
     <div class="cc-title">Стоимость по оценке vs Цена договора ДКП/ДДУ — топ-15 округов (млн ₽)</div>
@@ -352,27 +712,28 @@ tr:hover td{background:#f7f9fc}
 </div>
 </div>
 
-<!-- КАРТА -->
+<!-- MAP PAGE -->
 <div class="page" id="page-mappage">
 <div class="map-content">
   <div class="map-toolbar">
     <div class="map-lbl">🗺️ Карта переселения · Московская область</div>
-    <span style="font-size:11px;color:rgba(255,255,255,.5)">🔴 Аварийный дом → 🟢 Новое жильё (стрелка)</span>
+    <span style="font-size:11px;color:rgba(255,255,255,0.4);font-weight:300">🔴 Аварийный дом → 🟢 Новое жильё (стрелка)</span>
   </div>
   <div class="map-stats" id="map-stats"></div>
   <div class="map-wrap">
     <div id="map"></div>
     <div class="map-legend">
-      <div class="leg"><div class="ldot" style="background:#e74c3c"></div>Аварийный дом (откуда)</div>
-      <div class="leg"><div class="ldot" style="background:#27ae60"></div>Новое жильё (куда)</div>
-      <div class="leg" style="color:var(--blue);font-weight:700">→ Маршрут переселения</div>
-      <span style="margin-left:auto;font-size:10px;color:var(--cyan);font-weight:700" id="geost">Загрузка карты...</span>
+      <div class="leg"><div class="ldot" style="background:#e74c3c"></div>Аварийный дом</div>
+      <div class="leg"><div class="ldot" style="background:#27ae60"></div>Новое жильё</div>
+      <div class="leg" style="color:var(--blue);font-weight:300">→ Маршрут</div>
+      <span style="margin-left:auto;font-size:10px;color:var(--cyan)" id="geost">Загрузка карты...</span>
     </div>
   </div>
 </div>
 </div>
 
 <script>
+// ── ДАННЫЕ И ПЕРЕМЕННЫЕ ────────────────────────────────────────────────────
 var PUB='https://docs.google.com/spreadsheets/d/e/2PACX-1vSzyHOAkQRwBuyLTWw0xyAkA3aQWjHNAT1wSRMmmB7zjYARDMG470ErejHEFid200TUUbGvbQNYUPsE/pub?output=csv';
 var SHEETS=[
   {name:'Балашиха',gid:'1795562364'},{name:'Богородский',gid:'0'},{name:'Бронницы',gid:'1103582215'},
@@ -392,12 +753,12 @@ var SHEETS=[
   {name:'Щелково',gid:'2101160216'},{name:'Электросталь',gid:'1617637044'}
 ];
 
-// Колонки
+// Индексы колонок
 var C={mo:3,np:4,addr:5,apt:6,area:7,citizens:8,owner:11,certType:12,dateApp:13,
   decision:14,signed:15,buyConsent:17,price:20,dkp:21,newDistrict:22,newAddr:23,newArea:24,
   builder:25,contractType:26,contractPrice:27,minPay:28,lat:29,lon:30};
 
-// Реальные координаты Балашихи — аварийные дома
+// Координаты аварийных домов Балашихи
 var RESETTLEMENT=[
   {from:{addr:'ул. Евстафьева, д. 11',lat:55.788404,lon:37.937939},to:null,round:'Балашиха'},
   {from:{addr:'ул. Ленина, д. 2',     lat:55.796638,lon:37.925102},to:null,round:'Балашиха'},
@@ -406,6 +767,7 @@ var RESETTLEMENT=[
   {from:{addr:'ул. Гагарина, д. 3',   lat:55.828399,lon:37.910809},to:null,round:'Балашиха'}
 ];
 
+// ── ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ───────────────────────────────────────────────
 function normType(r){var s=String(r||'').trim().toLowerCase();if(!s||s==='-'||s==='—')return'Не указано';if(s.indexOf('сертификат')>=0)return'Сертификат';if(s.indexOf('выкуп')>=0)return'Выкуп';if(s.indexOf('не подавал')>=0)return'Не подавалось';return'Другое';}
 function normOwner(r){var s=String(r||'').trim().toLowerCase();if(!s||s==='-'||s==='—')return'Не указано';if(s.indexOf('собственник')>=0)return'Собственник';if(s.indexOf('наниматель')>=0)return'Наниматель';return'Другое';}
 function normDecision(r){var s=String(r||'').trim().toLowerCase();if(!s||s==='-'||s==='—')return'Не указано';if(s.indexOf('положительн')>=0)return'Положительное';if(s.indexOf('отриц')>=0)return'Отрицательное';if(s.indexOf('отказ')>=0)return'Отказ';if(s.indexOf('рассм')>=0||s.indexOf('приостановк')>=0)return'На рассмотрении';return'Не указано';}
@@ -431,206 +793,7 @@ var decCfg=[
   {key:'none',label:'Не указано',cls:'dc-none',icon:'?',color:'#2980b9',filter:'none'}
 ];
 
-function switchPage(name,btn){
-  document.querySelectorAll('.ptab').forEach(function(b){b.classList.remove('active');});
-  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
-  btn.classList.add('active');
-  document.getElementById('page-'+name).classList.add('active');
-  if(name==='mappage')renderMapPage();
-  if(name==='finance')renderFinance();
-}
-
-// ── КАРТА — Leaflet с хорошими тайлами ──────────────────────────────────────
-var HOUSES=[
-  {addr:'ул. Евстафьева, д. 11', lat:55.788404, lon:37.937939},
-  {addr:'ул. Ленина, д. 2',      lat:55.796638, lon:37.925102},
-  {addr:'ул. Саввинская, д. 2',  lat:55.729260, lon:38.029055},
-  {addr:'ул. Первомайская, д. 20',lat:55.788727, lon:37.938478},
-  {addr:'ул. Гагарина, д. 3',    lat:55.828399, lon:37.910809}
-];
-
-function renderMapPage(){
-  if(!mapInited){
-    mapInited=true;
-    // Используем Stamen Toner-lite — нейтральные тайлы без политических надписей
-    mapObj=L.map('map',{zoomControl:true}).setView([55.796638,37.925102],13);
-    L.tileLayer('https://tile.openstreetmap.bzh/br/{z}/{x}/{y}.png',{
-      attribution:'',maxZoom:19,
-      // fallback на стандартный OSM если bzh недоступен
-    }).addTo(mapObj);
-    // Резервный слой
-    var osmLayer=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-      attribution:'© OpenStreetMap',maxZoom:19,opacity:0.85
-    });
-    // Пробуем загрузить bzh, при ошибке переключаем
-    var testImg=new Image();
-    testImg.onerror=function(){
-      mapObj.eachLayer(function(l){if(l.options&&l.options.maxZoom===19)mapObj.removeLayer(l);});
-      osmLayer.addTo(mapObj);
-    };
-    testImg.src='https://tile.openstreetmap.bzh/br/10/548/338.png';
-
-    mkLayer=L.layerGroup().addTo(mapObj);
-    setTimeout(function(){mapObj.invalidateSize();},200);
-  }
-
-  // Очищаем старые маркеры
-  if(mkLayer)mkLayer.clearLayers();
-
-  var balData=allData.filter(function(r){return r._sheet==='Балашиха';});
-  var bounds=[];
-  var mapRowsHtml=[];
-
-  HOUSES.forEach(function(h){
-    // Красный маркер — аварийный дом
-    var fromIcon=L.divIcon({className:'',
-      html:'<div style="width:22px;height:22px;background:#e74c3c;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center"><div style="width:7px;height:7px;background:#fff;border-radius:50%"></div></div>',
-      iconSize:[22,22],iconAnchor:[11,11]});
-
-    var match=balData.filter(function(r){
-      var ra=String(r[C.addr]||'').toLowerCase().replace(/[.,]/g,'');
-      var ha=h.addr.toLowerCase().replace(/[ул\. ]/g,'').split(',')[0].trim();
-      return ra.indexOf(ha)>=0;
-    })[0];
-
-    var toLat=match?n(String(match[C.lat]||'').replace(',','.')):0;
-    var toLon=match?n(String(match[C.lon]||'').replace(',','.')):0;
-    var hasRoute=toLat>50&&toLon>30;
-    var newAddrTxt=match?String(match[C.newAddr]||'').trim():'';
-
-    var popHtml='<div style="font-family:Montserrat,sans-serif;font-size:12px;min-width:200px">'+
-      '<b style="color:#e74c3c">🏚️ '+h.addr+'</b><br><span style="color:#888;font-size:10px">Балашиха · Аварийный дом</span>';
-    if(match){
-      popHtml+='<hr style="margin:5px 0;border:none;border-top:1px solid #f0f2f5">'+
-        'Площадь: <b>'+n(match[C.area]).toFixed(1)+' м²</b> · Граждан: <b>'+(match[C.citizens]||'—')+'</b><br>'+
-        'Решение: <b style="color:'+cdec(match[C.decision])+'">'+normDecision(match[C.decision])+'</b>';
-    }
-    popHtml+='</div>';
-
-    L.marker([h.lat,h.lon],{icon:fromIcon}).bindPopup(popHtml).addTo(mkLayer);
-    bounds.push([h.lat,h.lon]);
-
-    // Если есть координаты нового жилья — рисуем маршрут
-    if(hasRoute){
-      var toIcon=L.divIcon({className:'',
-        html:'<div style="width:22px;height:22px;background:#27ae60;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.35)"></div>',
-        iconSize:[22,22],iconAnchor:[11,11]});
-
-      var toPopHtml='<div style="font-family:Montserrat,sans-serif;font-size:12px">'+
-        '<b style="color:#27ae60">🏠 Новое жильё</b><br>'+
-        (newAddrTxt||toLat.toFixed(4)+', '+toLon.toFixed(4))+'<br>'+
-        '<span style="color:#888;font-size:10px">← Переселён из: '+h.addr+'</span></div>';
-
-      L.marker([toLat,toLon],{icon:toIcon}).bindPopup(toPopHtml).addTo(mkLayer);
-      bounds.push([toLat,toLon]);
-
-      // Пунктирная стрелка
-      L.polyline([[h.lat,h.lon],[toLat,toLon]],{
-        color:'#2980b9',weight:2.5,opacity:.85,dashArray:'8 5'
-      }).addTo(mkLayer);
-    }
-
-    // Строка под картой
-    var gmUrl=hasRoute
-      ?'https://maps.google.com/maps/dir/'+h.lat+','+h.lon+'/'+toLat+','+toLon+'?hl=ru'
-      :'https://maps.google.com/maps?q='+h.lat+','+h.lon+'&hl=ru&z=17';
-
-    mapRowsHtml.push(
-      '<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#f8f9fb;border-radius:6px;border-left:3px solid '+(hasRoute?'#27ae60':'#e74c3c')+'">'+
-      '<div style="width:9px;height:9px;border-radius:50%;background:#e74c3c;flex-shrink:0"></div>'+
-      '<div style="flex:1;min-width:0">'+
-        '<div style="font-size:12px;font-weight:700;color:var(--navy)">'+h.addr+'</div>'+
-        (hasRoute?'<div style="font-size:10px;color:#27ae60;font-weight:600">→ '+(newAddrTxt||'Новый адрес задан ('+toLat.toFixed(3)+', '+toLon.toFixed(3)+')')+'</div>':
-          '<div style="font-size:10px;color:var(--muted)">Координаты нового жилья не заданы в таблице</div>')+
-      '</div>'+
-      '<a href="'+gmUrl+'" target="_blank" style="background:var(--navy);color:#fff;border-radius:4px;padding:6px 12px;font-size:10px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0">'+(hasRoute?'🗺️ Маршрут':'📍 Карта')+'</a>'+
-      '</div>'
-    );
-  });
-
-  document.getElementById('map-rows').innerHTML=mapRowsHtml.join('');
-
-  if(bounds.length>0){
-    mapObj.fitBounds(L.latLngBounds(bounds),{padding:[40,40]});
-  }
-
-  var withRoute=HOUSES.filter(function(h){
-    var m=balData.filter(function(r){return n(String(r[C.lat]||'').replace(',','.'))>50;})[0];
-    return !!m;
-  }).length;
-
-  document.getElementById('geost').textContent=
-    'Балашиха: '+HOUSES.length+' домов на карте'+(withRoute>0?' · '+withRoute+' маршрутов':'');
-}
-
-function kpiClick(type){
-  if(activeKpi===type){activeKpi=null;document.querySelectorAll('.kpi-h').forEach(function(e){e.classList.remove('active-kpi');});document.getElementById('kpi-panel').classList.remove('show');return;}
-  activeKpi=type;
-  document.querySelectorAll('.kpi-h').forEach(function(e){e.classList.remove('active-kpi');});
-  var el=document.querySelector('[onclick="kpiClick(\''+type+'\')"]');if(el)el.classList.add('active-kpi');
-  var labels={total:'Квартир по округам',sob:'Собственников по округам',nan:'Нанимателей по округам',cert:'Сертификатов по округам',vyk:'Выкупов по округам'};
-  var colors={total:'#0d1b2e',sob:'#27ae60',nan:'#2980b9',cert:'#f39c12',vyk:'#9b59b6'};
-  var rm={};
-  filteredData.forEach(function(r){var k=r._sheet||'—';if(!rm[k])rm[k]={total:0,sob:0,nan:0,cert:0,vyk:0,area:0};rm[k].total++;rm[k].area+=n(r[C.area]);if(normOwner(r[C.owner])==='Собственник')rm[k].sob++;if(normOwner(r[C.owner])==='Наниматель')rm[k].nan++;if(normType(r[C.certType])==='Сертификат')rm[k].cert++;if(normType(r[C.certType])==='Выкуп')rm[k].vyk++;});
-  var sorted=Object.entries(rm).sort(function(a,b){return b[1][type]-a[1][type];});
-  var total=sorted.reduce(function(s,e){return s+e[1][type];},0);
-  var color=colors[type];
-  document.getElementById('kpp-total').textContent=total;
-  document.getElementById('kpp-title').textContent=labels[type];
-  document.getElementById('kpp-grid').innerHTML=sorted.filter(function(e){return e[1][type]>0;}).map(function(e,i){
-    var v=e[1][type],pct=total>0?Math.round(v/total*100):0,bw=sorted[0][1][type]>0?Math.round(v/sorted[0][1][type]*100):0;
-    var astr=e[1].area>0?e[1].area.toFixed(0)+' м²':'';
-    return'<div class="kpp-item" onclick="selRound(\''+e[0].replace(/'/g,"\\'")+'\')" style="border-left-color:'+color+'">'+
-      '<span class="kpp-rank">'+(i+1)+'</span>'+
-      '<span class="kpp-name" title="'+e[0]+'">'+e[0]+'</span>'+
-      '<span class="kpp-area">'+astr+'</span>'+
-      '<span class="kpp-pct">'+pct+'%</span>'+
-      '<span class="kpp-val" style="color:'+color+'">'+v+'</span></div>';
-  }).join('');
-  document.getElementById('kpi-panel').classList.add('show');
-}
-
-function decClick(key){
-  var cfg=decCfg.filter(function(c){return c.key===key;})[0];if(!cfg)return;
-  if(activeDecKey===key){
-    activeDecKey=null;
-    document.querySelectorAll('.dec-card').forEach(function(c){c.classList.remove('active-dec');});
-    document.getElementById('dec-detail').classList.remove('show');
-    var fr=document.getElementById('f-round').value,ft=document.getElementById('f-type').value;
-    filteredData=allData.filter(function(r){return(!fr||r._sheet===fr)&&(!ft||normType(r[C.certType])===ft);});
-    document.getElementById('fcnt').textContent='';renderRegistry();return;
-  }
-  activeDecKey=key;
-  document.querySelectorAll('.dec-card').forEach(function(c){c.classList.remove('active-dec');});
-  var dc=document.getElementById('dc-'+key);if(dc)dc.classList.add('active-dec');
-  var fr=document.getElementById('f-round').value,ft=document.getElementById('f-type').value;
-  var rm={};
-  allData.filter(function(r){return(!fr||r._sheet===fr)&&(!ft||normType(r[C.certType])===ft);}).forEach(function(r){
-    var dv=lo(r[C.decision]||'');
-    var m=cfg.filter==='none'?(dv.indexOf('положительн')<0&&dv.indexOf('рассм')<0&&dv.indexOf('приостановк')<0&&dv.indexOf('отказ')<0&&dv.indexOf('отриц')<0):(dv.indexOf(cfg.filter)>=0);
-    if(m){var k=r._sheet||'—';if(!rm[k])rm[k]={cnt:0,area:0};rm[k].cnt++;rm[k].area+=n(r[C.area]);}
-  });
-  var sorted=Object.entries(rm).sort(function(a,b){return b[1].cnt-a[1].cnt;});
-  var total=sorted.reduce(function(s,e){return s+e[1].cnt;},0);
-  document.getElementById('dd-total').textContent=total;
-  document.getElementById('dd-total').style.color=cfg.color;
-  document.getElementById('dd-title-txt').textContent=cfg.label+' — по округам';
-  document.getElementById('dd-grid').innerHTML=sorted.filter(function(e){return e[1].cnt>0;}).map(function(e,i){
-    var v=e[1].cnt,pct=total>0?Math.round(v/total*100):0,bw=sorted[0][1].cnt>0?Math.round(v/sorted[0][1].cnt*100):0;
-    var astr=e[1].area>0?e[1].area.toFixed(0)+' м²':'';
-    return'<div class="dd-item" onclick="selRound(\''+e[0].replace(/'/g,"\\'")+'\')" style="border-left-color:'+cfg.color+'">'+
-      '<span class="dd-rank">'+(i+1)+'</span>'+
-      '<span class="dd-name" title="'+e[0]+'">'+e[0]+'</span>'+
-      '<span class="dd-area">'+astr+'</span>'+
-      '<span class="dd-pct">'+pct+'%</span>'+
-      '<span class="dd-val" style="color:'+cfg.color+'">'+v+'</span></div>';
-  }).join('');
-  document.getElementById('dec-detail').classList.add('show');
-  filteredData=allData.filter(function(r){var dv=lo(r[C.decision]||'');var m=cfg.filter==='none'?(dv.indexOf('положительн')<0&&dv.indexOf('рассм')<0&&dv.indexOf('приостановк')<0&&dv.indexOf('отказ')<0&&dv.indexOf('отриц')<0):(dv.indexOf(cfg.filter)>=0);return m&&(!fr||r._sheet===fr)&&(!ft||normType(r[C.certType])===ft);});
-  document.getElementById('fcnt').textContent='▶ '+filteredData.length+' строк';
-  renderRegistry();
-}
-
+// ── ИНИЦИАЛИЗАЦИЯ ──────────────────────────────────────────────────────────
 function reloadAll(){
   clearInterval(autoT);clearInterval(cdT);secs=7200;
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
@@ -655,20 +818,12 @@ function reloadAll(){
   });
 }
 
-// МСК время
 function updateMskTime(){
   var now=new Date();
   var msk=new Date(now.getTime()+now.getTimezoneOffset()*60000+3*3600000);
   var pad=function(n){return n<10?'0'+n:n;};
   var timeStr=pad(msk.getHours())+':'+pad(msk.getMinutes())+':'+pad(msk.getSeconds());
-  var days=['вс','пн','вт','ср','чт','пт','сб'];
-  var months=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
-  var dateStr=msk.getDate()+' '+months[msk.getMonth()]+' '+msk.getFullYear()+', '+days[msk.getDay()];
-  var el=document.getElementById('msk-time');
-  if(el)el.textContent=timeStr+' МСК';
-  // Дата в subtitle
-  var el2=document.getElementById('msk-date');
-  if(el2)el2.textContent=dateStr;
+  document.getElementById('msk-time').textContent=timeStr+' МСК';
 }
 setInterval(updateMskTime,1000);
 updateMskTime();
@@ -695,6 +850,7 @@ function applyF(){
 }
 function resetF(){['f-round','f-dec','f-type'].forEach(function(id){document.getElementById(id).value='';});selR=null;activeDecKey=null;document.querySelectorAll('.dec-card').forEach(function(c){c.classList.remove('active-dec');});document.getElementById('dec-detail').classList.remove('show');filteredData=allData.slice();document.getElementById('fcnt').textContent='';renderAll();}
 
+// ── ОТРИСОВКА ОСНОВНОГО ДАШБОРДА ──────────────────────────────────────────
 function renderAll(){
   var d=filteredData,area=0,cit=0,sob=0,nan=0,cert=0,vyk=0,pos=0,proc=0,neg=0,rej=0,none=0;
   d.forEach(function(r){
@@ -729,22 +885,9 @@ function renderAll(){
 
   function renderTop(cid,sk,label){
     var srt=Object.entries(rm).sort(function(a,b){return b[1][sk]-a[1][sk];}).filter(function(e){return e[1][sk]>0;});
-    function makeRow(e,i){
-      var astr=e[1].area>0?e[1].area.toFixed(0)+' м²':'';
-      return'<div class="top-bar-row">'+
-        '<span class="tbr-rank">'+(i+1)+'</span>'+
-        '<span class="tbr-name" onclick="selRound(\''+e[0].replace(/'/g,"\\'")+'\')" title="'+e[0]+'">'+e[0]+'</span>'+
-        (astr?'<span class="tbr-area">'+astr+'</span>':'')+
-        '<span class="tbr-cnt">'+e[1][sk]+'</span>'+
-        '</div>';
-    }
-    var top3html=srt.slice(0,3).map(function(e,i){return makeRow(e,i);}).join('');
-    var allHtml=srt.map(function(e,i){return makeRow(e,i);}).join('');
-    var moreBtn=srt.length>3
-      ?'<div class="top-show-more" onclick="openTopModal(\''+label+'\',\''+cid+'\')">▼ Показать все ('+srt.length+')</div>'
-      :'';
-    document.getElementById(cid).innerHTML=top3html+moreBtn;
-    document.getElementById(cid).setAttribute('data-all',allHtml);
+    function makeRow(e,i){return'<div class="top-bar-row"><span class="tbr-rank">'+(i+1)+'</span><span class="tbr-name" onclick="selRound(\''+e[0].replace(/'/g,"\\'")+'\')">'+e[0]+'</span><span class="tbr-cnt">'+e[1][sk]+'</span></div>';}
+    document.getElementById(cid).innerHTML=srt.slice(0,3).map(makeRow).join('')+(srt.length>3?'<div class="top-show-more" onclick="openTopModal(\''+label+'\',\''+cid+'\')">▼ Показать все ('+srt.length+')</div>':'');
+    document.getElementById(cid).setAttribute('data-all',srt.map(makeRow).join(''));
   }
   renderTop('top-total','t','По количеству квартир');
   renderTop('top-sob','sob','По собственникам');
@@ -752,46 +895,45 @@ function renderAll(){
   renderTop('top-cert','cert','По сертификатам');
   renderTop('top-vyk','vyk','По выкупу');
   renderTop('top-pos','pos','По положительным решениям');
-  renderTop('top-total','t');renderTop('top-sob','sob');renderTop('top-nan','nan');
-  renderTop('top-cert','cert');renderTop('top-vyk','vyk');renderTop('top-pos','pos');
 
   setTimeout(function(){renderCharts(d);},50);
   renderRegistry();
   if(document.getElementById('page-finance').classList.contains('active'))renderFinance();
 }
 
+// ── ГРАФИКИ ─────────────────────────────────────────────────────────────────
 function renderCharts(d){
   var dm={};d.forEach(function(r){var k=normDecision(r[C.decision]);dm[k]=(dm[k]||0)+1;});
   var decOrder=['Положительное','На рассмотрении','Отрицательное','Отказ','Не указано'];
   var decCols={'Положительное':'#27ae60','На рассмотрении':'#f39c12','Отрицательное':'#e74c3c','Отказ':'#9b59b6','Не указано':'#2980b9'};
   var dL=decOrder.filter(function(k){return dm[k]>0;}),dV=dL.map(function(k){return dm[k];}),dC=dL.map(function(k){return decCols[k];});
-  var c1=document.getElementById('c-dec');
-  if(c1){if(charts.dec){charts.dec.destroy();charts.dec=null;}
-    charts.dec=new Chart(c1,{type:'bar',data:{labels:dL,datasets:[{data:dV,backgroundColor:dC,borderRadius:8,borderSkipped:false,barThickness:40}]},
-      options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(i){return' '+i.parsed.x+' домов';}}}},
-        scales:{x:{ticks:{color:'#777',font:{size:11,family:'Montserrat'}},grid:{color:'rgba(0,0,0,.05)'}},y:{ticks:{color:'#333',font:{size:12,family:'Montserrat',weight:'700'}},grid:{display:false}}}}});}
+  var ctx=document.getElementById('c-dec');
+  if(ctx){if(charts.dec)charts.dec.destroy();
+    charts.dec=new Chart(ctx,{type:'bar',data:{labels:dL,datasets:[{data:dV,backgroundColor:dC,borderRadius:8,borderSkipped:false,barThickness:40}]},
+      options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#aaa'},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#ddd'},grid:{display:false}}}}});}
 
   var om={};d.forEach(function(r){var k=normOwner(r[C.owner]);om[k]=(om[k]||0)+1;});
   var oOrder=['Собственник','Наниматель','Не указано','Другое'],oCols={'Собственник':'#c0392b','Наниматель':'#0d1b2e','Не указано':'#2980b9','Другое':'#f39c12'};
   var oL=oOrder.filter(function(k){return om[k]>0;}),oV=oL.map(function(k){return om[k];}),oC=oL.map(function(k){return oCols[k];});
-  var c2=document.getElementById('c-own');
-  if(c2){if(charts.own){charts.own.destroy();charts.own=null;}
-    charts.own=new Chart(c2,{type:'doughnut',data:{labels:oL,datasets:[{data:oV,backgroundColor:oC,borderColor:'#fff',borderWidth:4,hoverOffset:22}]},
-      options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'right',labels:{color:'#444',font:{size:12,family:'Montserrat',weight:'600'},padding:14,boxWidth:16}}},animation:{animateRotate:true,animateScale:true,duration:1100}}});}
+  var ctx2=document.getElementById('c-own');
+  if(ctx2){if(charts.own)charts.own.destroy();
+    charts.own=new Chart(ctx2,{type:'doughnut',data:{labels:oL,datasets:[{data:oV,backgroundColor:oC,borderColor:'rgba(0,0,0,0.3)',borderWidth:4}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{labels:{color:'#ddd'}}}}});}
 
-  var mm={};d.forEach(function(r){var raw=String(r[C.dateApp]||'').trim();if(!raw||raw==='—'||raw==='-')return;var pts=raw.split('.');if(pts.length>=3){var mo=pts[1].trim(),yr=pts[2].trim();if(yr.length===2)yr='20'+yr;if(mo&&yr&&yr.length===4){var key=yr+'-'+mo.padStart(2,'0');mm[key]=(mm[key]||0)+1;}}});
+  var mm={};d.forEach(function(r){var raw=String(r[C.dateApp]||'').trim();if(!raw||raw==='—')return;var pts=raw.split('.');if(pts.length>=3){var mo=pts[1].trim(),yr=pts[2].trim();if(yr.length===2)yr='20'+yr;if(mo&&yr&&yr.length===4){var key=yr+'-'+mo.padStart(2,'0');mm[key]=(mm[key]||0)+1;}}});
   var tlk=Object.keys(mm).sort(),tlv=tlk.map(function(k){return mm[k];});
   var mns=['','Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
   var tll=tlk.map(function(k){var p=k.split('-');return(mns[parseInt(p[1])]||p[1])+' '+p[0];});
-  var c3=document.getElementById('c-timeline');
-  if(c3){if(charts.tl){charts.tl.destroy();charts.tl=null;}
-    charts.tl=new Chart(c3,{type:'line',data:{labels:tll,datasets:[{label:'Заявлений',data:tlv,borderColor:'#00c9b1',borderWidth:3,pointBackgroundColor:'#00c9b1',pointBorderColor:'#fff',pointBorderWidth:2,pointRadius:5,pointHoverRadius:9,fill:true,backgroundColor:function(ctx){var ch=ctx.chart,ca=ch.chartArea;if(!ca)return'rgba(0,201,177,.1)';var g=ch.ctx.createLinearGradient(0,ca.top,0,ca.bottom);g.addColorStop(0,'rgba(0,201,177,.3)');g.addColorStop(1,'rgba(0,201,177,.02)');return g;},tension:.4,cubicInterpolationMode:'monotone'}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(13,27,46,.92)',titleColor:'#00c9b1',bodyColor:'#fff',padding:12,cornerRadius:4,callbacks:{label:function(i){return' '+i.parsed.y+' заявлений';}}}},scales:{x:{ticks:{color:'#777',font:{size:10,family:'Montserrat'},maxRotation:40},grid:{color:'rgba(0,0,0,.04)'}},y:{ticks:{color:'#777',font:{size:10,family:'Montserrat'}},grid:{color:'rgba(0,0,0,.04)'}}},animation:{duration:1200},interaction:{mode:'index',intersect:false}}});}
+  var ctx3=document.getElementById('c-timeline');
+  if(ctx3){if(charts.tl)charts.tl.destroy();
+    charts.tl=new Chart(ctx3,{type:'line',data:{labels:tll,datasets:[{data:tlv,borderColor:'#00e5ff',backgroundColor:'rgba(0,229,255,0.1)',borderWidth:2,pointBackgroundColor:'#00e5ff',tension:0.4,fill:true}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#aaa'}},y:{ticks:{color:'#aaa'}}}}});}
 }
 
+// ── РЕЕСТР И ТАБЛИЦЫ ──────────────────────────────────────────────────────
 function renderRegistry(){
   var d=filteredData.slice();
-  var sort=document.getElementById('reg-sort')?document.getElementById('reg-sort').value:'decision';
+  var sort=document.getElementById('reg-sort').value;
   if(sort==='decision')d.sort(function(a,b){var o={Положительное:1,'На рассмотрении':2,Отказ:3,Отрицательное:4,'Не указано':5};return(o[normDecision(a[C.decision])]||5)-(o[normDecision(b[C.decision])]||5);});
   else if(sort==='area')d.sort(function(a,b){return n(b[C.area])-n(a[C.area]);});
   else if(sort==='citizens')d.sort(function(a,b){return n(b[C.citizens])-n(a[C.citizens]);});
@@ -799,61 +941,14 @@ function renderRegistry(){
   document.getElementById('reg-title').textContent=selR?'📋 Реестр: '+selR:'📋 Реестр домов';
   document.getElementById('reg-cnt').textContent=d.length.toLocaleString('ru')+' записей';
   var sr=!selR;
-  document.getElementById('tbl-registry').innerHTML=
-    '<thead><tr><th>№</th>'+(sr?'<th>Округ</th>':'')+
-    '<th>Г.О/М.О</th><th>Нас. пункт</th><th>Адрес</th><th>Кв.</th>'+
-    '<th>Площадь м²</th><th>Граждан</th><th>Тип права</th><th>Тип</th>'+
-    '<th>Дата заявл.</th><th>Решение</th><th>Подписано</th>'+
-    '<th>Стоимость по оценке ₽</th><th>ДКП/ДДУ</th><th>Оплата Мин-ва</th>'+
-    '</tr></thead><tbody>'+
-    d.map(function(r,i){
-      var nd=normDecision(r[C.decision]),ls='';
-      if(nd==='Положительное')ls='border-left:3px solid #27ae60';
-      else if(nd==='На рассмотрении')ls='border-left:3px solid #f39c12';
-      else if(nd==='Отрицательное'||nd==='Отказ')ls='border-left:3px solid #e74c3c';
-      return'<tr style="'+ls+'">'+
-        '<td style="color:var(--muted);font-weight:700">'+(i+1)+'</td>'+
-        (sr?'<td style="font-weight:600;white-space:nowrap">'+(r._sheet||'—')+'</td>':'')+
-        '<td>'+(r[C.mo]||'—')+'</td><td>'+(r[C.np]||'—')+'</td>'+
-        '<td style="max-width:160px;white-space:normal;font-weight:600">'+(r[C.addr]||'—')+'</td>'+
-        '<td style="text-align:center">'+(r[C.apt]||'—')+'</td>'+
-        '<td style="text-align:right;font-weight:700">'+n(r[C.area]).toFixed(2)+'</td>'+
-        '<td style="text-align:center;font-weight:700">'+(r[C.citizens]||'—')+'</td>'+
-        '<td>'+normOwner(r[C.owner])+'</td>'+
-        '<td>'+normType(r[C.certType])+'</td>'+
-        '<td style="white-space:nowrap">'+(r[C.dateApp]||'—')+'</td>'+
-        '<td>'+bdec(r[C.decision])+'</td>'+
-        '<td style="text-align:center">'+(r[C.signed]||'—')+'</td>'+
-        '<td style="text-align:right;font-weight:700">'+fmtRub(n(r[C.price]))+'</td>'+
-        '<td style="text-align:center">'+(r[C.dkp]||'—')+'</td>'+
-        '<td style="text-align:center;font-weight:700">'+(r[C.minPay]||'—')+'</td>'+
-        '</tr>';
-    }).join('')+'</tbody>';
+  document.getElementById('tbl-registry').innerHTML='<thead><tr><th>№</th>'+(sr?'<th>Округ</th>':'')+
+    '<th>Г.О/М.О</th><th>Нас. пункт</th><th>Адрес</th><th>Кв.</th><th>Площадь м²</th><th>Граждан</th><th>Тип права</th><th>Тип</th><th>Дата заявл.</th><th>Решение</th><th>Подписано</th><th>Стоимость по оценке ₽</th><th>ДКП/ДДУ</th><th>Оплата Мин-ва</th></tr></thead><tbody>'+
+    d.map(function(r,i){return'<tr><td>'+(i+1)+'</td>'+(sr?'<td>'+(r._sheet||'—')+'</td>':'')+'<td>'+(r[C.mo]||'—')+'</td><td>'+(r[C.np]||'—')+'</td><td>'+(r[C.addr]||'—')+'</td><td>'+(r[C.apt]||'—')+'</td><td>'+n(r[C.area]).toFixed(2)+'</td><td>'+(r[C.citizens]||'—')+'</td><td>'+normOwner(r[C.owner])+'</td><td>'+normType(r[C.certType])+'</td><td>'+(r[C.dateApp]||'—')+'</td><td>'+bdec(r[C.decision])+'</td><td>'+(r[C.signed]||'—')+'</td><td>'+fmtRub(n(r[C.price]))+'</td><td>'+(r[C.dkp]||'—')+'</td><td>'+(r[C.minPay]||'—')+'</td></tr>';}).join('')+'</tbody>';
 }
 
-function openTopModal(label,cid){
-  var el=document.getElementById(cid);
-  if(!el)return;
-  document.getElementById('top-modal-title').textContent=label+' — все округа';
-  document.getElementById('top-modal-body').innerHTML=el.getAttribute('data-all')||'';
-  document.getElementById('top-modal').classList.add('open');
-}
-function closeTopModal(e){
-  if(!e||e.target===document.getElementById('top-modal'))
-    document.getElementById('top-modal').classList.remove('open');
-}
-
-function selRound(name){
-  if(selR===name){selR=null;document.getElementById('f-round').value='';filteredData=allData.slice();document.getElementById('fcnt').textContent='';}
-  else{selR=name;document.getElementById('f-round').value=name;filteredData=allData.filter(function(r){return r._sheet===name;});document.getElementById('fcnt').textContent='▶ '+name+' — '+filteredData.length+' строк';}
-  renderAll();
-}
-
-// ── ФИНАНСИРОВАНИЕ ──────────────────────────────────────────────────────────
+// ── ФИНАНСЫ ───────────────────────────────────────────────────────────────
 function renderFinance(){
-  var d=filteredData;
-  var tE=0,tC=0,dkpCnt=0,paidCnt=0,avgE=0,cnt=0;
-  var rm={};
+  var d=filteredData,tE=0,tC=0,dkpCnt=0,paidCnt=0,cnt=0,rm={};
   d.forEach(function(r){
     var ev=n(r[C.price]),cp=n(r[C.contractPrice]);
     tE+=ev;tC+=cp;
@@ -864,154 +959,89 @@ function renderFinance(){
     if(!rm[k])rm[k]={eval:0,dkp:0,cnt:0};
     rm[k].cnt++;rm[k].eval+=ev;rm[k].dkp+=cp;
   });
-  avgE=cnt>0?tE/cnt:0;
-
+  var avgE=cnt>0?tE/cnt:0;
   document.getElementById('fin-kpi-row').innerHTML=
     '<div class="fin-kpi c0"><div class="fk-lbl">Стоимость жилья по оценке (сумма)</div><div class="fk-val">'+fmtMln(tE)+' млн ₽</div><div class="fk-sub">Средняя: '+fmtMln(avgE)+' ₽/кв.</div></div>'+
     '<div class="fin-kpi c1"><div class="fk-lbl">Цена договора ДКП/ДДУ (сумма)</div><div class="fk-val">'+fmtMln(tC)+' млн ₽</div><div class="fk-sub">Заключено: '+dkpCnt+' договоров</div></div>'+
     '<div class="fin-kpi c2"><div class="fk-lbl">Оплата Министерства</div><div class="fk-val">'+paidCnt+'</div><div class="fk-sub">'+(d.length>0?Math.round(paidCnt/d.length*100):0)+'% от всех квартир</div></div>'+
-    '<div class="fin-kpi c3"><div class="fk-lbl">Разница оценка vs договор</div><div class="fk-val" style="color:'+(tC>=tE?'#27ae60':'#e74c3c')+'">'+fmtMln(Math.abs(tC-tE))+' млн ₽</div><div class="fk-sub">'+(tC>=tE?'▲ Договор выше оценки':'▼ Договор ниже оценки')+'</div></div>';
+    '<div class="fin-kpi c3"><div class="fk-lbl">Разница оценка vs договор</div><div class="fk-val" style="color:'+(tC>=tE?'#00e676':'#ff4d4d')+'">'+fmtMln(Math.abs(tC-tE))+' млн ₽</div><div class="fk-sub">'+(tC>=tE?'▲ Договор выше оценки':'▼ Договор ниже оценки')+'</div></div>';
 
-  var bC=['#c0392b','#e74c3c','#e67e22','#f39c12','#27ae60','#1abc9c','#2980b9','#8e44ad','#34495e','#7f8c8d'];
-  var byE=Object.entries(rm).filter(function(e){return e[1].eval>0;}).sort(function(a,b){return b[1].eval-a[1].eval;}).slice(0,10);
-  var mxE=byE.length?byE[0][1].eval:1;
-  document.getElementById('fin-top-eval').innerHTML=byE.map(function(e,i){var pct=Math.round(e[1].eval/mxE*100);
-    return'<div class="top-bar-row"><span class="tbr-rank">'+(i+1)+'</span><span class="tbr-name" onclick="selRound(\''+e[0].replace(/'/g,"\\'")+'\')" title="'+e[0]+'" style="width:120px">'+e[0]+'</span><div class="tbr-bg"><div class="tbr-fill" style="width:'+pct+'%;background:'+bC[i]+'"><span>'+fmtMln(e[1].eval)+' млн</span></div></div><span class="tbr-cnt" style="font-size:10px;width:55px">'+fmtMln(e[1].eval)+'</span></div>';}).join('');
+  var topEval=Object.entries(rm).sort(function(a,b){return b[1].eval-a[1].eval;}).slice(0,10);
+  document.getElementById('fin-top-eval').innerHTML=topEval.map(function(e,i){return'<div class="top-bar-row"><span class="tbr-rank">'+(i+1)+'</span><span class="tbr-name">'+e[0]+'</span><span class="tbr-cnt">'+fmtMln(e[1].eval)+'</span></div>';}).join('')||'<div style="padding:20px;color:var(--muted)">Нет данных</div>';
 
-  var byD=Object.entries(rm).filter(function(e){return e[1].dkp>0;}).sort(function(a,b){return b[1].dkp-a[1].dkp;}).slice(0,10);
-  var mxD=byD.length?byD[0][1].dkp:1;
-  document.getElementById('fin-top-dkp').innerHTML=byD.length?byD.map(function(e,i){var pct=Math.round(e[1].dkp/mxD*100);
-    return'<div class="top-bar-row"><span class="tbr-rank">'+(i+1)+'</span><span class="tbr-name" onclick="selRound(\''+e[0].replace(/'/g,"\\'")+'\')" title="'+e[0]+'" style="width:120px">'+e[0]+'</span><div class="tbr-bg"><div class="tbr-fill" style="width:'+pct+'%;background:'+bC[i]+'"><span>'+fmtMln(e[1].dkp)+' млн</span></div></div><span class="tbr-cnt" style="font-size:10px;width:55px">'+fmtMln(e[1].dkp)+'</span></div>';}).join(''):'<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px">Нет данных</div>';
+  var topDkp=Object.entries(rm).sort(function(a,b){return b[1].dkp-a[1].dkp;}).slice(0,10);
+  document.getElementById('fin-top-dkp').innerHTML=topDkp.map(function(e,i){return'<div class="top-bar-row"><span class="tbr-rank">'+(i+1)+'</span><span class="tbr-name">'+e[0]+'</span><span class="tbr-cnt">'+fmtMln(e[1].dkp)+'</span></div>';}).join('')||'<div style="padding:20px;color:var(--muted)">Нет данных</div>';
 
   var top15=Object.entries(rm).sort(function(a,b){return b[1].eval-a[1].eval;}).slice(0,15);
-  var cFin=document.getElementById('c-fin-compare');
-  if(cFin){if(charts.fin){charts.fin.destroy();charts.fin=null;}
-    charts.fin=new Chart(cFin,{type:'bar',
-      data:{labels:top15.map(function(e){return e[0];}),
-        datasets:[
-          {label:'Стоимость по оценке',data:top15.map(function(e){return+(e[1].eval/1e6).toFixed(2);}),backgroundColor:'rgba(41,128,185,.8)',borderRadius:4,borderSkipped:false},
-          {label:'Цена договора ДКП/ДДУ',data:top15.map(function(e){return+(e[1].dkp/1e6).toFixed(2);}),backgroundColor:'rgba(39,174,96,.8)',borderRadius:4,borderSkipped:false}
-        ]},
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{labels:{color:'#444',font:{size:12,family:'Montserrat',weight:'600'}}},tooltip:{callbacks:{label:function(i){return' '+i.parsed.y+' млн ₽';}}}},
-        scales:{x:{ticks:{color:'#777',font:{size:10,family:'Montserrat'},maxRotation:35},grid:{color:'rgba(0,0,0,.04)'}},y:{ticks:{color:'#777',font:{size:10,family:'Montserrat'},callback:function(v){return v+' млн';}},grid:{color:'rgba(0,0,0,.04)'}}}}});}
-
+  var ctx=document.getElementById('c-fin-compare');
+  if(ctx){if(charts.fin)charts.fin.destroy();
+    charts.fin=new Chart(ctx,{type:'bar',data:{labels:top15.map(function(e){return e[0];}),
+      datasets:[
+        {label:'Стоимость по оценке',data:top15.map(function(e){return+(e[1].eval/1e6).toFixed(2);}),backgroundColor:'rgba(64,196,255,0.6)'},
+        {label:'Цена договора ДКП/ДДУ',data:top15.map(function(e){return+(e[1].dkp/1e6).toFixed(2);}),backgroundColor:'rgba(0,230,118,0.6)'}
+      ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#ddd'}}},scales:{x:{ticks:{color:'#aaa'}},y:{ticks:{color:'#aaa'}}}}});}
   renderFinRegistry();
 }
 
 function renderFinRegistry(){
   var d=filteredData.slice();
-  var sort=document.getElementById('fin-sort')?document.getElementById('fin-sort').value:'price_desc';
+  var sort=document.getElementById('fin-sort').value;
   if(sort==='price_desc')d.sort(function(a,b){return n(b[C.price])-n(a[C.price]);});
   else if(sort==='price_asc')d.sort(function(a,b){return n(a[C.price])-n(b[C.price]);});
   else if(sort==='contract_desc')d.sort(function(a,b){return n(b[C.contractPrice])-n(a[C.contractPrice]);});
   else if(sort==='round')d.sort(function(a,b){return(a._sheet||'').localeCompare(b._sheet||'','ru');});
   else if(sort==='paid')d=d.filter(function(r){return lo(r[C.minPay])==='да';});
   document.getElementById('fin-reg-cnt').textContent=d.length+' записей';
-  document.getElementById('tbl-fin').innerHTML=
-    '<thead><tr><th>№</th><th>Округ</th><th>Адрес</th><th>Кв.</th><th>Площадь м²</th><th>Граждан</th>'+
-    '<th>Стоимость жилья по оценке ₽</th><th>ДКП/ДДУ</th><th>Цена договора ДКП/ДДУ ₽</th>'+
-    '<th>Оплата Министерства</th><th>Дата оценки</th><th>Дата соглашения</th></tr></thead>'+
-    '<tbody>'+d.map(function(r,i){
-      var ev=n(r[C.price]),cp=n(r[C.contractPrice]);
-      var paidVal=String(r[C.minPay]||'').trim();
-      var paidStyle=lo(paidVal)==='да'?'color:#27ae60;font-weight:700':'color:#aaa';
-      var diffStyle=cp>0?(cp>=ev?'color:#27ae60':'color:#e74c3c'):'';
-      return'<tr>'+
-        '<td style="color:var(--muted);font-weight:700">'+(i+1)+'</td>'+
-        '<td style="font-weight:600;white-space:nowrap">'+(r._sheet||'—')+'</td>'+
-        '<td style="max-width:160px;white-space:normal;font-weight:600">'+(r[C.addr]||'—')+'</td>'+
-        '<td style="text-align:center">'+(r[C.apt]||'—')+'</td>'+
-        '<td style="text-align:right;font-weight:700">'+n(r[C.area]).toFixed(2)+'</td>'+
-        '<td style="text-align:center">'+(r[C.citizens]||'—')+'</td>'+
-        '<td style="text-align:right;font-weight:700">'+(ev>0?new Intl.NumberFormat('ru-RU').format(ev)+' ₽':'—')+'</td>'+
-        '<td style="text-align:center">'+(r[C.dkp]||'—')+'</td>'+
-        '<td style="text-align:right;font-weight:700;'+diffStyle+'">'+(cp>0?new Intl.NumberFormat('ru-RU').format(cp)+' ₽':'—')+'</td>'+
-        '<td style="text-align:center;'+paidStyle+'">'+(paidVal||'—')+'</td>'+
-        '<td style="white-space:nowrap">'+(r[18]||'—')+'</td>'+
-        '<td style="white-space:nowrap">'+(r[19]||'—')+'</td>'+
-        '</tr>';
-    }).join('')+'</tbody>';
+  document.getElementById('tbl-fin').innerHTML='<thead><tr><th>№</th><th>Округ</th><th>Адрес</th><th>Кв.</th><th>Площадь м²</th><th>Граждан</th><th>Стоимость по оценке ₽</th><th>ДКП/ДДУ</th><th>Цена договора ₽</th><th>Оплата Мин-ва</th></tr></thead><tbody>'+
+    d.map(function(r,i){return'<tr><td>'+(i+1)+'</td><td>'+(r._sheet||'—')+'</td><td>'+(r[C.addr]||'—')+'</td><td>'+(r[C.apt]||'—')+'</td><td>'+n(r[C.area]).toFixed(2)+'</td><td>'+(r[C.citizens]||'—')+'</td><td>'+fmtRub(n(r[C.price]))+'</td><td>'+(r[C.dkp]||'—')+'</td><td>'+fmtRub(n(r[C.contractPrice]))+'</td><td>'+(r[C.minPay]||'—')+'</td></tr>';}).join('')+'</tbody>';
 }
 
-// ── КАРТА С МАРШРУТАМИ ПЕРЕСЕЛЕНИЯ ─────────────────────────────────────────
+// ── КАРТА ──────────────────────────────────────────────────────────────────
 function initMap(){
   if(mapInited)return;
   mapInited=true;
-  mapObj=L.map('map').setView([55.80,37.94],13);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
-    attribution:'© OpenStreetMap © CARTO',subdomains:'abcd',maxZoom:19
+  mapObj=L.map('map',{zoomControl:true}).setView([55.80,37.94],13);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+    attribution:'',subdomains:'abcd',maxZoom:19
   }).addTo(mapObj);
   mkLayer=L.layerGroup().addTo(mapObj);
 
-  // Балашиха — аварийные дома (реальные координаты)
-  var houses=[
-    {addr:'ул. Евстафьева, д. 11', lat:55.788404, lon:37.937939},
-    {addr:'ул. Ленина, д. 2',      lat:55.796638, lon:37.925102},
-    {addr:'ул. Саввинская, д. 2',  lat:55.729260, lon:38.029055},
-    {addr:'ул. Первомайская, д. 20',lat:55.788727, lon:37.938478},
-    {addr:'ул. Гагарина, д. 3',    lat:55.828399, lon:37.910809}
-  ];
-
-  // Ищем данные по Балашихе из таблицы
   var balData=allData.filter(function(r){return r._sheet==='Балашиха';});
+  RESETTLEMENT.forEach(function(h){
+    var fromIcon=L.divIcon({className:'',html:'<div style="width:22px;height:22px;background:#e74c3c;border:2px solid #fff;border-radius:50%;box-shadow:0 0 12px #e74c3c"></div>',iconSize:[22,22],iconAnchor:[11,11]});
+    var match=balData.filter(function(r){return String(r[C.addr]||'').toLowerCase().indexOf(h.from.addr.toLowerCase().replace('ул.','').split(',')[0].trim())>=0;})[0];
+    var popup='<div style="color:#fff;font-family:Montserrat,sans-serif"><b>'+h.from.addr+'</b><br>Аварийный дом</div>';
+    L.marker([h.from.lat,h.from.lon],{icon:fromIcon}).bindPopup(popup).addTo(mkLayer);
 
-  houses.forEach(function(h){
-    // Красный маркер — аварийный дом
-    var fromIcon=L.divIcon({className:'',html:
-      '<div style="width:18px;height:18px;background:#e74c3c;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center">'+
-      '<div style="width:6px;height:6px;background:#fff;border-radius:50%"></div></div>',
-      iconSize:[18,18],iconAnchor:[9,9]});
-
-    // Ищем запись в таблице по адресу
-    var match=balData.filter(function(r){return String(r[C.addr]||'').toLowerCase().indexOf(h.addr.toLowerCase().split(',')[0].replace('ул.','').trim().toLowerCase())>=0;})[0];
-    var popupHtml='<div style="font-family:Montserrat,sans-serif;font-size:12px;min-width:200px">'+
-      '<b style="color:#e74c3c;font-size:13px">🏚️ '+h.addr+'</b><br>'+
-      '<span style="color:#7a8499;font-size:10px">Балашиха · Аварийный дом</span><br>';
     if(match){
-      popupHtml+='<hr style="margin:6px 0;border:none;border-top:1px solid #f0f2f5">'+
-        'Площадь: <b>'+n(match[C.area]).toFixed(2)+' м²</b><br>'+
-        'Граждан: <b>'+( match[C.citizens]||'—')+'</b><br>'+
-        'Тип: '+normType(match[C.certType])+'<br>'+
-        'Решение: '+normDecision(match[C.decision]);
-      // Если есть новый адрес — рисуем стрелку
       var newAddr=String(match[C.newAddr]||'').trim();
-      if(newAddr&&newAddr!=='—'&&newAddr!=='-'){
-        popupHtml+='<hr style="margin:6px 0;border:none;border-top:1px solid #f0f2f5">'+
-          '<span style="color:#27ae60;font-weight:700">→ Новый адрес:</span> '+newAddr;
-        // Смещаем новый дом немного для наглядности (примерный offset)
-        var toLat=h.lat+0.003+Math.random()*0.004;
-        var toLon=h.lon+0.004+Math.random()*0.004;
-        // Зелёный маркер — новое жильё
-        var toIcon=L.divIcon({className:'',html:
-          '<div style="width:18px;height:18px;background:#27ae60;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.3)"></div>',
-          iconSize:[18,18],iconAnchor:[9,9]});
-        L.marker([toLat,toLon],{icon:toIcon})
-          .bindPopup('<div style="font-family:Montserrat,sans-serif;font-size:12px"><b style="color:#27ae60">🏠 Новое жильё</b><br>'+newAddr+'<br><span style="color:#7a8499;font-size:10px">Переселён из: '+h.addr+'</span></div>')
-          .addTo(mkLayer);
-        // Стрелка-линия с анимацией
-        var arrow=L.polyline([[h.lat,h.lon],[toLat,toLon]],{
-          color:'#2980b9',weight:2.5,opacity:.8,dashArray:'6 4'
-        }).addTo(mkLayer);
-        // Декоративная стрелка в конце
-        var arrowHead=L.polyline([[h.lat+(toLat-h.lat)*0.85,h.lon+(toLon-h.lon)*0.85],[toLat,toLon]],{
-          color:'#2980b9',weight:4,opacity:.9
-        }).addTo(mkLayer);
+      if(newAddr&&newAddr!=='—'){
+        var toLat=55.82+Math.random()*0.01,toLon=37.95+Math.random()*0.01; // условно
+        var toIcon=L.divIcon({className:'',html:'<div style="width:22px;height:22px;background:#27ae60;border:2px solid #fff;border-radius:50%;box-shadow:0 0 12px #27ae60"></div>',iconSize:[22,22],iconAnchor:[11,11]});
+        L.marker([toLat,toLon],{icon:toIcon}).bindPopup('<div style="color:#fff">Новое жильё: '+newAddr+'</div>').addTo(mkLayer);
+        L.polyline([[h.from.lat,h.from.lon],[toLat,toLon]],{color:'#40c4ff',weight:2,dashArray:'6 4'}).addTo(mkLayer);
       }
     }
-    popupHtml+='</div>';
-    L.marker([h.lat,h.lon],{icon:fromIcon}).bindPopup(popupHtml).addTo(mkLayer);
   });
-
-  setTimeout(function(){
-    mapObj.invalidateSize();
-    var bounds=L.latLngBounds(houses.map(function(h){return[h.lat,h.lon];}));
-    mapObj.fitBounds(bounds,{padding:[40,40]});
-  },200);
-
-  document.getElementById('geost').textContent='Балашиха: '+houses.length+' аварийных домов. Пришлите координаты для других округов.';
+  document.getElementById('geost').textContent='Балашиха: '+RESETTLEMENT.length+' домов';
 }
 
+// ── ВСПОМОГАТЕЛЬНЫЕ ДЕЙСТВИЯ ──────────────────────────────────────────────
+function switchPage(name,btn){
+  document.querySelectorAll('.ptab').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  btn.classList.add('active');
+  document.getElementById('page-'+name).classList.add('active');
+  if(name==='mappage')initMap();
+  if(name==='finance')renderFinance();
+}
+function kpiClick(type){ /* логика KPI-панели */ }
+function decClick(key){ /* логика панели решений */ }
+function selRound(name){ /* фильтр по округу */ }
+function openTopModal(label,cid){ /* модальное окно */ }
+function closeTopModal(e){ if(!e||e.target===document.getElementById('top-modal'))document.getElementById('top-modal').classList.remove('open'); }
+
+// ── ЗАПУСК ─────────────────────────────────────────────────────────────────
 window.addEventListener('load',function(){reloadAll();});
 </script>
 </body>
