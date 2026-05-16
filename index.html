@@ -13,7 +13,21 @@
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--navy:#0d1b2e;--accent:#c0392b;--cyan:#00c9b1;--gold:#f39c12;--green:#27ae60;--blue:#2980b9;--purple:#8e44ad;--bg:#f0f2f5;--card:#fff;--border:#e0e4ed;--muted:#7a8499;--text:#0a0e1a}
 body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background-image:url('https://nailimf-maker.github.io/-_-/bg.png');background-size:cover;background-position:center;opacity:.08;pointer-events:none;z-index:0}
+body::before{
+  content:'';
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background-image:url('bg.png');
+  background-size:cover;
+  background-position:center center;
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+  opacity:.10;
+  pointer-events:none;
+  z-index:0;
+  mix-blend-mode:multiply;
+}
 
 .hdr{background:var(--navy);min-height:60px;display:flex;align-items:center;padding:0 28px;gap:16px;position:relative;z-index:10;box-shadow:0 4px 20px rgba(0,0,0,.35)}
 .hdr-icon{width:40px;height:40px;background:var(--accent);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
@@ -113,12 +127,13 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;backg
 .dd-pct{font-size:9px;color:var(--muted);font-weight:700;white-space:nowrap;text-align:right}
 .dd-val{font-size:17px;font-weight:900;white-space:nowrap;text-align:right}
 
-/* TOP */
+/* TOP — показываем 3, остальные скрыты */
 .top-section{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
 .top-block{background:var(--card);border-radius:6px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.07);border:1px solid var(--border)}
-.tb-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.tb-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:14px;display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none}
 .tb-title::before{content:'';width:16px;height:3px;background:var(--accent);display:inline-block;border-radius:2px}
-/* Строка топа — вертикальный список */
+.tb-title-arrow{margin-left:auto;font-size:10px;color:var(--muted);transition:transform .2s}
+.tb-title-arrow.open{transform:rotate(180deg)}
 .top-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:7px 10px;background:#f8f9fb;border-radius:5px;transition:background .15s}
 .top-bar-row:hover{background:#f0f2f5}
 .tbr-rank{font-size:10px;font-weight:700;color:var(--muted);width:18px;text-align:right;flex-shrink:0}
@@ -126,6 +141,9 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;backg
 .tbr-name:hover{color:var(--accent)}
 .tbr-area{font-size:9px;color:var(--muted);white-space:nowrap;flex-shrink:0}
 .tbr-cnt{font-size:15px;font-weight:900;color:var(--navy);min-width:28px;text-align:right;flex-shrink:0}
+.top-rows-hidden{display:none}
+.top-show-more{text-align:center;padding:8px;font-size:11px;font-weight:700;color:var(--cyan);cursor:pointer;border-top:1px solid var(--border);margin-top:4px}
+.top-show-more:hover{color:var(--navy)}
 
 /* CHARTS */
 .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
@@ -605,17 +623,23 @@ function renderAll(){
   d.forEach(function(r){var k=r._sheet||'—';if(!rm[k])rm[k]={t:0,sob:0,nan:0,cert:0,vyk:0,pos:0,area:0};rm[k].t++;rm[k].area+=n(r[C.area]);if(normOwner(r[C.owner])==='Собственник')rm[k].sob++;if(normOwner(r[C.owner])==='Наниматель')rm[k].nan++;var nt=normType(r[C.certType]);if(nt==='Сертификат')rm[k].cert++;if(nt==='Выкуп')rm[k].vyk++;if(normDecision(r[C.decision])==='Положительное')rm[k].pos++;});
 
   function renderTop(cid,sk){
-    var srt=Object.entries(rm).sort(function(a,b){return b[1][sk]-a[1][sk];}).slice(0,10);
-    document.getElementById(cid).innerHTML=srt.filter(function(e){return e[1][sk]>0;}).map(function(e,i){
-      var v=e[1][sk];
+    var srt=Object.entries(rm).sort(function(a,b){return b[1][sk]-a[1][sk];}).filter(function(e){return e[1][sk]>0;});
+    var visible=srt.slice(0,3);
+    var hidden=srt.slice(3);
+    function makeRow(e,i,globalIdx){
       var astr=e[1].area>0?e[1].area.toFixed(0)+' м²':'';
       return'<div class="top-bar-row">'+
-        '<span class="tbr-rank">'+(i+1)+'</span>'+
+        '<span class="tbr-rank">'+(globalIdx+1)+'</span>'+
         '<span class="tbr-name" onclick="selRound(\''+e[0].replace(/'/g,"\\'")+'\')" title="'+e[0]+'">'+e[0]+'</span>'+
         (astr?'<span class="tbr-area">'+astr+'</span>':'')+
-        '<span class="tbr-cnt">'+v+'</span>'+
+        '<span class="tbr-cnt">'+e[1][sk]+'</span>'+
         '</div>';
-    }).join('');
+    }
+    var hiddenHtml=hidden.length?
+      '<div class="top-rows-hidden" id="hidden-'+cid+'">'+hidden.map(function(e,i){return makeRow(e,i,i+3);}).join('')+'</div>'+
+      '<div class="top-show-more" id="btn-'+cid+'" onclick="toggleTopHidden(\''+cid+'\')">▼ Показать ещё '+hidden.length+'</div>'
+      :'';
+    document.getElementById(cid).innerHTML=visible.map(function(e,i){return makeRow(e,i,i);}).join('')+hiddenHtml;
   }
   renderTop('top-total','t');renderTop('top-sob','sob');renderTop('top-nan','nan');
   renderTop('top-cert','cert');renderTop('top-vyk','vyk');renderTop('top-pos','pos');
@@ -694,6 +718,15 @@ function renderRegistry(){
         '<td style="text-align:center;font-weight:700">'+(r[C.minPay]||'—')+'</td>'+
         '</tr>';
     }).join('')+'</tbody>';
+}
+
+function toggleTopHidden(cid){
+  var el=document.getElementById('hidden-'+cid);
+  var btn=document.getElementById('btn-'+cid);
+  if(!el||!btn)return;
+  var isOpen=el.style.display==='block';
+  el.style.display=isOpen?'none':'block';
+  btn.textContent=isOpen?'▼ Показать ещё':'▲ Свернуть';
 }
 
 function selRound(name){
