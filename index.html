@@ -317,70 +317,6 @@ body::before {
 .dc-rej { background: linear-gradient(135deg, #1e0a2b, #4a148c); }
 .dc-none { background: linear-gradient(135deg, #0a1e2e, #1565c0); }
 
-.dec-detail {
-  background: var(--surface);
-  backdrop-filter: blur(25px);
-  border-radius: 28px 10px 40px 20px;
-  padding: 24px 28px;
-  display: none;
-  border: 1px solid rgba(64, 196, 255, 0.2);
-  box-shadow: 0 15px 45px rgba(0,0,0,0.3);
-}
-.dec-detail.show { display: block; }
-.dd-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; }
-.dd-total { font-size: 36px; font-weight: 200; color: var(--text); }
-.dd-title-txt { font-size: 13px; font-weight: 300; color: var(--blue); text-transform: uppercase; }
-.dd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
-.dd-item {
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(10px);
-  border-radius: 18px 4px 22px 10px;
-  padding: 14px 16px;
-  display: grid;
-  grid-template-columns: 22px 1fr auto auto auto;
-  align-items: center;
-  gap: 8px;
-  border-left: 4px solid #40c4ff;
-  transition: all 0.25s;
-  cursor: pointer;
-}
-.dd-item:hover { background: rgba(255,255,255,0.06); transform: translateX(6px); }
-.light .dd-item { background: rgba(0,0,0,0.03); }
-.light .dd-item:hover { background: rgba(0,0,0,0.06); }
-
-/* TOP */
-.top-section { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
-.top-block {
-  background: var(--surface);
-  backdrop-filter: blur(20px);
-  border-radius: 20px 6px 30px 14px;
-  padding: 22px 18px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
-}
-.tb-title {
-  font-size: 10px; font-weight: 400; color: var(--muted);
-  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
-}
-.top-bar-row {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 8px; padding: 10px 12px;
-  background: rgba(255,255,255,0.02);
-  border-radius: 12px 4px 12px 6px;
-  transition: background 0.2s;
-}
-.light .top-bar-row { background: rgba(0,0,0,0.02); }
-.top-bar-row:hover { background: rgba(255,255,255,0.05); }
-.light .top-bar-row:hover { background: rgba(0,0,0,0.05); }
-.tbr-rank { font-size: 10px; font-weight: 400; color: var(--muted); width: 18px; text-align: right; }
-.tbr-name { font-size: 12px; font-weight: 400; color: var(--text); flex: 1; cursor: pointer; }
-.tbr-name:hover { color: var(--cyan); }
-.tbr-cnt { font-size: 16px; font-weight: 300; color: var(--text); min-width: 28px; text-align: right; }
-.top-show-more {
-  text-align: center; padding: 10px 0 0; font-size: 11px; font-weight: 400;
-  color: var(--cyan); cursor: pointer; border-top: 1px solid var(--border); margin-top: 8px;
-}
-
 /* MODAL */
 .top-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; }
 .top-modal-overlay.open { display: flex; }
@@ -569,10 +505,6 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 
   <div style="font-size:10px;font-weight:400;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Решения</div>
   <div class="dec-row" id="dec-row"></div>
-  <div class="dec-detail" id="dec-detail">
-    <div class="dd-header"><span class="dd-total" id="dd-total">—</span><span class="dd-title-txt" id="dd-title-txt">—</span></div>
-    <div class="dd-grid" id="dd-grid"></div>
-  </div>
 
   <div style="font-size:10px;font-weight:400;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Топ округов</div>
   <div class="top-section">
@@ -660,7 +592,10 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 </div>
 
 <script>
-// ── ДАННЫЕ И ПЕРЕМЕННЫЕ ────────────────────────────────────────────────────
+// ── ВСТАВЬТЕ СЮДА СВОЙ GOOGLE API КЛЮЧ (если нужен Google Maps) ──────────
+var googleApiKey = '';
+
+// ── ДАННЫЕ И ПЕРЕМЕННЫЕ ──────────────────────────────────────────────────
 var PUB='https://docs.google.com/spreadsheets/d/e/2PACX-1vSzyHOAkQRwBuyLTWw0xyAkA3aQWjHNAT1wSRMmmB7zjYARDMG470ErejHEFid200TUUbGvbQNYUPsE/pub?output=csv';
 var SHEETS=[
   {name:'Балашиха',gid:'1795562364'},{name:'Богородский',gid:'0'},{name:'Бронницы',gid:'1103582215'},
@@ -684,12 +619,13 @@ var C={mo:3,np:4,addr:5,apt:6,area:7,citizens:8,owner:11,certType:12,dateApp:13,
   decision:14,signed:15,buyConsent:17,price:20,dkp:21,newDistrict:22,newAddr:23,newArea:24,
   builder:25,contractType:26,contractPrice:27,minPay:28,lat:29,lon:30};
 
+// Координаты аварийных домов (из примера пользователя, плюс можно расширять)
 var RESETTLEMENT=[
-  {from:{addr:'ул. Евстафьева, д. 11',lat:55.788404,lon:37.937939},to:null,round:'Балашиха'},
-  {from:{addr:'ул. Ленина, д. 2',     lat:55.796638,lon:37.925102},to:null,round:'Балашиха'},
-  {from:{addr:'ул. Саввинская, д. 2', lat:55.729260,lon:38.029055},to:null,round:'Балашиха'},
-  {from:{addr:'ул. Первомайская, д. 20',lat:55.788727,lon:37.938478},to:null,round:'Балашиха'},
-  {from:{addr:'ул. Гагарина, д. 3',   lat:55.828399,lon:37.910809},to:null,round:'Балашиха'}
+  {fromAddr:'ул. Евстафьева, д. 11', fromLat:55.788404, fromLon:37.937939},
+  {fromAddr:'ул. Ленина, д. 2', fromLat:55.796638, fromLon:37.925102},
+  {fromAddr:'ул. Саввинская, д. 2', fromLat:55.729260, fromLon:38.029055},
+  {fromAddr:'ул. Первомайская, д. 20', fromLat:55.788727, fromLon:37.938478},
+  {fromAddr:'ул. Гагарина, д. 3', fromLat:55.828399, fromLon:37.910809}
 ];
 
 function normType(r){var s=String(r||'').trim().toLowerCase();if(!s||s==='-'||s==='—')return'Не указано';if(s.indexOf('сертификат')>=0)return'Сертификат';if(s.indexOf('выкуп')>=0)return'Выкуп';if(s.indexOf('не подавал')>=0)return'Не подавалось';return'Другое';}
@@ -722,10 +658,7 @@ function toggleTheme(){
   document.body.classList.toggle('light');
   var btn = document.querySelector('.theme-btn');
   btn.textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
-  if(mapObj){
-    // при смене темы карта остаётся, но можно обновить размер
-    setTimeout(function(){ mapObj.invalidateSize(); }, 200);
-  }
+  if(mapObj) setTimeout(function(){ mapObj.invalidateSize(); }, 200);
 }
 
 // ── МОСКОВСКОЕ ВРЕМЯ ─────────────────────────────────────────────────────
@@ -734,8 +667,7 @@ function updateMskTime(){
   var msk=new Date(now.getTime()+now.getTimezoneOffset()*60000+3*3600000);
   var pad=function(n){return n<10?'0'+n:n;};
   var timeStr=pad(msk.getHours())+':'+pad(msk.getMinutes())+':'+pad(msk.getSeconds());
-  var el=document.getElementById('msk-time');
-  if(el)el.textContent=timeStr+' МСК';
+  document.getElementById('msk-time').textContent=timeStr+' МСК';
 }
 setInterval(updateMskTime,1000);
 updateMskTime();
@@ -779,14 +711,13 @@ function applyF(){
   var fr=document.getElementById('f-round').value,fd=document.getElementById('f-dec').value,ft=document.getElementById('f-type').value;
   selR=fr||null;activeDecKey=null;
   document.querySelectorAll('.dec-card').forEach(function(c){c.classList.remove('active-dec');});
-  document.getElementById('dec-detail').classList.remove('show');
   filteredData=allData.filter(function(r){return(!fr||r._sheet===fr)&&(!fd||normDecision(r[C.decision])===fd)&&(!ft||normType(r[C.certType])===ft);});
   document.getElementById('fcnt').textContent=filteredData.length<allData.length?'▶ '+filteredData.length+' строк':'';
   renderAll();
 }
-function resetF(){['f-round','f-dec','f-type'].forEach(function(id){document.getElementById(id).value='';});selR=null;activeDecKey=null;document.querySelectorAll('.dec-card').forEach(function(c){c.classList.remove('active-dec');});document.getElementById('dec-detail').classList.remove('show');filteredData=allData.slice();document.getElementById('fcnt').textContent='';renderAll();}
+function resetF(){['f-round','f-dec','f-type'].forEach(function(id){document.getElementById(id).value='';});selR=null;activeDecKey=null;document.querySelectorAll('.dec-card').forEach(function(c){c.classList.remove('active-dec');});filteredData=allData.slice();document.getElementById('fcnt').textContent='';renderAll();}
 
-// ── ОТРИСОВКА ────────────────────────────────────────────────────────────
+// ── ОТРИСОВКА ОСНОВНОГО ДАШБОРДА ──────────────────────────────────────────
 function renderAll(){
   var d=filteredData,area=0,cit=0,sob=0,nan=0,cert=0,vyk=0,pos=0,proc=0,neg=0,rej=0,none=0;
   d.forEach(function(r){
@@ -814,7 +745,7 @@ function renderAll(){
 
   var decVals={pos:pos,proc:proc,neg:neg,rej:rej,none:none};
   document.getElementById('dec-row').innerHTML=decCfg.map(function(c){var v=decVals[c.key],pct=d.length>0?Math.round(v/d.length*100):0;
-    return'<div class="dec-card '+c.cls+'" onclick="decClick(\''+c.key+'\')" id="dc-'+c.key+'"><div class="dc-label">'+c.label+'</div><div class="dc-val">'+v+'</div><div class="dc-sub">'+pct+'% от всех</div><div class="dc-icon">'+c.icon+'</div></div>';}).join('');
+    return'<div class="dec-card '+c.cls+'" onclick="decClick(\''+c.key+'\')"><div class="dc-label">'+c.label+'</div><div class="dc-val">'+v+'</div><div class="dc-sub">'+pct+'% от всех</div><div class="dc-icon">'+c.icon+'</div></div>';}).join('');
 
   var rm={};
   d.forEach(function(r){var k=r._sheet||'—';if(!rm[k])rm[k]={t:0,sob:0,nan:0,cert:0,vyk:0,pos:0,area:0};rm[k].t++;rm[k].area+=n(r[C.area]);if(normOwner(r[C.owner])==='Собственник')rm[k].sob++;if(normOwner(r[C.owner])==='Наниматель')rm[k].nan++;var nt=normType(r[C.certType]);if(nt==='Сертификат')rm[k].cert++;if(nt==='Выкуп')rm[k].vyk++;if(normDecision(r[C.decision])==='Положительное')rm[k].pos++;});
@@ -846,8 +777,24 @@ function renderCharts(d){
   var ctx=document.getElementById('c-dec');
   if(ctx){if(charts.dec)charts.dec.destroy();
     charts.dec=new Chart(ctx,{type:'bar',data:{labels:dL,datasets:[{data:dV,backgroundColor:dC,borderRadius:8,borderSkipped:false,barThickness:40}]},
-      options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--muted')},grid:{color:'rgba(128,128,128,0.1)'}},y:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--text')},grid:{display:false}}}}});}
-  // аналогично остальные графики...
+      options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(128,128,128,0.1)'}},y:{grid:{display:false}}}}});}
+
+  var om={};d.forEach(function(r){var k=normOwner(r[C.owner]);om[k]=(om[k]||0)+1;});
+  var oOrder=['Собственник','Наниматель','Не указано','Другое'],oCols={'Собственник':'#c0392b','Наниматель':'#0d1b2e','Не указано':'#2980b9','Другое':'#f39c12'};
+  var oL=oOrder.filter(function(k){return om[k]>0;}),oV=oL.map(function(k){return om[k];}),oC=oL.map(function(k){return oCols[k];});
+  var ctx2=document.getElementById('c-own');
+  if(ctx2){if(charts.own)charts.own.destroy();
+    charts.own=new Chart(ctx2,{type:'doughnut',data:{labels:oL,datasets:[{data:oV,backgroundColor:oC,borderWidth:2}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{labels:{color:getComputedStyle(document.body).getPropertyValue('--text')}}}}});}
+
+  var mm={};d.forEach(function(r){var raw=String(r[C.dateApp]||'').trim();if(!raw||raw==='—')return;var pts=raw.split('.');if(pts.length>=3){var mo=pts[1].trim(),yr=pts[2].trim();if(yr.length===2)yr='20'+yr;if(mo&&yr&&yr.length===4){var key=yr+'-'+mo.padStart(2,'0');mm[key]=(mm[key]||0)+1;}}});
+  var tlk=Object.keys(mm).sort(),tlv=tlk.map(function(k){return mm[k];});
+  var mns=['','Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+  var tll=tlk.map(function(k){var p=k.split('-');return(mns[parseInt(p[1])]||p[1])+' '+p[0];});
+  var ctx3=document.getElementById('c-timeline');
+  if(ctx3){if(charts.tl)charts.tl.destroy();
+    charts.tl=new Chart(ctx3,{type:'line',data:{labels:tll,datasets:[{data:tlv,borderColor:'#00e5ff',backgroundColor:'rgba(0,229,255,0.1)',borderWidth:2,pointBackgroundColor:'#00e5ff',tension:0.4,fill:true}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(128,128,128,0.1)'}},y:{grid:{color:'rgba(128,128,128,0.1)'}}}}});}
 }
 
 // ── KPI CLICK ────────────────────────────────────────────────────────────
@@ -857,7 +804,6 @@ function kpiClick(type){
   document.querySelectorAll('.kpi-h').forEach(function(e){e.classList.remove('active-kpi');});
   var el=document.querySelector('[onclick="kpiClick(\''+type+'\')"]');if(el)el.classList.add('active-kpi');
   var labels={total:'Квартир по округам',sob:'Собственников по округам',nan:'Нанимателей по округам',cert:'Сертификатов по округам',vyk:'Выкупов по округам'};
-  var colors={total:'#0d1b2e',sob:'#27ae60',nan:'#2980b9',cert:'#f39c12',vyk:'#9b59b6'};
   var rm={};
   filteredData.forEach(function(r){var k=r._sheet||'—';if(!rm[k])rm[k]={total:0,sob:0,nan:0,cert:0,vyk:0,area:0};rm[k].total++;rm[k].area+=n(r[C.area]);if(normOwner(r[C.owner])==='Собственник')rm[k].sob++;if(normOwner(r[C.owner])==='Наниматель')rm[k].nan++;if(normType(r[C.certType])==='Сертификат')rm[k].cert++;if(normType(r[C.certType])==='Выкуп')rm[k].vyk++;});
   var sorted=Object.entries(rm).sort(function(a,b){return b[1][type]-a[1][type];});
@@ -870,37 +816,34 @@ function kpiClick(type){
   document.getElementById('kpi-panel').classList.add('show');
 }
 
-// ── DEC CLICK ────────────────────────────────────────────────────────────
+// ── DEC CLICK (теперь открывает модальное окно) ─────────────────────────
 function decClick(key){
   var cfg=decCfg.filter(function(c){return c.key===key;})[0];if(!cfg)return;
-  if(activeDecKey===key){
-    activeDecKey=null;document.querySelectorAll('.dec-card').forEach(function(c){c.classList.remove('active-dec');});
-    document.getElementById('dec-detail').classList.remove('show');
-    var fr=document.getElementById('f-round').value,ft=document.getElementById('f-type').value;
-    filteredData=allData.filter(function(r){return(!fr||r._sheet===fr)&&(!ft||normType(r[C.certType])===ft);});
-    document.getElementById('fcnt').textContent='';renderRegistry();return;
-  }
-  activeDecKey=key;
-  document.querySelectorAll('.dec-card').forEach(function(c){c.classList.remove('active-dec');});
-  var dc=document.getElementById('dc-'+key);if(dc)dc.classList.add('active-dec');
   var fr=document.getElementById('f-round').value,ft=document.getElementById('f-type').value;
   var rm={};
   allData.filter(function(r){return(!fr||r._sheet===fr)&&(!ft||normType(r[C.certType])===ft);}).forEach(function(r){
     var dv=lo(r[C.decision]||'');
     var m=cfg.filter==='none'?(dv.indexOf('положительн')<0&&dv.indexOf('рассм')<0&&dv.indexOf('приостановк')<0&&dv.indexOf('отказ')<0&&dv.indexOf('отриц')<0):(dv.indexOf(cfg.filter)>=0);
-    if(m){var k=r._sheet||'—';if(!rm[k])rm[k]={cnt:0,area:0};rm[k].cnt++;rm[k].area+=n(r[C.area]);}
+    if(m){var k=r._sheet||'—';if(!rm[k])rm[k]={cnt:0};rm[k].cnt++;}
   });
   var sorted=Object.entries(rm).sort(function(a,b){return b[1].cnt-a[1].cnt;});
-  var total=sorted.reduce(function(s,e){return s+e[1].cnt;},0);
-  document.getElementById('dd-total').textContent=total;
-  document.getElementById('dd-title-txt').textContent=cfg.label+' — по округам';
-  document.getElementById('dd-grid').innerHTML=sorted.filter(function(e){return e[1].cnt>0;}).map(function(e,i){
-    return'<div class="dd-item" onclick="selRound(\''+e[0].replace(/'/g,"\\'")+'\')"><span class="dd-rank">'+(i+1)+'</span><span class="dd-name">'+e[0]+'</span><span class="dd-pct">'+(total>0?Math.round(e[1].cnt/total*100):0)+'%</span><span class="dd-val">'+e[1].cnt+'</span></div>';
-  }).join('');
-  document.getElementById('dec-detail').classList.add('show');
-  filteredData=allData.filter(function(r){var dv=lo(r[C.decision]||'');var m=cfg.filter==='none'?(dv.indexOf('положительн')<0&&dv.indexOf('рассм')<0&&dv.indexOf('приостановк')<0&&dv.indexOf('отказ')<0&&dv.indexOf('отриц')<0):(dv.indexOf(cfg.filter)>=0);return m&&(!fr||r._sheet===fr)&&(!ft||normType(r[C.certType])===ft);});
-  document.getElementById('fcnt').textContent='▶ '+filteredData.length+' строк';
-  renderRegistry();
+  var html=sorted.map(function(e,i){return'<div class="top-bar-row"><span class="tbr-rank">'+(i+1)+'</span><span class="tbr-name" onclick="selRound(\''+e[0].replace(/'/g,"\\'")+'\')">'+e[0]+'</span><span class="tbr-cnt">'+e[1].cnt+'</span></div>';}).join('');
+  openTopModalDirect(cfg.label+' — по округам', html);
+}
+
+// ── МОДАЛЬНОЕ ОКНО (универсальное) ──────────────────────────────────────
+function openTopModal(label,cid){
+  var el=document.getElementById(cid); if(!el)return;
+  openTopModalDirect(label, el.getAttribute('data-all')||'');
+}
+function openTopModalDirect(title, bodyHtml){
+  document.getElementById('top-modal-title').textContent=title;
+  document.getElementById('top-modal-body').innerHTML=bodyHtml;
+  document.getElementById('top-modal').classList.add('open');
+}
+function closeTopModal(e){
+  if(!e||e.target===document.getElementById('top-modal'))
+    document.getElementById('top-modal').classList.remove('open');
 }
 
 // ── ВЫБОР ОКРУГА ─────────────────────────────────────────────────────────
@@ -908,18 +851,6 @@ function selRound(name){
   if(selR===name){selR=null;document.getElementById('f-round').value='';filteredData=allData.slice();document.getElementById('fcnt').textContent='';}
   else{selR=name;document.getElementById('f-round').value=name;filteredData=allData.filter(function(r){return r._sheet===name;});document.getElementById('fcnt').textContent='▶ '+name+' — '+filteredData.length+' строк';}
   renderAll();
-}
-
-// ── МОДАЛЬНОЕ ОКНО ТОП ──────────────────────────────────────────────────
-function openTopModal(label,cid){
-  var el=document.getElementById(cid); if(!el)return;
-  document.getElementById('top-modal-title').textContent=label+' — все округа';
-  document.getElementById('top-modal-body').innerHTML=el.getAttribute('data-all')||'';
-  document.getElementById('top-modal').classList.add('open');
-}
-function closeTopModal(e){
-  if(!e||e.target===document.getElementById('top-modal'))
-    document.getElementById('top-modal').classList.remove('open');
 }
 
 // ── ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ────────────────────────────────────────────────
@@ -932,31 +863,40 @@ function switchPage(name,btn){
   if(name==='finance')renderFinance();
 }
 
-// ── КАРТА (СВЕТЛЫЙ OSM) ──────────────────────────────────────────────────
+// ── КАРТА (с поддержкой Google Maps и стрелками из таблицы) ─────────────
 function initMap(){
   if(mapInited)return;
   mapInited=true;
   mapObj=L.map('map',{zoomControl:true}).setView([55.80,37.94],13);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    attribution:'© OpenStreetMap contributors',
-    maxZoom:19
-  }).addTo(mapObj);
+
+  // Если указан Google API ключ – используем Google Maps, иначе нейтральные тайлы
+  if(googleApiKey && googleApiKey.length>5){
+    L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&hl=ru',{
+      maxZoom:20, subdomains:['mt0','mt1','mt2','mt3'], attribution:'Google'
+    }).addTo(mapObj);
+  } else {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
+      attribution:'© CartoDB', subdomains:'abcd', maxZoom:19
+    }).addTo(mapObj);
+  }
+
   mkLayer=L.layerGroup().addTo(mapObj);
 
+  // Для каждого аварийного дома ищем в данных координаты нового жилья
   var balData=allData.filter(function(r){return r._sheet==='Балашиха';});
   RESETTLEMENT.forEach(function(h){
     var fromIcon=L.divIcon({className:'',html:'<div style="width:22px;height:22px;background:#e74c3c;border:2px solid #fff;border-radius:50%;box-shadow:0 0 8px rgba(0,0,0,0.3)"></div>',iconSize:[22,22],iconAnchor:[11,11]});
-    var match=balData.filter(function(r){return String(r[C.addr]||'').toLowerCase().indexOf(h.from.addr.toLowerCase().replace('ул.','').split(',')[0].trim())>=0;})[0];
-    L.marker([h.from.lat,h.from.lon],{icon:fromIcon}).bindPopup('<b>'+h.from.addr+'</b><br>Аварийный дом').addTo(mkLayer);
+    var match=balData.filter(function(r){return String(r[C.addr]||'').toLowerCase().indexOf(h.fromAddr.toLowerCase().replace(/[.,]/g,'').replace('ул.','').trim())>=0;})[0];
     if(match){
-      var newAddr=String(match[C.newAddr]||'').trim();
-      if(newAddr&&newAddr!=='—'){
-        var toLat=55.82+Math.random()*0.01,toLon=37.95+Math.random()*0.01;
+      var toLat=n(String(match[C.lat]||'').replace(',','.'));
+      var toLon=n(String(match[C.lon]||'').replace(',','.'));
+      if(toLat>50&&toLon>30){
         var toIcon=L.divIcon({className:'',html:'<div style="width:22px;height:22px;background:#27ae60;border:2px solid #fff;border-radius:50%;box-shadow:0 0 8px rgba(0,0,0,0.3)"></div>',iconSize:[22,22],iconAnchor:[11,11]});
-        L.marker([toLat,toLon],{icon:toIcon}).bindPopup('Новое жильё: '+newAddr).addTo(mkLayer);
-        L.polyline([[h.from.lat,h.from.lon],[toLat,toLon]],{color:'#2980b9',weight:2,dashArray:'6 4'}).addTo(mkLayer);
+        L.marker([toLat,toLon],{icon:toIcon}).bindPopup('Новое жильё: '+match[C.newAddr]).addTo(mkLayer);
+        L.polyline([[h.fromLat,h.fromLon],[toLat,toLon]],{color:'#2980b9',weight:2.5,dashArray:'6 4'}).addTo(mkLayer);
       }
     }
+    L.marker([h.fromLat,h.fromLon],{icon:fromIcon}).bindPopup('<b>'+h.fromAddr+'</b><br>Аварийный дом').addTo(mkLayer);
   });
   document.getElementById('geost').textContent='Балашиха: '+RESETTLEMENT.length+' домов';
 }
@@ -977,10 +917,55 @@ function renderRegistry(){
     d.map(function(r,i){return'<tr><td>'+(i+1)+'</td>'+(sr?'<td>'+(r._sheet||'—')+'</td>':'')+'<td>'+(r[C.mo]||'—')+'</td><td>'+(r[C.np]||'—')+'</td><td>'+(r[C.addr]||'—')+'</td><td>'+(r[C.apt]||'—')+'</td><td>'+n(r[C.area]).toFixed(2)+'</td><td>'+(r[C.citizens]||'—')+'</td><td>'+normOwner(r[C.owner])+'</td><td>'+normType(r[C.certType])+'</td><td>'+(r[C.dateApp]||'—')+'</td><td>'+bdec(r[C.decision])+'</td><td>'+(r[C.signed]||'—')+'</td><td>'+fmtRub(n(r[C.price]))+'</td><td>'+(r[C.dkp]||'—')+'</td><td>'+(r[C.minPay]||'—')+'</td></tr>';}).join('')+'</tbody>';
 }
 
-function renderFinance(){ /* ... (аналогично с учётом темы) ... */ }
-function renderFinRegistry(){ /* ... */ }
+function renderFinance(){
+  var d=filteredData,tE=0,tC=0,dkpCnt=0,paidCnt=0,cnt=0;
+  var rm={};
+  d.forEach(function(r){
+    var ev=n(r[C.price]),cp=n(r[C.contractPrice]);
+    tE+=ev;tC+=cp;
+    if(up(r[C.dkp])==='ДА')dkpCnt++;
+    if(lo(r[C.minPay])==='да')paidCnt++;
+    if(ev>0)cnt++;
+    var k=r._sheet||'—';if(!rm[k])rm[k]={eval:0,dkp:0};
+    rm[k].eval+=ev;rm[k].dkp+=cp;
+  });
+  var avgE=cnt>0?tE/cnt:0;
+  document.getElementById('fin-kpi-row').innerHTML=
+    '<div class="fin-kpi c0"><div class="fk-lbl">Стоимость жилья по оценке (сумма)</div><div class="fk-val">'+fmtMln(tE)+' млн ₽</div><div class="fk-sub">Средняя: '+fmtMln(avgE)+' ₽/кв.</div></div>'+
+    '<div class="fin-kpi c1"><div class="fk-lbl">Цена договора ДКП/ДДУ (сумма)</div><div class="fk-val">'+fmtMln(tC)+' млн ₽</div><div class="fk-sub">Заключено: '+dkpCnt+' договоров</div></div>'+
+    '<div class="fin-kpi c2"><div class="fk-lbl">Оплата Министерства</div><div class="fk-val">'+paidCnt+'</div><div class="fk-sub">'+(d.length>0?Math.round(paidCnt/d.length*100):0)+'% от всех квартир</div></div>'+
+    '<div class="fin-kpi c3"><div class="fk-lbl">Разница оценка vs договор</div><div class="fk-val" style="color:'+(tC>=tE?'var(--green)':'var(--accent)')+'">'+fmtMln(Math.abs(tC-tE))+' млн ₽</div><div class="fk-sub">'+(tC>=tE?'▲ Договор выше оценки':'▼ Договор ниже оценки')+'</div></div>';
 
-// Запуск
+  var topEval=Object.entries(rm).sort(function(a,b){return b[1].eval-a[1].eval;}).slice(0,10);
+  document.getElementById('fin-top-eval').innerHTML=topEval.map(function(e,i){return'<div class="top-bar-row"><span class="tbr-rank">'+(i+1)+'</span><span class="tbr-name">'+e[0]+'</span><span class="tbr-cnt">'+fmtMln(e[1].eval)+'</span></div>';}).join('')||'<div style="padding:20px;color:var(--muted)">Нет данных</div>';
+
+  var topDkp=Object.entries(rm).sort(function(a,b){return b[1].dkp-a[1].dkp;}).slice(0,10);
+  document.getElementById('fin-top-dkp').innerHTML=topDkp.map(function(e,i){return'<div class="top-bar-row"><span class="tbr-rank">'+(i+1)+'</span><span class="tbr-name">'+e[0]+'</span><span class="tbr-cnt">'+fmtMln(e[1].dkp)+'</span></div>';}).join('')||'<div style="padding:20px;color:var(--muted)">Нет данных</div>';
+
+  var top15=Object.entries(rm).sort(function(a,b){return b[1].eval-a[1].eval;}).slice(0,15);
+  var ctx=document.getElementById('c-fin-compare');
+  if(ctx){if(charts.fin)charts.fin.destroy();
+    charts.fin=new Chart(ctx,{type:'bar',data:{labels:top15.map(function(e){return e[0];}),
+      datasets:[
+        {label:'Стоимость по оценке',data:top15.map(function(e){return+(e[1].eval/1e6).toFixed(2);}),backgroundColor:'rgba(64,196,255,0.6)'},
+        {label:'Цена договора ДКП/ДДУ',data:top15.map(function(e){return+(e[1].dkp/1e6).toFixed(2);}),backgroundColor:'rgba(0,230,118,0.6)'}
+      ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:getComputedStyle(document.body).getPropertyValue('--text')}}},scales:{x:{grid:{color:'rgba(128,128,128,0.1)'}},y:{grid:{color:'rgba(128,128,128,0.1)'}}}}});}
+  renderFinRegistry();
+}
+
+function renderFinRegistry(){
+  var d=filteredData.slice();
+  var sort=document.getElementById('fin-sort').value;
+  if(sort==='price_desc')d.sort(function(a,b){return n(b[C.price])-n(a[C.price]);});
+  else if(sort==='price_asc')d.sort(function(a,b){return n(a[C.price])-n(b[C.price]);});
+  else if(sort==='contract_desc')d.sort(function(a,b){return n(b[C.contractPrice])-n(a[C.contractPrice]);});
+  else if(sort==='round')d.sort(function(a,b){return(a._sheet||'').localeCompare(b._sheet||'','ru');});
+  else if(sort==='paid')d=d.filter(function(r){return lo(r[C.minPay])==='да';});
+  document.getElementById('fin-reg-cnt').textContent=d.length+' записей';
+  document.getElementById('tbl-fin').innerHTML='<thead><tr><th>№</th><th>Округ</th><th>Адрес</th><th>Кв.</th><th>Площадь м²</th><th>Граждан</th><th>Стоимость по оценке ₽</th><th>ДКП/ДДУ</th><th>Цена договора ₽</th><th>Оплата Мин-ва</th></tr></thead><tbody>'+
+    d.map(function(r,i){return'<tr><td>'+(i+1)+'</td><td>'+(r._sheet||'—')+'</td><td>'+(r[C.addr]||'—')+'</td><td>'+(r[C.apt]||'—')+'</td><td>'+n(r[C.area]).toFixed(2)+'</td><td>'+(r[C.citizens]||'—')+'</td><td>'+fmtRub(n(r[C.price]))+'</td><td>'+(r[C.dkp]||'—')+'</td><td>'+fmtRub(n(r[C.contractPrice]))+'</td><td>'+(r[C.minPay]||'—')+'</td></tr>';}).join('')+'</tbody>';
+}
+
 window.addEventListener('load',function(){reloadAll();});
 </script>
 </body>
