@@ -430,6 +430,53 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .ldot { width: 10px; height: 10px; border-radius: 50%; }
 #geost { font-size: 10px; color: var(--muted); padding: 6px 16px; background: rgba(0,0,0,0.2); border-top: 1px solid var(--border); text-align: center; }
 
+/* TOP BAR ROWS with progress bar */
+.top-section { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+.top-block {
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  border-radius: 20px 6px 30px 14px;
+  padding: 22px 18px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.tb-title {
+  font-size: 10px; font-weight: 400; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
+}
+.top-bar-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 8px; padding: 6px 0;
+}
+.tbr-rank { font-size: 10px; font-weight: 400; color: var(--muted); width: 18px; text-align: right; }
+.tbr-name { font-size: 11px; font-weight: 400; color: var(--text); width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+.tbr-name:hover { color: var(--cyan); }
+.tbr-bg {
+  flex: 1; height: 18px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; position: relative;
+}
+.light .tbr-bg { background: rgba(0,0,0,0.05); }
+.tbr-fill {
+  height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 8px;
+  font-size: 9px; font-weight: 700; color: #fff; transition: width 0.5s; white-space: nowrap;
+}
+.tbr-cnt { font-size: 13px; font-weight: 300; color: var(--text); min-width: 50px; text-align: right; }
+.top-show-more {
+  text-align: center; padding: 10px 0 0; font-size: 11px; font-weight: 400;
+  color: var(--cyan); cursor: pointer; border-top: 1px solid var(--border); margin-top: 8px;
+}
+
+/* палитра для прогресс-баров */
+.bar-palette { background: #c0392b; }
+.bar-palette-1 { background: #e74c3c; }
+.bar-palette-2 { background: #e67e22; }
+.bar-palette-3 { background: #f39c12; }
+.bar-palette-4 { background: #27ae60; }
+.bar-palette-5 { background: #1abc9c; }
+.bar-palette-6 { background: #2980b9; }
+.bar-palette-7 { background: #8e44ad; }
+.bar-palette-8 { background: #34495e; }
+.bar-palette-9 { background: #7f8c8d; }
+
 /* SCROLLBAR */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
@@ -604,22 +651,21 @@ var SHEETS=[
   {name:'Жуковский',gid:'305796329'},{name:'Зарайск',gid:'283920738'},{name:'Истра',gid:'1434615352'},
   {name:'Кашира',gid:'1580393335'},{name:'Клин',gid:'1338049965'},{name:'Коломна',gid:'106788836'},
   {name:'Королев',gid:'1576913234'},{name:'Котельники',gid:'1390969273'},{name:'Красногорск',gid:'1821499361'},
-  {name:'Лобня',gid:'2065587021'},{name:'Лосино-Петровский',gid:'2082287183'},{name:'Луховицы',gid:'239748466'},
-  {name:'Люберцы',gid:'1843254790'},{name:'Можайский',gid:'661476574'},{name:'Мытищи',gid:'846842811'},
-  {name:'Наро-Фоминский',gid:'249806909'},{name:'Одинцовский',gid:'1539692434'},{name:'Орехово-Зуево',gid:'696528998'},
-  {name:'Павлово-Посадский',gid:'1190501242'},{name:'Подольск',gid:'1062490300'},{name:'Пушкинский',gid:'1496220984'},
-  {name:'Раменский',gid:'732430860'},{name:'Рузский',gid:'376297159'},{name:'Сергиево-Посадский',gid:'782139300'},
-  {name:'Серебряные Пруды',gid:'344890850'},{name:'Серпухов',gid:'1919190345'},{name:'Солнечногорск',gid:'24184888'},
-  {name:'Ступино',gid:'1528804810'},{name:'Талдомский',gid:'652495233'},{name:'Химки',gid:'1817325599'},
-  {name:'Чехов',gid:'1699541847'},{name:'Шатура',gid:'1588732400'},{name:'Шаховская',gid:'1886732760'},
-  {name:'Щелково',gid:'2101160216'},{name:'Электросталь',gid:'1617637044'}
+  {name:'Ленинский',gid:'0'},{name:'Лобня',gid:'2065587021'},{name:'Лосино-Петровский',gid:'2082287183'},
+  {name:'Луховицы',gid:'239748466'},{name:'Люберцы',gid:'1843254790'},{name:'Можайский',gid:'661476574'},
+  {name:'Мытищи',gid:'846842811'},{name:'Наро-Фоминский',gid:'249806909'},{name:'Одинцовский',gid:'1539692434'},
+  {name:'Орехово-Зуево',gid:'696528998'},{name:'Павлово-Посадский',gid:'1190501242'},{name:'Подольск',gid:'1062490300'},
+  {name:'Пушкинский',gid:'1496220984'},{name:'Раменский',gid:'732430860'},{name:'Рузский',gid:'376297159'},
+  {name:'Сергиево-Посадский',gid:'782139300'},{name:'Серебряные Пруды',gid:'344890850'},{name:'Серпухов',gid:'1919190345'},
+  {name:'Солнечногорск',gid:'24184888'},{name:'Ступино',gid:'1528804810'},{name:'Талдомский',gid:'652495233'},
+  {name:'Химки',gid:'1817325599'},{name:'Чехов',gid:'1699541847'},{name:'Шатура',gid:'1588732400'},
+  {name:'Шаховская',gid:'1886732760'},{name:'Щелково',gid:'2101160216'},{name:'Электросталь',gid:'1617637044'}
 ];
 
 var C={mo:3,np:4,addr:5,apt:6,area:7,citizens:8,owner:11,certType:12,dateApp:13,
   decision:14,signed:15,buyConsent:17,price:20,dkp:21,newDistrict:22,newAddr:23,newArea:24,
   builder:25,contractType:26,contractPrice:27,minPay:28,lat:29,lon:30};
 
-// Координаты аварийных домов (из примера пользователя, плюс можно расширять)
 var RESETTLEMENT=[
   {fromAddr:'ул. Евстафьева, д. 11', fromLat:55.788404, fromLon:37.937939},
   {fromAddr:'ул. Ленина, д. 2', fromLat:55.796638, fromLon:37.925102},
@@ -718,6 +764,8 @@ function applyF(){
 function resetF(){['f-round','f-dec','f-type'].forEach(function(id){document.getElementById(id).value='';});selR=null;activeDecKey=null;document.querySelectorAll('.dec-card').forEach(function(c){c.classList.remove('active-dec');});filteredData=allData.slice();document.getElementById('fcnt').textContent='';renderAll();}
 
 // ── ОТРИСОВКА ОСНОВНОГО ДАШБОРДА ──────────────────────────────────────────
+var barColors=['#c0392b','#e74c3c','#e67e22','#f39c12','#27ae60','#1abc9c','#2980b9','#8e44ad','#34495e','#7f8c8d'];
+
 function renderAll(){
   var d=filteredData,area=0,cit=0,sob=0,nan=0,cert=0,vyk=0,pos=0,proc=0,neg=0,rej=0,none=0;
   d.forEach(function(r){
@@ -747,15 +795,30 @@ function renderAll(){
   document.getElementById('dec-row').innerHTML=decCfg.map(function(c){var v=decVals[c.key],pct=d.length>0?Math.round(v/d.length*100):0;
     return'<div class="dec-card '+c.cls+'" onclick="decClick(\''+c.key+'\')"><div class="dc-label">'+c.label+'</div><div class="dc-val">'+v+'</div><div class="dc-sub">'+pct+'% от всех</div><div class="dc-icon">'+c.icon+'</div></div>';}).join('');
 
+  // сбор статистики по округам
   var rm={};
   d.forEach(function(r){var k=r._sheet||'—';if(!rm[k])rm[k]={t:0,sob:0,nan:0,cert:0,vyk:0,pos:0,area:0};rm[k].t++;rm[k].area+=n(r[C.area]);if(normOwner(r[C.owner])==='Собственник')rm[k].sob++;if(normOwner(r[C.owner])==='Наниматель')rm[k].nan++;var nt=normType(r[C.certType]);if(nt==='Сертификат')rm[k].cert++;if(nt==='Выкуп')rm[k].vyk++;if(normDecision(r[C.decision])==='Положительное')rm[k].pos++;});
 
+  // функция отрисовки топа с прогресс-барами
   function renderTop(cid,sk,label){
     var srt=Object.entries(rm).sort(function(a,b){return b[1][sk]-a[1][sk];}).filter(function(e){return e[1][sk]>0;});
-    function makeRow(e,i){return'<div class="top-bar-row"><span class="tbr-rank">'+(i+1)+'</span><span class="tbr-name" onclick="selRound(\''+e[0].replace(/'/g,"\\'")+'\')">'+e[0]+'</span><span class="tbr-cnt">'+e[1][sk]+'</span></div>';}
-    document.getElementById(cid).innerHTML=srt.slice(0,3).map(makeRow).join('')+(srt.length>3?'<div class="top-show-more" onclick="openTopModal(\''+label+'\',\''+cid+'\')">▼ Показать все ('+srt.length+')</div>':'');
-    document.getElementById(cid).setAttribute('data-all',srt.map(makeRow).join(''));
+    var maxVal=srt.length? srt[0][1][sk] : 1;
+    function makeRow(e,i){
+      var pct=Math.round(e[1][sk]/maxVal*100);
+      var color=barColors[i%barColors.length];
+      return'<div class="top-bar-row">'+
+        '<span class="tbr-rank">'+(i+1)+'</span>'+
+        '<span class="tbr-name" onclick="selRound(\''+e[0].replace(/'/g,"\\'")+'\')">'+e[0]+'</span>'+
+        '<div class="tbr-bg"><div class="tbr-fill" style="width:'+pct+'%; background:'+color+'"></div></div>'+
+        '<span class="tbr-cnt">'+e[1][sk]+'</span>'+
+        '</div>';
+    }
+    var top3html=srt.slice(0,3).map(makeRow).join('');
+    var allHtml=srt.map(makeRow).join('');
+    document.getElementById(cid).innerHTML=top3html+(srt.length>3?'<div class="top-show-more" onclick="openTopModal(\''+label+'\',\''+cid+'\')">▼ Показать все ('+srt.length+')</div>':'');
+    document.getElementById(cid).setAttribute('data-all',allHtml);
   }
+
   renderTop('top-total','t','По количеству квартир');
   renderTop('top-sob','sob','По собственникам');
   renderTop('top-nan','nan','По нанимателям');
@@ -816,7 +879,7 @@ function kpiClick(type){
   document.getElementById('kpi-panel').classList.add('show');
 }
 
-// ── DEC CLICK (теперь открывает модальное окно) ─────────────────────────
+// ── DEC CLICK (модальное окно) ───────────────────────────────────────────
 function decClick(key){
   var cfg=decCfg.filter(function(c){return c.key===key;})[0];if(!cfg)return;
   var fr=document.getElementById('f-round').value,ft=document.getElementById('f-type').value;
@@ -831,7 +894,7 @@ function decClick(key){
   openTopModalDirect(cfg.label+' — по округам', html);
 }
 
-// ── МОДАЛЬНОЕ ОКНО (универсальное) ──────────────────────────────────────
+// ── МОДАЛЬНОЕ ОКНО ──────────────────────────────────────────────────────
 function openTopModal(label,cid){
   var el=document.getElementById(cid); if(!el)return;
   openTopModalDirect(label, el.getAttribute('data-all')||'');
@@ -863,13 +926,12 @@ function switchPage(name,btn){
   if(name==='finance')renderFinance();
 }
 
-// ── КАРТА (с поддержкой Google Maps и стрелками из таблицы) ─────────────
+// ── КАРТА ─────────────────────────────────────────────────────────────────
 function initMap(){
   if(mapInited)return;
   mapInited=true;
   mapObj=L.map('map',{zoomControl:true}).setView([55.80,37.94],13);
 
-  // Если указан Google API ключ – используем Google Maps, иначе нейтральные тайлы
   if(googleApiKey && googleApiKey.length>5){
     L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&hl=ru',{
       maxZoom:20, subdomains:['mt0','mt1','mt2','mt3'], attribution:'Google'
@@ -881,8 +943,6 @@ function initMap(){
   }
 
   mkLayer=L.layerGroup().addTo(mapObj);
-
-  // Для каждого аварийного дома ищем в данных координаты нового жилья
   var balData=allData.filter(function(r){return r._sheet==='Балашиха';});
   RESETTLEMENT.forEach(function(h){
     var fromIcon=L.divIcon({className:'',html:'<div style="width:22px;height:22px;background:#e74c3c;border:2px solid #fff;border-radius:50%;box-shadow:0 0 8px rgba(0,0,0,0.3)"></div>',iconSize:[22,22],iconAnchor:[11,11]});
@@ -936,11 +996,30 @@ function renderFinance(){
     '<div class="fin-kpi c2"><div class="fk-lbl">Оплата Министерства</div><div class="fk-val">'+paidCnt+'</div><div class="fk-sub">'+(d.length>0?Math.round(paidCnt/d.length*100):0)+'% от всех квартир</div></div>'+
     '<div class="fin-kpi c3"><div class="fk-lbl">Разница оценка vs договор</div><div class="fk-val" style="color:'+(tC>=tE?'var(--green)':'var(--accent)')+'">'+fmtMln(Math.abs(tC-tE))+' млн ₽</div><div class="fk-sub">'+(tC>=tE?'▲ Договор выше оценки':'▼ Договор ниже оценки')+'</div></div>';
 
-  var topEval=Object.entries(rm).sort(function(a,b){return b[1].eval-a[1].eval;}).slice(0,10);
-  document.getElementById('fin-top-eval').innerHTML=topEval.map(function(e,i){return'<div class="top-bar-row"><span class="tbr-rank">'+(i+1)+'</span><span class="tbr-name">'+e[0]+'</span><span class="tbr-cnt">'+fmtMln(e[1].eval)+'</span></div>';}).join('')||'<div style="padding:20px;color:var(--muted)">Нет данных</div>';
+  // топ по стоимости оценки с прогресс-барами
+  var byE=Object.entries(rm).filter(function(e){return e[1].eval>0;}).sort(function(a,b){return b[1].eval-a[1].eval;}).slice(0,10);
+  var mxE=byE.length? byE[0][1].eval : 1;
+  document.getElementById('fin-top-eval').innerHTML=byE.map(function(e,i){
+    var pct=Math.round(e[1].eval/mxE*100);
+    var color=barColors[i%barColors.length];
+    return'<div class="top-bar-row">'+
+      '<span class="tbr-rank">'+(i+1)+'</span>'+
+      '<span class="tbr-name" onclick="selRound(\''+e[0].replace(/'/g,"\\'")+'\')">'+e[0]+'</span>'+
+      '<div class="tbr-bg"><div class="tbr-fill" style="width:'+pct+'%; background:'+color+'">'+fmtMln(e[1].eval)+' млн</div></div>'+
+      '<span class="tbr-cnt">'+fmtMln(e[1].eval)+'</span></div>';
+  }).join('')||'<div style="padding:20px;color:var(--muted)">Нет данных</div>';
 
-  var topDkp=Object.entries(rm).sort(function(a,b){return b[1].dkp-a[1].dkp;}).slice(0,10);
-  document.getElementById('fin-top-dkp').innerHTML=topDkp.map(function(e,i){return'<div class="top-bar-row"><span class="tbr-rank">'+(i+1)+'</span><span class="tbr-name">'+e[0]+'</span><span class="tbr-cnt">'+fmtMln(e[1].dkp)+'</span></div>';}).join('')||'<div style="padding:20px;color:var(--muted)">Нет данных</div>';
+  var byD=Object.entries(rm).filter(function(e){return e[1].dkp>0;}).sort(function(a,b){return b[1].dkp-a[1].dkp;}).slice(0,10);
+  var mxD=byD.length? byD[0][1].dkp : 1;
+  document.getElementById('fin-top-dkp').innerHTML=byD.map(function(e,i){
+    var pct=Math.round(e[1].dkp/mxD*100);
+    var color=barColors[i%barColors.length];
+    return'<div class="top-bar-row">'+
+      '<span class="tbr-rank">'+(i+1)+'</span>'+
+      '<span class="tbr-name" onclick="selRound(\''+e[0].replace(/'/g,"\\'")+'\')">'+e[0]+'</span>'+
+      '<div class="tbr-bg"><div class="tbr-fill" style="width:'+pct+'%; background:'+color+'">'+fmtMln(e[1].dkp)+' млн</div></div>'+
+      '<span class="tbr-cnt">'+fmtMln(e[1].dkp)+'</span></div>';
+  }).join('')||'<div style="padding:20px;color:var(--muted)">Нет данных</div>';
 
   var top15=Object.entries(rm).sort(function(a,b){return b[1].eval-a[1].eval;}).slice(0,15);
   var ctx=document.getElementById('c-fin-compare');
