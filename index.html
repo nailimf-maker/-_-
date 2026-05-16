@@ -317,6 +317,38 @@ body::before {
 .dc-rej { background: linear-gradient(135deg, #1e0a2b, #4a148c); }
 .dc-none { background: linear-gradient(135deg, #0a1e2e, #1565c0); }
 
+/* DECISION DETAIL PANEL – восстановлена как в оригинале */
+.dec-detail {
+  background: rgba(20,20,28,0.85);
+  backdrop-filter: blur(25px);
+  border-radius: 28px 10px 40px 20px;
+  padding: 24px 28px;
+  display: none;
+  border: 1px solid rgba(64, 196, 255, 0.2);
+  box-shadow: 0 15px 45px rgba(64, 196, 255, 0.2);
+}
+.dec-detail.show { display: block; }
+.dd-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; }
+.dd-total { font-size: 36px; font-weight: 200; color: #fff; }
+.dd-title-txt { font-size: 13px; font-weight: 300; color: var(--blue); text-transform: uppercase; letter-spacing: 1px; }
+.dd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.dd-item {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(10px);
+  border-radius: 18px 4px 22px 10px;
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: 22px 1fr auto auto auto;
+  align-items: center;
+  gap: 8px;
+  border-left: 4px solid #40c4ff;
+  transition: all 0.25s;
+  cursor: pointer;
+}
+.dd-item:hover { background: rgba(255,255,255,0.06); transform: translateX(6px); }
+.light .dd-item { background: rgba(0,0,0,0.03); }
+.light .dd-item:hover { background: rgba(0,0,0,0.06); }
+
 /* MODAL */
 .top-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; }
 .top-modal-overlay.open { display: flex; }
@@ -430,7 +462,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .ldot { width: 10px; height: 10px; border-radius: 50%; }
 #geost { font-size: 10px; color: var(--muted); padding: 6px 16px; background: rgba(0,0,0,0.2); border-top: 1px solid var(--border); text-align: center; }
 
-/* TOP BAR ROWS with progress bar */
+/* TOP BAR с прогресс-баром */
 .top-section { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
 .top-block {
   background: var(--surface);
@@ -451,31 +483,13 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .tbr-rank { font-size: 10px; font-weight: 400; color: var(--muted); width: 18px; text-align: right; }
 .tbr-name { font-size: 11px; font-weight: 400; color: var(--text); width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
 .tbr-name:hover { color: var(--cyan); }
-.tbr-bg {
-  flex: 1; height: 18px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; position: relative;
-}
+.tbr-bg { flex: 1; height: 18px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; position: relative; }
 .light .tbr-bg { background: rgba(0,0,0,0.05); }
-.tbr-fill {
-  height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 8px;
-  font-size: 9px; font-weight: 700; color: #fff; transition: width 0.5s; white-space: nowrap;
-}
+.tbr-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 8px; font-size: 9px; font-weight: 700; color: #fff; transition: width 0.5s; white-space: nowrap; }
 .tbr-cnt { font-size: 13px; font-weight: 300; color: var(--text); min-width: 50px; text-align: right; }
-.top-show-more {
-  text-align: center; padding: 10px 0 0; font-size: 11px; font-weight: 400;
-  color: var(--cyan); cursor: pointer; border-top: 1px solid var(--border); margin-top: 8px;
-}
+.top-show-more { text-align: center; padding: 10px 0 0; font-size: 11px; font-weight: 400; color: var(--cyan); cursor: pointer; border-top: 1px solid var(--border); margin-top: 8px; }
 
-/* палитра для прогресс-баров */
 .bar-palette { background: #c0392b; }
-.bar-palette-1 { background: #e74c3c; }
-.bar-palette-2 { background: #e67e22; }
-.bar-palette-3 { background: #f39c12; }
-.bar-palette-4 { background: #27ae60; }
-.bar-palette-5 { background: #1abc9c; }
-.bar-palette-6 { background: #2980b9; }
-.bar-palette-7 { background: #8e44ad; }
-.bar-palette-8 { background: #34495e; }
-.bar-palette-9 { background: #7f8c8d; }
 
 /* SCROLLBAR */
 ::-webkit-scrollbar { width: 5px; }
@@ -552,6 +566,10 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 
   <div style="font-size:10px;font-weight:400;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Решения</div>
   <div class="dec-row" id="dec-row"></div>
+  <div class="dec-detail" id="dec-detail">
+    <div class="dd-header"><span class="dd-total" id="dd-total">—</span><span class="dd-title-txt" id="dd-title-txt">—</span></div>
+    <div class="dd-grid" id="dd-grid"></div>
+  </div>
 
   <div style="font-size:10px;font-weight:400;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Топ округов</div>
   <div class="top-section">
@@ -757,11 +775,12 @@ function applyF(){
   var fr=document.getElementById('f-round').value,fd=document.getElementById('f-dec').value,ft=document.getElementById('f-type').value;
   selR=fr||null;activeDecKey=null;
   document.querySelectorAll('.dec-card').forEach(function(c){c.classList.remove('active-dec');});
+  document.getElementById('dec-detail').classList.remove('show');
   filteredData=allData.filter(function(r){return(!fr||r._sheet===fr)&&(!fd||normDecision(r[C.decision])===fd)&&(!ft||normType(r[C.certType])===ft);});
   document.getElementById('fcnt').textContent=filteredData.length<allData.length?'▶ '+filteredData.length+' строк':'';
   renderAll();
 }
-function resetF(){['f-round','f-dec','f-type'].forEach(function(id){document.getElementById(id).value='';});selR=null;activeDecKey=null;document.querySelectorAll('.dec-card').forEach(function(c){c.classList.remove('active-dec');});filteredData=allData.slice();document.getElementById('fcnt').textContent='';renderAll();}
+function resetF(){['f-round','f-dec','f-type'].forEach(function(id){document.getElementById(id).value='';});selR=null;activeDecKey=null;document.querySelectorAll('.dec-card').forEach(function(c){c.classList.remove('active-dec');});document.getElementById('dec-detail').classList.remove('show');filteredData=allData.slice();document.getElementById('fcnt').textContent='';renderAll();}
 
 // ── ОТРИСОВКА ОСНОВНОГО ДАШБОРДА ──────────────────────────────────────────
 var barColors=['#c0392b','#e74c3c','#e67e22','#f39c12','#27ae60','#1abc9c','#2980b9','#8e44ad','#34495e','#7f8c8d'];
@@ -793,13 +812,12 @@ function renderAll(){
 
   var decVals={pos:pos,proc:proc,neg:neg,rej:rej,none:none};
   document.getElementById('dec-row').innerHTML=decCfg.map(function(c){var v=decVals[c.key],pct=d.length>0?Math.round(v/d.length*100):0;
-    return'<div class="dec-card '+c.cls+'" onclick="decClick(\''+c.key+'\')"><div class="dc-label">'+c.label+'</div><div class="dc-val">'+v+'</div><div class="dc-sub">'+pct+'% от всех</div><div class="dc-icon">'+c.icon+'</div></div>';}).join('');
+    return'<div class="dec-card '+c.cls+'" onclick="decClick(\''+c.key+'\')" id="dc-'+c.key+'"><div class="dc-label">'+c.label+'</div><div class="dc-val">'+v+'</div><div class="dc-sub">'+pct+'% от всех</div><div class="dc-icon">'+c.icon+'</div></div>';}).join('');
 
   // сбор статистики по округам
   var rm={};
   d.forEach(function(r){var k=r._sheet||'—';if(!rm[k])rm[k]={t:0,sob:0,nan:0,cert:0,vyk:0,pos:0,area:0};rm[k].t++;rm[k].area+=n(r[C.area]);if(normOwner(r[C.owner])==='Собственник')rm[k].sob++;if(normOwner(r[C.owner])==='Наниматель')rm[k].nan++;var nt=normType(r[C.certType]);if(nt==='Сертификат')rm[k].cert++;if(nt==='Выкуп')rm[k].vyk++;if(normDecision(r[C.decision])==='Положительное')rm[k].pos++;});
 
-  // функция отрисовки топа с прогресс-барами
   function renderTop(cid,sk,label){
     var srt=Object.entries(rm).sort(function(a,b){return b[1][sk]-a[1][sk];}).filter(function(e){return e[1][sk]>0;});
     var maxVal=srt.length? srt[0][1][sk] : 1;
@@ -848,7 +866,12 @@ function renderCharts(d){
   var ctx2=document.getElementById('c-own');
   if(ctx2){if(charts.own)charts.own.destroy();
     charts.own=new Chart(ctx2,{type:'doughnut',data:{labels:oL,datasets:[{data:oV,backgroundColor:oC,borderWidth:2}]},
-      options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{labels:{color:getComputedStyle(document.body).getPropertyValue('--text')}}}}});}
+      options:{responsive:true,maintainAspectRatio:false,cutout:'55%',
+        plugins:{
+          legend:{display:true,position:'right',labels:{color:getComputedStyle(document.body).getPropertyValue('--text'),font:{size:12,family:'Montserrat',weight:'400'},padding:12,boxWidth:14}},
+          tooltip:{callbacks:{label:function(context){return context.label+': '+context.parsed;}}}
+        }
+      }});}
 
   var mm={};d.forEach(function(r){var raw=String(r[C.dateApp]||'').trim();if(!raw||raw==='—')return;var pts=raw.split('.');if(pts.length>=3){var mo=pts[1].trim(),yr=pts[2].trim();if(yr.length===2)yr='20'+yr;if(mo&&yr&&yr.length===4){var key=yr+'-'+mo.padStart(2,'0');mm[key]=(mm[key]||0)+1;}}});
   var tlk=Object.keys(mm).sort(),tlv=tlk.map(function(k){return mm[k];});
@@ -879,19 +902,41 @@ function kpiClick(type){
   document.getElementById('kpi-panel').classList.add('show');
 }
 
-// ── DEC CLICK (модальное окно) ───────────────────────────────────────────
+// ── DEC CLICK (восстановлена оригинальная панель + обновление реестра) ──
 function decClick(key){
   var cfg=decCfg.filter(function(c){return c.key===key;})[0];if(!cfg)return;
+  if(activeDecKey===key){
+    activeDecKey=null;
+    document.querySelectorAll('.dec-card').forEach(function(c){c.classList.remove('active-dec');});
+    document.getElementById('dec-detail').classList.remove('show');
+    var fr=document.getElementById('f-round').value,ft=document.getElementById('f-type').value;
+    filteredData=allData.filter(function(r){return(!fr||r._sheet===fr)&&(!ft||normType(r[C.certType])===ft);});
+    document.getElementById('fcnt').textContent='';
+    renderRegistry();
+    return;
+  }
+  activeDecKey=key;
+  document.querySelectorAll('.dec-card').forEach(function(c){c.classList.remove('active-dec');});
+  var dc=document.getElementById('dc-'+key);if(dc)dc.classList.add('active-dec');
   var fr=document.getElementById('f-round').value,ft=document.getElementById('f-type').value;
   var rm={};
   allData.filter(function(r){return(!fr||r._sheet===fr)&&(!ft||normType(r[C.certType])===ft);}).forEach(function(r){
     var dv=lo(r[C.decision]||'');
     var m=cfg.filter==='none'?(dv.indexOf('положительн')<0&&dv.indexOf('рассм')<0&&dv.indexOf('приостановк')<0&&dv.indexOf('отказ')<0&&dv.indexOf('отриц')<0):(dv.indexOf(cfg.filter)>=0);
-    if(m){var k=r._sheet||'—';if(!rm[k])rm[k]={cnt:0};rm[k].cnt++;}
+    if(m){var k=r._sheet||'—';if(!rm[k])rm[k]={cnt:0,area:0};rm[k].cnt++;rm[k].area+=n(r[C.area]);}
   });
   var sorted=Object.entries(rm).sort(function(a,b){return b[1].cnt-a[1].cnt;});
-  var html=sorted.map(function(e,i){return'<div class="top-bar-row"><span class="tbr-rank">'+(i+1)+'</span><span class="tbr-name" onclick="selRound(\''+e[0].replace(/'/g,"\\'")+'\')">'+e[0]+'</span><span class="tbr-cnt">'+e[1].cnt+'</span></div>';}).join('');
-  openTopModalDirect(cfg.label+' — по округам', html);
+  var total=sorted.reduce(function(s,e){return s+e[1].cnt;},0);
+  document.getElementById('dd-total').textContent=total;
+  document.getElementById('dd-title-txt').textContent=cfg.label+' — по округам';
+  document.getElementById('dd-grid').innerHTML=sorted.filter(function(e){return e[1].cnt>0;}).map(function(e,i){
+    var pct=total>0?Math.round(e[1].cnt/total*100):0;
+    return'<div class="dd-item" onclick="selRound(\''+e[0].replace(/'/g,"\\'")+'\')"><span class="dd-rank">'+(i+1)+'</span><span class="dd-name">'+e[0]+'</span><span class="dd-pct">'+pct+'%</span><span class="dd-val">'+e[1].cnt+'</span></div>';
+  }).join('');
+  document.getElementById('dec-detail').classList.add('show');
+  filteredData=allData.filter(function(r){var dv=lo(r[C.decision]||'');var m=cfg.filter==='none'?(dv.indexOf('положительн')<0&&dv.indexOf('рассм')<0&&dv.indexOf('приостановк')<0&&dv.indexOf('отказ')<0&&dv.indexOf('отриц')<0):(dv.indexOf(cfg.filter)>=0);return m&&(!fr||r._sheet===fr)&&(!ft||normType(r[C.certType])===ft);});
+  document.getElementById('fcnt').textContent='▶ '+filteredData.length+' строк';
+  renderRegistry();
 }
 
 // ── МОДАЛЬНОЕ ОКНО ──────────────────────────────────────────────────────
@@ -996,7 +1041,6 @@ function renderFinance(){
     '<div class="fin-kpi c2"><div class="fk-lbl">Оплата Министерства</div><div class="fk-val">'+paidCnt+'</div><div class="fk-sub">'+(d.length>0?Math.round(paidCnt/d.length*100):0)+'% от всех квартир</div></div>'+
     '<div class="fin-kpi c3"><div class="fk-lbl">Разница оценка vs договор</div><div class="fk-val" style="color:'+(tC>=tE?'var(--green)':'var(--accent)')+'">'+fmtMln(Math.abs(tC-tE))+' млн ₽</div><div class="fk-sub">'+(tC>=tE?'▲ Договор выше оценки':'▼ Договор ниже оценки')+'</div></div>';
 
-  // топ по стоимости оценки с прогресс-барами
   var byE=Object.entries(rm).filter(function(e){return e[1].eval>0;}).sort(function(a,b){return b[1].eval-a[1].eval;}).slice(0,10);
   var mxE=byE.length? byE[0][1].eval : 1;
   document.getElementById('fin-top-eval').innerHTML=byE.map(function(e,i){
