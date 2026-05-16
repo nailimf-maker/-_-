@@ -197,6 +197,7 @@ tr:hover td{background:#f7f9fc}
   <div class="hdr-prog">📋 Программа выдачи сертификатов · 2026</div>
   <div class="page-tabs">
     <button class="ptab active" id="tab-btn-overview" onclick="switchPage('overview',this)">📊 Обзор</button>
+    <button class="ptab" id="tab-btn-finance" onclick="switchPage('finance',this)">💰 Финансирование</button>
     <button class="ptab" id="tab-btn-mappage" onclick="switchPage('mappage',this)">🗺️ Карта</button>
   </div>
   <div style="display:flex;align-items:center;gap:7px"><div class="live-dot"></div><span id="upd-time">Загрузка...</span></div>
@@ -274,6 +275,49 @@ tr:hover td{background:#f7f9fc}
 </div>
 </div>
 
+<!-- ФИНАНСИРОВАНИЕ -->
+<div class="page" id="page-finance">
+<div class="content">
+
+  <!-- Финансовые KPI -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px" id="fin-kpi-row"></div>
+
+  <!-- Две колонки: топ по стоимости + воронка финансов -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+    <div class="card">
+      <div class="ctitle">Топ округов по суммарной стоимости оценки</div>
+      <div id="fin-top-eval"></div>
+    </div>
+    <div class="card">
+      <div class="ctitle">Топ округов по сумме договоров ДКП/ДДУ</div>
+      <div id="fin-top-dkp"></div>
+    </div>
+  </div>
+
+  <!-- График стоимости по округам -->
+  <div class="chart-card">
+    <div class="cc-title">Стоимость жилья по оценке vs договор ДКП/ДДУ — топ-15 округов</div>
+    <div style="position:relative;height:320px"><canvas id="c-fin-compare"></canvas></div>
+  </div>
+
+  <!-- Финансовая детализация реестра -->
+  <div class="registry-card">
+    <div class="reg-header">
+      <div class="reg-title">💰 Финансовая детализация</div>
+      <div class="reg-cnt" id="fin-reg-cnt"></div>
+      <select class="reg-sort" id="fin-sort" onchange="renderFinRegistry()">
+        <option value="price_desc">По стоимости ↓</option>
+        <option value="price_asc">По стоимости ↑</option>
+        <option value="round">По округу</option>
+        <option value="dkp">Только с ДКП</option>
+      </select>
+    </div>
+    <div class="twrap"><table id="tbl-fin"></table></div>
+  </div>
+
+</div>
+</div>
+
 <!-- КАРТА -->
 <div class="page" id="page-mappage">
 <div class="map-content">
@@ -284,15 +328,19 @@ tr:hover td{background:#f7f9fc}
   <div class="map-wrap" style="border-radius:6px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.1);border:1px solid var(--border)">
     <iframe
       src="https://maps.google.com/maps?q=Московская+область,+Россия&t=m&z=9&output=embed&hl=ru"
-      width="100%"
+      width="100%" id="gmap-frame"
       style="height:calc(100vh - 300px);min-height:440px;border:none;display:block"
-      allowfullscreen
-      loading="lazy"
-      title="Карта Московской области">
+      allowfullscreen loading="lazy" title="Карта Московской области">
     </iframe>
-    <div style="padding:8px 14px;background:#fafbfc;border-top:1px solid var(--border);font-size:11px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:8px">
-      <span>🗺️ Google Maps · Московская область</span>
-      <span style="margin-left:auto;color:var(--cyan)">Геокодирование адресов доступно по запросу</span>
+    <div style="padding:10px 16px;background:#fafbfc;border-top:1px solid var(--border);font-size:11px;color:var(--muted);display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+      <b style="color:var(--navy)">🗺️ Google Maps · Московская область</b>
+      <span>Адреса Балашихи добавлены ниже ↓</span>
+      <span style="margin-left:auto;color:var(--cyan);font-weight:700">Пришлите координаты других округов для отображения</span>
+    </div>
+    <!-- Точки Балашихи под картой -->
+    <div style="padding:14px 16px;background:#fff;border-top:1px solid var(--border)">
+      <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">📍 Балашиха — аварийные дома</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px" id="balashiha-pts"></div>
     </div>
   </div>
 </div>
@@ -351,7 +399,7 @@ function normDecision(raw){
 
 var allData=[],filteredData=[],loaded=0;
 var mapObj,mkLayer,allMks=[],mf='all',mapInited=false;
-var charts={dec:null,own:null,tl:null};
+var charts={dec:null,own:null,tl:null,fin:null};
 var selR=null,activeKpi=null,activeDecKey=null;
 var autoT,cdT,secs=7200;
 
@@ -368,6 +416,10 @@ function switchPage(name,btn){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
   btn.classList.add('active');
   document.getElementById('page-'+name).classList.add('active');
+  if(name==='mappage'){
+    if(!mapInited)initMap();
+    else if(mapObj)setTimeout(function(){mapObj.invalidateSize();},150);
+  }
 }
 
 // KPI детализация
@@ -448,6 +500,9 @@ function decClick(key){
   panel.classList.add('show');
   filteredData=allData.filter(function(r){var dv=lo(r[C.decision]||'');var m=cfg.filter==='none'?(dv.indexOf('положительн')<0&&dv.indexOf('рассм')<0&&dv.indexOf('приостановк')<0&&dv.indexOf('отказ')<0&&dv.indexOf('отриц')<0):(dv.indexOf(cfg.filter)>=0);return m&&(!fr||r._sheet===fr)&&(!ft||normType(r[C.certType])===ft);});
   document.getElementById('fcnt').textContent='▶ '+filteredData.length+' строк';
+  // Если открыта вкладка финансов — обновляем её тоже
+  if(document.getElementById('page-finance').classList.contains('active'))renderFinance();
+
   renderRegistry();
 }
 
@@ -681,17 +736,44 @@ function selRound(name){
 }
 
 // MAP
+// Координаты аварийных домов Балашихи (тестовые — добавьте реальные из таблицы)
+var KNOWN_COORDS={
+  'Балашиха':[
+    {lat:55.7966,lon:37.9388,addr:'ул. Гагарина, д. 3'},
+    {lat:55.7958,lon:37.9401,addr:'ул. Гагарина, д. 5'},
+    {lat:55.7971,lon:37.9372,addr:'ул. Гагарина, д. 7'},
+    {lat:55.8012,lon:37.9450,addr:'ул. Советская, д. 12'},
+    {lat:55.7935,lon:37.9320,addr:'ул. Ленина, д. 8'}
+  ]
+};
+
 function initMap(){
   if(mapInited)return;
   mapInited=true;
   mapObj=L.map('map').setView([55.82,37.62],9);
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:18}).addTo(mapObj);
-  var mb=L.latLngBounds([54.0,34.5],[57.5,41.0]);
-  mapObj.setMaxBounds(mb.pad(0.1));
+  // Нейтральные тайлы без политических границ — CartoDB Positron
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
+    attribution:'© OpenStreetMap © CARTO',
+    subdomains:'abcd',maxZoom:19
+  }).addTo(mapObj);
+  // Ограничиваем область МО
+  var moBounds=L.latLngBounds([54.0,34.5],[57.5,41.0]);
+  mapObj.setMaxBounds(moBounds.pad(0.1));
   mapObj.setMinZoom(7);
   mkLayer=L.layerGroup().addTo(mapObj);
+  // Добавляем известные точки
+  Object.keys(KNOWN_COORDS).forEach(function(roundName){
+    KNOWN_COORDS[roundName].forEach(function(pt){
+      var mk=L.circleMarker([pt.lat,pt.lon],{
+        radius:9,fillColor:'#27ae60',color:'#fff',weight:2,fillOpacity:0.9
+      });
+      mk.bindPopup('<div style="font-family:Montserrat,sans-serif;font-size:12px"><b style="color:#0d1b2e">'+pt.addr+'</b><br><span style="color:#7a8499">'+roundName+'</span></div>');
+      mk._dec='положительн';mk._sheet=roundName;
+      mk.addTo(mkLayer);allMks.push(mk);
+    });
+  });
   setTimeout(function(){mapObj.invalidateSize();},200);
-  document.getElementById('geost').textContent='Карта загружена. Геокодирование отключено для быстрой работы.';
+  document.getElementById('geost').textContent='Отображено '+allMks.length+' домов. Пришлите координаты остальных округов для добавления на карту.';
 }
 function setMF(mode,btn){mf=mode;document.querySelectorAll('.mtab').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');fmk();}
 function fmk(){if(!mapObj)return;allMks.forEach(function(mk){var dv=mk._dec,show=true;if(mf==='pos')show=dv.indexOf('положит')>=0;else if(mf==='neg')show=dv.indexOf('отриц')>=0||dv.indexOf('отказ')>=0;else if(mf==='proc')show=dv.indexOf('рассм')>=0;if(selR&&mk._sheet!==selR)show=false;if(show){if(!mapObj.hasLayer(mk))mk.addTo(mkLayer);}else{if(mapObj.hasLayer(mk))mapObj.removeLayer(mk);}});}
