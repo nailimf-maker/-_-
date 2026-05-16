@@ -28,6 +28,9 @@
   --text:#0a0e1a;
 }
 body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+/* BACKGROUND IMAGE — замените URL на свою ссылку */
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:url('bg.jpg') center center/cover no-repeat;opacity:.07;pointer-events:none;z-index:0}
+.hdr,.fbar,.loading,.content,.map-content{position:relative;z-index:1}
 
 /* ── HEADER ── */
 .hdr{background:var(--navy);min-height:72px;display:flex;align-items:center;padding:0 32px;gap:20px;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.35)}
@@ -486,13 +489,24 @@ function renderAll(){
   document.getElementById('kv-vyk').textContent=vyk.toLocaleString('ru');
   document.getElementById('kv-vyk-sub').textContent=(d.length>0?Math.round(vyk/d.length*100):0)+'% от всех';
 
-  // Decisions row
-  document.getElementById('dec-row').innerHTML=
-    '<div class="dec-card dc-pos"><div class="dc-label">Положительное</div><div class="dc-val">'+pos+'</div><div class="dc-sub">'+(d.length>0?Math.round(pos/d.length*100):0)+'% от всех</div><div class="dc-pct">✓</div></div>'+
-    '<div class="dec-card dc-proc"><div class="dc-label">На рассмотрении</div><div class="dc-val">'+proc+'</div><div class="dc-sub">'+(d.length>0?Math.round(proc/d.length*100):0)+'%</div><div class="dc-pct">⏳</div></div>'+
-    '<div class="dec-card dc-neg"><div class="dc-label">Отрицательное</div><div class="dc-val">'+neg+'</div><div class="dc-sub">'+(d.length>0?Math.round(neg/d.length*100):0)+'%</div><div class="dc-pct">✗</div></div>'+
-    '<div class="dec-card dc-rej"><div class="dc-label">Отказ</div><div class="dc-val">'+rej+'</div><div class="dc-sub">'+(d.length>0?Math.round(rej/d.length*100):0)+'%</div><div class="dc-pct">⊘</div></div>'+
-    '<div class="dec-card dc-none"><div class="dc-label">Не указано</div><div class="dc-val">'+none+'</div><div class="dc-sub">'+(d.length>0?Math.round(none/d.length*100):0)+'%</div><div class="dc-pct">?</div></div>';
+  // Decisions row — кликабельные с детализацией
+  var decTypes=[
+    {key:'pos',label:'Положительное',cls:'dc-pos',icon:'✓',filter:'положительн'},
+    {key:'proc',label:'На рассмотрении',cls:'dc-proc',icon:'⏳',filter:'рассм'},
+    {key:'neg',label:'Отрицательное',cls:'dc-neg',icon:'✗',filter:'отриц'},
+    {key:'rej',label:'Отказ',cls:'dc-rej',icon:'⊘',filter:'отказ'},
+    {key:'none',label:'Не указано',cls:'dc-none',icon:'?',filter:'none'}
+  ];
+  var decVals={pos:pos,proc:proc,neg:neg,rej:rej,none:none};
+  document.getElementById('dec-row').innerHTML=decTypes.map(function(dt){
+    var pct=d.length>0?Math.round(decVals[dt.key]/d.length*100):0;
+    return'<div class="dec-card '+dt.cls+'" onclick="decClick(\''+dt.key+'\',\''+dt.filter+'\')" id="dc-'+dt.key+'">'+
+      '<div class="dc-label">'+dt.label+'</div>'+
+      '<div class="dc-val">'+decVals[dt.key]+'</div>'+
+      '<div class="dc-sub">'+pct+'% от всех</div>'+
+      '<div class="dc-pct">'+dt.icon+'</div>'+
+      '</div>';
+  }).join('');
 
   // Round maps
   var rm={};
@@ -525,39 +539,92 @@ function renderAll(){
   renderTop('top-total','t');renderTop('top-sob','sob');renderTop('top-nan','nan');
   renderTop('top-cert','cert');renderTop('top-vyk','vyk');renderTop('top-pos','pos');
 
-  // Chart: решения
+  // Chart: решения — 3D polar area
   var dm={};d.forEach(function(r){var k=r[C.decision]||'Не указано';dm[k]=(dm[k]||0)+1;});
   if(charts.dec)charts.dec.destroy();
-  charts.dec=new Chart(document.getElementById('c-dec'),{type:'doughnut',
-    data:{labels:Object.keys(dm),datasets:[{data:Object.values(dm),backgroundColor:Object.keys(dm).map(cdec),borderWidth:3,borderColor:'#fff'}]},
-    options:{plugins:{legend:{position:'right',labels:{color:'#555',font:{size:11,family:'Montserrat'},padding:10,boxWidth:14}}},cutout:'55%'}});
+  charts.dec=new Chart(document.getElementById('c-dec'),{type:'polarArea',
+    data:{labels:Object.keys(dm),datasets:[{data:Object.values(dm),
+      backgroundColor:Object.keys(dm).map(function(k,i){var c=cdec(k);return c+'cc';}),
+      borderColor:Object.keys(dm).map(cdec),
+      borderWidth:2}]},
+    options:{plugins:{legend:{position:'right',labels:{color:'#333',font:{size:12,family:'Montserrat',weight:'600'},padding:12,boxWidth:16}}},
+      scales:{r:{ticks:{backdropColor:'transparent',color:'#aaa',font:{size:10}},grid:{color:'rgba(0,0,0,.08)'}}}}});
 
-  // Chart: собственники vs наниматели
+  // Chart: собственники vs наниматели — 3D doughnut с тенью
   var ownMap={};d.forEach(function(r){var k=String(r[C.owner]||'Не указано').trim();ownMap[k]=(ownMap[k]||0)+1;});
   if(charts.own)charts.own.destroy();
   charts.own=new Chart(document.getElementById('c-own'),{type:'doughnut',
-    data:{labels:Object.keys(ownMap),datasets:[{data:Object.values(ownMap),backgroundColor:['#0d1b2e','#c0392b','#2980b9','#27ae60','#f39c12','#9b59b6'],borderWidth:3,borderColor:'#fff'}]},
-    options:{plugins:{legend:{position:'right',labels:{color:'#555',font:{size:11,family:'Montserrat'},padding:10,boxWidth:14}}},cutout:'55%'}});
+    data:{labels:Object.keys(ownMap),datasets:[{data:Object.values(ownMap),
+      backgroundColor:['#0d1b2edd','#c0392bdd','#2980b9dd','#27ae60dd','#f39c12dd','#9b59b6dd'],
+      borderColor:'#fff',borderWidth:4,
+      hoverOffset:20,hoverBorderWidth:6}]},
+    options:{plugins:{legend:{position:'right',labels:{color:'#333',font:{size:12,family:'Montserrat',weight:'600'},padding:12,boxWidth:16}}},
+      cutout:'50%',
+      animation:{animateRotate:true,animateScale:true,duration:1200,easing:'easeInOutQuart'}}});
 
-  // Timeline — дата подачи заявления
+  // Timeline — красивый градиентный line chart
   var monthMap={};
   d.forEach(function(r){
     var raw=String(r[C.dateApp]||'').trim();
     if(!raw||raw==='—')return;
     var parts=raw.split('.');
     if(parts.length>=3){
-      var mon=parts[1],yr=parts[2].length===4?parts[2]:(parts[2].length===2?'20'+parts[2]:parts[2]);
+      var mon=parts[1],yr=parts[2].length===4?parts[2]:'20'+parts[2];
       if(mon&&yr){var key=yr+'-'+mon;monthMap[key]=(monthMap[key]||0)+1;}
     }
   });
   var tlKeys=Object.keys(monthMap).sort();
   var tlVals=tlKeys.map(function(k){return monthMap[k];});
-  var tlLabels=tlKeys.map(function(k){var p=k.split('-');var months=['','Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];return(months[parseInt(p[1])]||p[1])+' '+p[0];});
+  var months=['','Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+  var tlLabels=tlKeys.map(function(k){var p=k.split('-');return(months[parseInt(p[1])]||p[1])+' '+p[0];});
   if(charts.tl)charts.tl.destroy();
   charts.tl=new Chart(document.getElementById('c-timeline'),{type:'line',
-    data:{labels:tlLabels,datasets:[{label:'Заявлений',data:tlVals,borderColor:'#00c9b1',backgroundColor:'rgba(0,201,177,.1)',borderWidth:2.5,pointBackgroundColor:'#00c9b1',pointRadius:4,pointHoverRadius:7,fill:true,tension:.35}]},
-    options:{plugins:{legend:{display:false},tooltip:{callbacks:{title:function(i){return i[0].label;},label:function(i){return' '+i.parsed.y+' заявлений';}}}},
-      scales:{x:{ticks:{color:'#aaa',font:{size:10,family:'Montserrat'},maxRotation:45},grid:{color:'#f0f0f0'}},y:{ticks:{color:'#aaa',font:{size:10,family:'Montserrat'}},grid:{color:'#f0f0f0'}}}}});
+    data:{labels:tlLabels,datasets:[{
+      label:'Заявлений',data:tlVals,
+      borderColor:'#00c9b1',
+      borderWidth:3,
+      pointBackgroundColor:'#00c9b1',
+      pointBorderColor:'#fff',
+      pointBorderWidth:2,
+      pointRadius:6,
+      pointHoverRadius:10,
+      pointHoverBackgroundColor:'#fff',
+      pointHoverBorderColor:'#00c9b1',
+      pointHoverBorderWidth:3,
+      fill:true,
+      backgroundColor:function(ctx){
+        var chart=ctx.chart,{ctx:c,chartArea}=chart;
+        if(!chartArea)return'rgba(0,201,177,.1)';
+        var g=c.createLinearGradient(0,chartArea.top,0,chartArea.bottom);
+        g.addColorStop(0,'rgba(0,201,177,.35)');
+        g.addColorStop(0.5,'rgba(0,201,177,.12)');
+        g.addColorStop(1,'rgba(0,201,177,.02)');
+        return g;
+      },
+      tension:.45,
+      cubicInterpolationMode:'monotone'
+    }]},
+    options:{
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'rgba(13,27,46,.95)',
+          titleColor:'#00c9b1',
+          bodyColor:'#fff',
+          padding:12,
+          cornerRadius:4,
+          titleFont:{family:'Montserrat',weight:'700',size:12},
+          bodyFont:{family:'Montserrat',size:13},
+          callbacks:{label:function(i){return' '+i.parsed.y+' заявлений';}}
+        }
+      },
+      scales:{
+        x:{ticks:{color:'#888',font:{size:11,family:'Montserrat'},maxRotation:45},grid:{color:'rgba(0,0,0,.04)'},border:{color:'rgba(0,0,0,.1)'}},
+        y:{ticks:{color:'#888',font:{size:11,family:'Montserrat'}},grid:{color:'rgba(0,0,0,.04)'},border:{color:'rgba(0,0,0,.1)'}}
+      },
+      animation:{duration:1500,easing:'easeInOutQuart'},
+      interaction:{mode:'index',intersect:false}
+    }});
 
   // Map stats
   document.getElementById('map-stats').innerHTML=
@@ -628,6 +695,32 @@ function renderRegistry(){
         '<td style="text-align:center">'+(r[28]||'—')+'</td>'+
         '</tr>';
     }).join('')+'</tbody>';
+}
+
+var activeDecFilter=null;
+function decClick(key,filter){
+  if(activeDecFilter===key){
+    activeDecFilter=null;
+    document.querySelectorAll('.dec-card').forEach(function(c){c.classList.remove('active-dec');});
+    document.getElementById('f-dec').value='';
+    filteredData=allData.filter(function(r){
+      var fr=document.getElementById('f-round').value,ft=document.getElementById('f-type').value;
+      return(!fr||r._sheet===fr)&&(!ft||r[C.certType]===ft);
+    });
+    document.getElementById('fcnt').textContent=selR?'▶ '+selR+' — '+filteredData.length+' строк':'';
+  } else {
+    activeDecFilter=key;
+    document.querySelectorAll('.dec-card').forEach(function(c){c.classList.remove('active-dec');});
+    var el=document.getElementById('dc-'+key);if(el)el.classList.add('active-dec');
+    var fr=document.getElementById('f-round').value,ft=document.getElementById('f-type').value;
+    filteredData=allData.filter(function(r){
+      var dv=lo(r[C.decision]||'');
+      var match=filter==='none'?(dv.indexOf('положительн')<0&&dv.indexOf('рассм')<0&&dv.indexOf('отказ')<0&&dv.indexOf('отриц')<0):(dv.indexOf(filter)>=0);
+      return match&&(!fr||r._sheet===fr)&&(!ft||r[C.certType]===ft);
+    });
+    document.getElementById('fcnt').textContent='▶ '+filteredData.length+' строк по фильтру';
+  }
+  renderRegistry();
 }
 
 function selRound(name){
